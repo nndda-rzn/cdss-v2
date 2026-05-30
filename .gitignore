@@ -1,5 +1,6 @@
 # ===== Secrets & PHI (NEVER COMMIT) =====
-secrets/
+secrets/*
+!secrets/.gitkeep
 *.key
 *.pem
 .env
