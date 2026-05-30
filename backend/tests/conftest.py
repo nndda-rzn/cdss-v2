@@ -4,6 +4,7 @@ Guards against touching the real data/cdss.db: TestConfig uses in-memory,
 and any file-based fixtures use tmp_path only.
 """
 import os
+from typing import cast
 
 import pytest
 from cryptography.fernet import Fernet
@@ -44,7 +45,7 @@ def app() -> object:
 
 @pytest.fixture()
 def session(app: Flask) -> Session:
-    return _db.session
+    return cast(Session, _db.session)
 
 
 @pytest.fixture()

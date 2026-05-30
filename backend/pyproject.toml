@@ -39,6 +39,7 @@ ignore = ["S101"]
 python_version = "3.13"
 strict = true
 plugins = []
+exclude = ["migrations/"]
 
 [[tool.mypy.overrides]]
 module = ["flask_migrate.*"]
@@ -49,6 +50,18 @@ ignore_missing_imports = true
 # only at the API boundary module that uses them.
 module = ["app.api.auth"]
 disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+# Test functions are not strictly typed by convention.
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+
+[[tool.mypy.overrides]]
+# Top-level scripts package (repo root) has no py.typed marker.
+module = ["scripts.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
