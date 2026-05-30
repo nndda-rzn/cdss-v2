@@ -39,7 +39,7 @@ jobs:
       - uses: actions/setup-python@v5
         if: steps.check.outputs.exists == 'true'
         with:
-          python-version: "3.11"
+          python-version: "3.13"
           cache: pip
       - name: Install dependencies
         if: steps.check.outputs.exists == 'true'
@@ -72,7 +72,7 @@ jobs:
       - uses: actions/setup-node@v4
         if: steps.check.outputs.exists == 'true'
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - name: Install dependencies

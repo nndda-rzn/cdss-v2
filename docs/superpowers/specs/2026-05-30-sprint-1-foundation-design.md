@@ -17,7 +17,7 @@ Tujuan: menyiapkan fondasi yang dapat di-install di mesin baru, dengan auth skel
 
 1. Repository skeleton lengkap (backend + frontend folder structure).
 2. SQLite + Litestream config.
-3. 5 tabel: HealthcareFacility, User, AuditLog, PHIAccessLog, SystemConfig.
+3. 6 tabel: HealthcareFacility, User, RefreshToken, AuditLog, PHIAccessLog, SystemConfig.
 4. Alembic migration awal.
 5. Encryption key bootstrap (`init_secrets.py`, Fernet key generation).
 6. JWT auth skeleton (login, access + refresh token, rotation).
@@ -142,12 +142,13 @@ frontend/
 
 ## 4. Migrasi Tabel Sprint 1
 
-5 tabel (detail field di data-model doc Section 4):
+6 tabel (detail field di data-model doc Section 4):
 
 | Tabel | Sprint 1 Notes |
 | --- | --- |
 | HealthcareFacility | Seeded 1 row saat install |
 | User | Admin pertama via seed; password bcrypt |
+| RefreshToken | Hash refresh token; rotation + replay detection (id, user_id, token_hash, issued_at, expires_at, revoked_at, replaced_by_id) |
 | AuditLog | Writer aktif sejak login pertama |
 | PHIAccessLog | Tabel + writer ada; belum dipanggil sampai Patient aktif (Sprint 2) |
 | SystemConfig | Key-value config global faskes |
