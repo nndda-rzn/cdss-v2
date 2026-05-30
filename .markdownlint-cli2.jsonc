@@ -18,7 +18,8 @@
     "MD001": false, // heading increment: imported PRD structure
     "MD051": false, // link fragments: imported PRD table of contents
     "MD058": false, // blanks around tables: compact entity/field tables
-    "MD060": false  // table column style: imported reference tables
+    "MD060": false, // table column style: imported reference tables
+    "MD050": false  // strong style: __init__.py filenames parse as emphasis
   },
   "ignores": [
     "**/node_modules/**"

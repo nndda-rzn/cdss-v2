@@ -4,8 +4,8 @@ Thank you for contributing. This guide covers development setup, branching, comm
 
 ## Prerequisites
 
-- Python 3.11
-- Node.js 20 LTS
+- Python 3.13
+- Node.js 24
 - Git
 - (Optional) `gh` CLI for GitHub operations
 

@@ -5,8 +5,8 @@
 
 ![status](https://img.shields.io/badge/status-research_prototype-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
-![python](https://img.shields.io/badge/python-3.11-blue)
-![node](https://img.shields.io/badge/node-20_LTS-green)
+![python](https://img.shields.io/badge/python-3.13-blue)
+![node](https://img.shields.io/badge/node-24-green)
 ![sprint](https://img.shields.io/badge/sprint-0_foundation-orange)
 ![ci](https://github.com/nndda-rzn/cdss-v2/actions/workflows/ci.yml/badge.svg)
 
