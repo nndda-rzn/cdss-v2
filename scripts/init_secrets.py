@@ -19,7 +19,9 @@ def generate_secrets(key_path: str, pepper_path: str) -> None:
 
 
 if __name__ == "__main__":
-    key = os.environ.get("MASTER_KEY_PATH", "secrets/master.key")
-    pepper = os.environ.get("HMAC_PEPPER_PATH", "secrets/hmac_pepper.key")
+    from app.paths import DEFAULT_HMAC_PEPPER_PATH, DEFAULT_MASTER_KEY_PATH
+
+    key = os.environ.get("MASTER_KEY_PATH", str(DEFAULT_MASTER_KEY_PATH))
+    pepper = os.environ.get("HMAC_PEPPER_PATH", str(DEFAULT_HMAC_PEPPER_PATH))
     generate_secrets(key, pepper)
     print(f"Secrets ready: {key}, {pepper}", file=sys.stderr)

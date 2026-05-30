@@ -56,6 +56,17 @@ def test_me_requires_token(client):
     assert client.get("/api/auth/me").status_code == 401
 
 
+def test_failed_login_persists_audit(client):
+    from sqlalchemy import select
+
+    from app.db.models.audit_log import AuditLog
+    from app.extensions import db
+
+    client.post("/api/auth/login", json={"email": "a@x.id", "password": "wrong"})
+    row = db.session.scalar(select(AuditLog).where(AuditLog.action == "login_failed"))
+    assert row is not None
+
+
 def test_logout_then_me(client):
     login = client.post(
         "/api/auth/login", json={"email": "a@x.id", "password": "good"}

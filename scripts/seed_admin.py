@@ -38,12 +38,35 @@ def seed_admin(
 
 
 def _read_credentials() -> tuple[str, str, str]:
+    env = os.environ
+    if {"ADMIN_NAME", "ADMIN_EMAIL", "ADMIN_PASSWORD"} <= env.keys():
+        return env["ADMIN_NAME"], env["ADMIN_EMAIL"], env["ADMIN_PASSWORD"]
     if sys.stdin.isatty():
         name = input("Admin name: ")
         email = input("Admin email: ")
         password = getpass("Admin password: ")
-    else:
-        name = os.environ["ADMIN_NAME"]
-        email = os.environ["ADMIN_EMAIL"]
-        password = os.environ["ADMIN_PASSWORD"]
-    return name, email, password
+        return name, email, password
+    raise SystemExit(
+        "Set ADMIN_NAME/ADMIN_EMAIL/ADMIN_PASSWORD (non-interactive) or run in a terminal."
+    )
+
+
+if __name__ == "__main__":
+    from sqlalchemy import select
+    from sqlalchemy.orm import Session
+
+    from app.db.engine import create_db_engine
+    from app.db.models.facility import HealthcareFacility
+    from app.paths import default_database_url
+
+    name, email, password = _read_credentials()
+    engine = create_db_engine(default_database_url())
+    with Session(engine) as s:
+        facility = s.scalar(select(HealthcareFacility).order_by(HealthcareFacility.id))
+        if facility is None:
+            raise SystemExit("No facility found. Run seed_facility first.")
+        seed_admin(
+            s, name=name, email=email, password=password, facility_id=facility.id
+        )
+        s.commit()
+    print(f"Admin seeded: {email}", file=sys.stderr)

@@ -6,6 +6,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.exceptions.base import AuthError
 from app.core.security.jwt import make_access_token
 from app.core.security.tokens import hash_token
 from app.db.models.refresh_token import RefreshToken
@@ -40,7 +41,13 @@ def _ctx() -> dict[str, str]:
 def login() -> Response:
     data = LoginRequest(**(request.get_json() or {}))
     session = _session()
-    user = authenticate(session, email=data.email, password=data.password, **_ctx())
+    try:
+        user = authenticate(session, email=data.email, password=data.password, **_ctx())
+    except AuthError:
+        # authenticate() writes a login_failed audit row before raising; commit
+        # it so failed attempts are persisted in the real request lifecycle.
+        session.commit()
+        raise
     access = make_access_token(user_id=user.id, role=user.role, facility_id=user.facility_id)
     refresh = issue_refresh_token(
         session, user_id=user.id, ttl_days=current_app.config["REFRESH_TTL_DAYS"]

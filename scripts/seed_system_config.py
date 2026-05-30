@@ -16,3 +16,16 @@ def seed_system_config(session: Session) -> None:
         existing = session.scalar(select(SystemConfig).where(SystemConfig.key == key))
         if existing is None:
             session.add(SystemConfig(key=key, value_json=value))
+
+
+if __name__ == "__main__":
+    import sys
+
+    from app.db.engine import create_db_engine
+    from app.paths import default_database_url
+
+    engine = create_db_engine(default_database_url())
+    with Session(engine) as s:
+        seed_system_config(s)
+        s.commit()
+    print("System config seeded", file=sys.stderr)
