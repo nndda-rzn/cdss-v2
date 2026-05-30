@@ -1,0 +1,8 @@
+# Litestream replication config. Requires WAL mode (set via SQLite pragmas).
+dbs:
+  - path: data/cdss.db
+    replicas:
+      - type: file
+        path: litestream-data/cdss
+        retention: 168h
+        sync-interval: 10s
