@@ -1,0 +1,26 @@
+{
+  // Markdownlint configuration for EKG-Insight CDSS.
+  // Documentation-heavy research repo: relax purely stylistic rules,
+  // keep meaningful structural ones. See docs/operations for rationale.
+  "config": {
+    "default": true,
+    "MD013": false, // line length: prose, wide tables, and code samples
+    "MD022": false, // blanks around headings: compact option/section style
+    "MD024": false, // duplicate headings: repeated section names across ADRs
+    "MD025": false, // multiple H1: PRD uses per-section H1 headings
+    "MD031": false, // blanks around fences
+    "MD032": false, // blanks around lists
+    "MD033": false, // inline HTML: <name>/<sprint> placeholders in templates
+    "MD034": false, // bare URLs: attribution links
+    "MD036": false, // emphasis as heading: schema entity labels
+    "MD040": false, // fenced code language: ASCII diagrams/trees
+    "MD041": false, // first-line heading: templates start with HTML comments
+    "MD001": false, // heading increment: imported PRD structure
+    "MD051": false, // link fragments: imported PRD table of contents
+    "MD058": false, // blanks around tables: compact entity/field tables
+    "MD060": false  // table column style: imported reference tables
+  },
+  "ignores": [
+    "**/node_modules/**"
+  ]
+}
