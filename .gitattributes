@@ -1,0 +1,47 @@
+# Normalize line endings to LF on commit
+* text=auto eol=lf
+
+# Explicitly declare text files
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.ini text eol=lf
+*.txt text eol=lf
+*.cff text eol=lf
+
+# Windows scripts keep CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Shell scripts keep LF
+*.sh text eol=lf
+
+# Binary files (no diff, no eol conversion)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.pt binary
+*.onnx binary
+*.pth binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Mark generated/vendored files for GitHub Linguist
+docs/** linguist-documentation
+*.md linguist-detectable=true
