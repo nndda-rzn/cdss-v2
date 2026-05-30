@@ -20,3 +20,14 @@ def hash_password(plain: str, rounds: int = _DEFAULT_ROUNDS) -> str:
 
 def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(_to_bytes(plain), hashed.encode("ascii"))
+
+
+# A fixed bcrypt hash used to spend comparable CPU time when a user is absent
+# or inactive, closing the login timing side-channel (email enumeration).
+_DUMMY_HASH = bcrypt.hashpw(b"dummy-password", bcrypt.gensalt(_DEFAULT_ROUNDS)).decode("ascii")
+
+
+def verify_dummy(plain: str) -> bool:
+    """Run a throwaway verification to equalize timing. Always returns False."""
+    bcrypt.checkpw(_to_bytes(plain), _DUMMY_HASH.encode("ascii"))
+    return False

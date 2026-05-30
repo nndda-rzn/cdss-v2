@@ -1,5 +1,4 @@
 import { useAuthStore } from "@/features/auth/store";
-import { saveTokens, clearTokens } from "./auth-token";
 
 async function doRefresh(): Promise<boolean> {
   const { refreshToken } = useAuthStore.getState();
@@ -10,13 +9,11 @@ async function doRefresh(): Promise<boolean> {
     body: JSON.stringify({ refresh_token: refreshToken }),
   });
   if (!resp.ok) {
-    clearTokens();
     useAuthStore.getState().clear();
     return false;
   }
   const data = await resp.json();
   useAuthStore.getState().setTokens(data.access_token, data.refresh_token);
-  saveTokens(data.access_token, data.refresh_token);
   return true;
 }
 

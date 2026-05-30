@@ -6,7 +6,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.exceptions.base import AuthError
+from app.core.exceptions.base import AuthError, NotFoundError
 from app.core.security.jwt import make_access_token
 from app.core.security.tokens import hash_token
 from app.db.models.refresh_token import RefreshToken
@@ -66,15 +66,35 @@ def login() -> Response:
 def refresh() -> Response:
     data = RefreshRequest(**(request.get_json() or {}))
     session = _session()
-    new_refresh = rotate_refresh_token(
-        session, raw_token=data.refresh_token, ttl_days=current_app.config["REFRESH_TTL_DAYS"]
-    )
+    try:
+        new_refresh = rotate_refresh_token(
+            session, raw_token=data.refresh_token, ttl_days=current_app.config["REFRESH_TTL_DAYS"]
+        )
+    except AuthError:
+        # Replay detection writes a chain-wide revocation before raising; commit
+        # it so the revocation persists in the real request lifecycle (C1).
+        session.commit()
+        raise
     token_row = session.scalar(
         select(RefreshToken).where(RefreshToken.token_hash == hash_token(new_refresh))
     )
-    assert token_row is not None
+    if token_row is None:
+        raise NotFoundError(
+            code="AUTH_REFRESH_INVALID",
+            message_id="Token tidak valid",
+            message_en="Invalid refresh token",
+        )
     user = session.get(User, token_row.user_id)
-    assert user is not None
+    # Re-check the user is still active: a deactivated user must not keep minting
+    # access tokens by rotating refresh tokens (I2).
+    if user is None or not user.is_active:
+        revoke_refresh_token(session, raw_token=new_refresh)
+        session.commit()
+        raise AuthError(
+            code="AUTH_REFRESH_INVALID",
+            message_id="Akun tidak aktif",
+            message_en="Account is inactive",
+        )
     access = make_access_token(user_id=user.id, role=user.role, facility_id=user.facility_id)
     session.commit()
     return jsonify(access_token=access, refresh_token=new_refresh)
@@ -96,7 +116,12 @@ def logout() -> Response:
 @jwt_required()
 def me() -> Response:
     user = _session().get(User, int(get_jwt_identity()))
-    assert user is not None
+    if user is None:
+        raise NotFoundError(
+            code="USER_NOT_FOUND",
+            message_id="Pengguna tidak ditemukan",
+            message_en="User not found",
+        )
     return jsonify(
         user=UserOut(
             id=user.id, name=user.name, role=user.role, facility_id=user.facility_id

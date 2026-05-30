@@ -67,6 +67,42 @@ def test_failed_login_persists_audit(client):
     assert row is not None
 
 
+def test_refresh_replay_revokes_chain(client):
+    # Log in, rotate once, then replay the original refresh token. The replay
+    # must be rejected AND the successor token must be revoked (C1).
+    login = client.post(
+        "/api/auth/login", json={"email": "a@x.id", "password": "good"}
+    ).get_json()
+    original = login["refresh_token"]
+    rotated = client.post("/api/auth/refresh", json={"refresh_token": original})
+    assert rotated.status_code == 200
+    successor = rotated.get_json()["refresh_token"]
+
+    replay = client.post("/api/auth/refresh", json={"refresh_token": original})
+    assert replay.status_code == 401
+    assert replay.get_json()["error"]["code"] == "AUTH_REFRESH_REPLAY"
+
+    # The successor token issued before the replay must now be dead.
+    after = client.post("/api/auth/refresh", json={"refresh_token": successor})
+    assert after.status_code == 401
+
+
+def test_inactive_user_cannot_refresh(client):
+    from app.db.models.user import User
+    from app.extensions import db
+
+    login = client.post(
+        "/api/auth/login", json={"email": "a@x.id", "password": "good"}
+    ).get_json()
+    user = db.session.get(User, 1)
+    user.is_active = False
+    db.session.commit()
+
+    resp = client.post("/api/auth/refresh", json={"refresh_token": login["refresh_token"]})
+    assert resp.status_code == 401
+
+
+
 def test_logout_then_me(client):
     login = client.post(
         "/api/auth/login", json={"email": "a@x.id", "password": "good"}

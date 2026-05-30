@@ -1,3 +1,5 @@
+import pytest
+
 from app.config import DevConfig, ProdConfig, TestConfig
 
 
@@ -12,6 +14,12 @@ def test_prod_requires_jwt_secret(monkeypatch):
     cfg = ProdConfig()
     assert cfg.JWT_SECRET_KEY == "prod-secret"  # noqa: S105
     assert cfg.DEBUG is False
+
+
+def test_prod_rejects_default_jwt_key(monkeypatch):
+    monkeypatch.delenv("JWT_SECRET_KEY", raising=False)
+    with pytest.raises(RuntimeError):
+        ProdConfig()
 
 
 def test_dev_defaults():

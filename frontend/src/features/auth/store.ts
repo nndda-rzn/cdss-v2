@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import { clearTokens, loadTokens, saveTokens } from "@/lib/api/auth-token";
+
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
@@ -7,9 +9,17 @@ interface AuthState {
   clear: () => void;
 }
 
+const initial = loadTokens();
+
 export const useAuthStore = create<AuthState>((set) => ({
-  accessToken: null,
-  refreshToken: null,
-  setTokens: (access, refresh) => set({ accessToken: access, refreshToken: refresh }),
-  clear: () => set({ accessToken: null, refreshToken: null }),
+  accessToken: initial.accessToken,
+  refreshToken: initial.refreshToken,
+  setTokens: (access, refresh) => {
+    saveTokens(access, refresh);
+    set({ accessToken: access, refreshToken: refresh });
+  },
+  clear: () => {
+    clearTokens();
+    set({ accessToken: null, refreshToken: null });
+  },
 }));

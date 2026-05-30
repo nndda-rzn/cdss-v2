@@ -8,10 +8,12 @@ from app.paths import (
     default_database_url,
 )
 
+_DEV_JWT_KEY = "dev-only-change-me"  # noqa: S105
+
 
 class BaseConfig:
     def __init__(self) -> None:
-        self.JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "dev-only-change-me")  # noqa: S105
+        self.JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", _DEV_JWT_KEY)
         self.JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
         self.REFRESH_TTL_DAYS = 7
         self.SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", default_database_url())
@@ -34,6 +36,11 @@ class ProdConfig(BaseConfig):
     def __init__(self) -> None:
         super().__init__()
         self.DEBUG = False
+        # Never serve production traffic with the publicly-known dev key (I4).
+        if self.JWT_SECRET_KEY == _DEV_JWT_KEY:
+            raise RuntimeError(
+                "JWT_SECRET_KEY must be set to a non-default value in production"
+            )
 
 
 class TestConfig(BaseConfig):
