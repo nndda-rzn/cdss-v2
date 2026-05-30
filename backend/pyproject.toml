@@ -44,6 +44,12 @@ plugins = []
 module = ["flask_migrate.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# flask-jwt-extended ships untyped decorators (jwt_required); allow them
+# only at the API boundary module that uses them.
+module = ["app.api.auth"]
+disallow_untyped_decorators = false
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q --import-mode=importlib"
