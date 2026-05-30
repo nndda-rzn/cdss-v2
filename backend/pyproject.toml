@@ -4,6 +4,8 @@ version = "0.1.0"
 requires-python = ">=3.13,<3.14"
 dependencies = [
   "flask>=3.0",
+  "flask-sqlalchemy>=3.1",
+  "flask-migrate>=4.0",
   "sqlalchemy>=2.0",
   "alembic>=1.13",
   "pydantic>=2.6",
@@ -36,6 +38,10 @@ ignore = ["S101"]
 python_version = "3.13"
 strict = true
 plugins = []
+
+[[tool.mypy.overrides]]
+module = ["flask_migrate.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
