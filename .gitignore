@@ -80,6 +80,7 @@ dist-ssr/
 .eslintcache
 coverage/
 .turbo/
+*.tsbuildinfo
 
 # ===== Build output (frontend -> backend static) =====
 backend/app/static/assets/
