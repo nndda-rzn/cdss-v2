@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "EKG-Insight CDSS: Interpretable Clinical Decision Support System for ECG-based Myocardial Infarction Screening in Low-Resource Settings"
+abstract: >-
+  A web-based clinical decision support system for early screening of 12-lead
+  ECG image abnormalities focusing on Myocardial Infarction, combining YOLO
+  classification (YOLOv8n-cls, YOLOv11n-cls, YOLOv26n-cls), HiResCAM visual
+  explanation, and a rule-based / decision-tree recommendation layer, designed
+  for primary and remote healthcare facilities.
+type: software
+authors:
+  - given-names: ""
+    family-names: ""
+    affiliation: ""
+    orcid: ""
+keywords:
+  - clinical decision support system
+  - electrocardiogram
+  - myocardial infarction
+  - explainable AI
+  - HiResCAM
+  - YOLO
+  - decision tree
+  - low-resource healthcare
+  - screening
+license: MIT
+version: "0.1.0"
+date-released: "2026-05-30"
+repository-code: "https://github.com/nndda-rzn/cdss-v2"

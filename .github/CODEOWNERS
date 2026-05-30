@@ -1,0 +1,17 @@
+# Code owners for EKG-Insight CDSS
+# Solo developer project: the maintainer owns all paths.
+
+* @nndda-rzn
+
+# Security-sensitive paths (extra attention on review)
+/secrets/ @nndda-rzn
+/backend/app/core/encryption/ @nndda-rzn
+/backend/app/core/security/ @nndda-rzn
+/backend/app/core/rbac/ @nndda-rzn
+/SECURITY.md @nndda-rzn
+
+# Clinical logic (decision engine)
+/backend/app/services/recommendation/ @nndda-rzn
+
+# Documentation
+/docs/ @nndda-rzn

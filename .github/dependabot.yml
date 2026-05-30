@@ -1,0 +1,51 @@
+version: 2
+updates:
+  # Backend Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "type/chore"
+      - "area/backend"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      backend-dev:
+        patterns:
+          - "ruff"
+          - "mypy"
+          - "pytest*"
+
+  # Frontend Node dependencies
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "type/chore"
+      - "area/frontend"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      frontend-dev:
+        patterns:
+          - "eslint*"
+          - "prettier"
+          - "vitest"
+          - "@testing-library/*"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "type/chore"
+      - "area/ci"
+    commit-message:
+      prefix: "chore(ci)"
