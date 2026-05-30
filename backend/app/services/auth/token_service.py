@@ -53,3 +53,11 @@ def rotate_refresh_token(session: Session, *, raw_token: str, ttl_days: int) -> 
     current.revoked_at = _now()
     current.replaced_by_id = new_token.id
     return new_raw
+
+
+def revoke_refresh_token(session: Session, *, raw_token: str) -> None:
+    """Idempotent: revoke the token if it exists and is active; otherwise no-op."""
+    token_hash = hash_token(raw_token)
+    current = session.scalar(select(RefreshToken).where(RefreshToken.token_hash == token_hash))
+    if current is not None and current.revoked_at is None:
+        current.revoked_at = _now()
