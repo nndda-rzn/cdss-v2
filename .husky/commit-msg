@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# Resolve the commit-msg file to an absolute path while still at the repo root,
+# because git passes $1 relative to the repo root.
+EDIT_MSG="$1"
+case "$EDIT_MSG" in
+  /* | [A-Za-z]:*) ;;                 # already absolute (unix or windows drive)
+  *) EDIT_MSG="$(pwd)/$EDIT_MSG" ;;
+esac
+# commitlint/config live in frontend/node_modules, so run from there.
+# NODE_PATH lets the root config resolve @commitlint/config-conventional.
+cd frontend && NODE_PATH="$PWD/node_modules" npx --no-install commitlint --edit "$EDIT_MSG"
