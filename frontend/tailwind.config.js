@@ -90,6 +90,11 @@ export default {
         negative: "hsl(var(--status-negative))",
         "negative-soft": "hsl(var(--status-negative-soft))",
       },
+      keyframes: {
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
       borderRadius: {
         // ADR-0011: clinical-sharp radius scale anchored at 2px.
         lg: "var(--radius)",
