@@ -48,7 +48,7 @@ jobs:
         id: check
         run: echo "exists=$([ -f pyproject.toml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
         working-directory: .
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         if: steps.check.outputs.exists == 'true'
         with:
           python-version: "3.13"
