@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ContextForm } from "@/features/clinical_context/ContextForm";
+import { EcgStudyList } from "@/features/ecg_study/EcgStudyList";
+import { EcgUploadForm } from "@/features/ecg_study/EcgUploadForm";
 import { VitalsPanel } from "@/features/vital_signs/VitalsPanel";
 import { closeEncounter, encounterKeys, fetchEncounter } from "./api";
 
@@ -94,8 +96,9 @@ export function Detail() {
         <CardHeader>
           <CardTitle>Studi EKG</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          Upload EKG akan diaktifkan di Sprint 2B.
+        <CardContent className="space-y-4">
+          <EcgUploadForm encounterId={String(data.id)} />
+          <EcgStudyList encounterId={String(data.id)} />
         </CardContent>
       </Card>
 
