@@ -15,11 +15,18 @@ jobs:
   secret-scan:
     name: Secret Scan
     runs-on: ubuntu-latest
-    # Dependabot PRs run with a read-only GITHUB_TOKEN that cannot post check
-    # results, so gitleaks-action exits 403. The PR diff is workflow YAML only
-    # (no app code, no PHI), and Secret Scan still gates pushes to main and
-    # human-authored PRs, so skipping here is safe.
+    # gitleaks-action posts results via the Checks API on pull_request events,
+    # which needs a writable GITHUB_TOKEN. Repo default workflow permissions
+    # are read-only, so we widen at the job level. Dependabot PRs are forced
+    # read-only by GitHub regardless and cannot be widened, so they are
+    # skipped here; their diff is workflow YAML only (no app code, no PHI),
+    # and Secret Scan still gates push to main and human-authored PRs.
     if: github.actor != 'dependabot[bot]'
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      checks: write
     steps:
       - uses: actions/checkout@v4
         with:
