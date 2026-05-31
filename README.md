@@ -7,7 +7,7 @@
 ![license](https://img.shields.io/badge/license-MIT-green)
 ![python](https://img.shields.io/badge/python-3.13-blue)
 ![node](https://img.shields.io/badge/node-24-green)
-![sprint](https://img.shields.io/badge/sprint-0_foundation-orange)
+![sprint](https://img.shields.io/badge/sprint-2a_clinical_context-blue)
 ![ci](https://github.com/nndda-rzn/cdss-v2/actions/workflows/ci.yml/badge.svg)
 
 > This repository is currently **private** as part of an ongoing research project. It will be made public upon paper publication.
@@ -59,6 +59,10 @@ npm run dev
 
 See [docs/operations/repo-setup.md](docs/operations/repo-setup.md) for full setup.
 
+After login, Sprint 2A enables the clinical-context flow: register a patient,
+create an encounter, then capture clinical context and vital signs. Image upload
+and AI analysis arrive in later sprints.
+
 ### Documentation
 
 | Document | Description |
@@ -105,8 +109,8 @@ Dirancang untuk **low-resource settings**: inferensi CPU-only, dapat offline, ri
 
 | Sprint | Fokus | Status |
 | --- | --- | --- |
-| 1 | Project Foundation | In progress |
-| 2 | Auth & Upload | Planned |
+| 1 | Project Foundation | Done (v0.1.0-sprint-1) |
+| 2 | Auth & Upload | In progress (2A: clinical context done) |
 | 3 | AI Inference | Planned |
 | 4 | HiResCAM | Planned |
 | 5 | Recommendation | Planned |
