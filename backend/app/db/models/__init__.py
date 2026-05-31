@@ -2,6 +2,7 @@
 from app.db.models.audit_log import AuditLog
 from app.db.models.clinical_context import ClinicalContext
 from app.db.models.consent import Consent
+from app.db.models.ecg_study import ECGStudy
 from app.db.models.encounter import Encounter
 from app.db.models.facility import HealthcareFacility
 from app.db.models.patient import Patient
@@ -25,4 +26,5 @@ __all__ = [
     "Encounter",
     "ClinicalContext",
     "VitalSigns",
+    "ECGStudy",
 ]

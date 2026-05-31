@@ -1,0 +1,1 @@
+"""ECGStudy domain services."""

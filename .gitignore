@@ -15,6 +15,10 @@ data/
 *.sqlite
 *.sqlite3
 
+# ===== Uploaded clinical images (PHI-adjacent) =====
+storage/uploads/**
+!storage/uploads/ecg/.gitkeep
+
 # ===== Runtime Storage (PHI: EKG images, heatmaps, reports) =====
 storage/
 uploads/

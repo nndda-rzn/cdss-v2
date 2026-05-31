@@ -5,6 +5,7 @@ from datetime import timedelta
 from app.paths import (
     DEFAULT_HMAC_PEPPER_PATH,
     DEFAULT_MASTER_KEY_PATH,
+    STORAGE_DIR,
     default_database_url,
 )
 
@@ -20,6 +21,7 @@ class BaseConfig:
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
         self.MASTER_KEY_PATH = os.environ.get("MASTER_KEY_PATH", str(DEFAULT_MASTER_KEY_PATH))
         self.HMAC_PEPPER_PATH = os.environ.get("HMAC_PEPPER_PATH", str(DEFAULT_HMAC_PEPPER_PATH))
+        self.STORAGE_DIR = os.environ.get("STORAGE_DIR", str(STORAGE_DIR))
         self.APP_VERSION = os.environ.get("APP_VERSION", "0.1.0")
         self.GIT_SHA = os.environ.get("GIT_SHA", "local")
         self.DEBUG = False
@@ -49,3 +51,4 @@ class TestConfig(BaseConfig):
         self.TESTING = True
         self.SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
         self.JWT_SECRET_KEY = "test-secret"  # noqa: S105
+        self.STORAGE_DIR = os.environ.get("TEST_STORAGE_DIR", str(STORAGE_DIR / "_test"))
