@@ -11,13 +11,14 @@ function renderWithClient(ui: React.ReactNode) {
 
 describe("EcgUploadForm", () => {
   it("rejects non-image files client-side", async () => {
-    // applyAccept: false (set on the session) bypasses userEvent's accept-attribute
-    // filter so the component's own client-side validation is exercised.
+    // applyAccept: false lets the text/plain file reach the dropzone input so
+    // react-dropzone's own accept-filter rejects it (onDropRejected path).
     const user = userEvent.setup({ applyAccept: false });
     renderWithClient(<EcgUploadForm encounterId="1" />);
     const input = screen.getByLabelText(/pilih berkas/i) as HTMLInputElement;
     const bad = new File(["x"], "note.txt", { type: "text/plain" });
     await user.upload(input, bad);
-    expect(await screen.findByText(/format harus jpeg atau png/i)).toBeInTheDocument();
+    // Dropzone rejects non-JPEG/PNG before the component's own validation runs.
+    expect(await screen.findByText(/ditolak|format harus jpeg atau png/i)).toBeInTheDocument();
   });
 });
