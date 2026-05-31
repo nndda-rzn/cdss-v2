@@ -73,3 +73,14 @@ def test_register_writes_audit(session, seeded_admin):
         select(AuditLog).where(AuditLog.action == "patient_register")
     )
     assert row is not None
+
+
+def test_register_captures_data_use_consent(session, seeded_admin):
+    from app.services.consent.query import has_consent
+
+    p = register_patient(
+        session, facility_id=1, facility_code="P1", name="A",
+        dob=date(1990, 1, 1), gender="male", recorded_by_user_id=1,
+    )
+    session.commit()
+    assert has_consent(session, patient_id=p.id, consent_type="data_use") is True

@@ -13,6 +13,7 @@ from app.core.exceptions.base import ConflictError
 from app.db.models.patient import Patient
 from app.db.mrn_generator import generate_mrn
 from app.services.audit.writer import write_audit
+from app.services.consent.capture import capture_consent
 
 
 def _nik_exists(session: Session, *, facility_id: int, nik: str) -> bool:
@@ -66,6 +67,13 @@ def register_patient(
     )
     session.add(patient)
     session.flush()
+
+    capture_consent(
+        session,
+        patient_id=patient.id,
+        consent_type="data_use",
+        user_id=recorded_by_user_id,
+    )
 
     write_audit(
         session,
