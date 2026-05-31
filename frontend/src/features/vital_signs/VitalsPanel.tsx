@@ -5,9 +5,10 @@ import { Activity, Droplet, Heart, Thermometer, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
-import { captureVitals, fetchVitals, vitalsKeys, type VitalRow, type VitalsInput } from "./api";
+import { captureVitals, fetchVitals, vitalsKeys, type VitalsInput } from "./api";
+import { MiniCard } from "./MiniCard";
+import { classify } from "./ranges";
 
 const _FIELDS = [
   { key: "bp_systolic", label: "Sistolik" },
@@ -20,101 +21,14 @@ const _FIELDS = [
 
 type FieldKey = (typeof _FIELDS)[number]["key"];
 
-type Status = "ok" | "caution" | "negative" | "unknown";
-
-const TONE: Record<Status, string> = {
-  ok: "border-border-strong bg-paper",
-  caution: "border-amber-500/30 bg-caution-soft",
-  negative: "border-wine-500/30 bg-negative-soft",
-  unknown: "border-dashed border-border bg-sunken",
+const _EMPTY: Record<FieldKey, string> = {
+  bp_systolic: "",
+  bp_diastolic: "",
+  heart_rate: "",
+  respiratory_rate: "",
+  spo2: "",
+  temperature: "",
 };
-
-const DOT: Record<Status, string> = {
-  ok: "bg-affirmed",
-  caution: "bg-caution",
-  negative: "bg-negative",
-  unknown: "bg-charcoal-300",
-};
-
-function classify(latest: VitalRow): {
-  bp: Status;
-  hr: Status;
-  spo2: Status;
-  temp: Status;
-  resp: Status;
-} {
-  const sys = latest.bp_systolic;
-  const dia = latest.bp_diastolic;
-  const bp: Status =
-    sys === null || dia === null
-      ? "unknown"
-      : sys >= 180 || dia >= 110 || sys < 90
-        ? "negative"
-        : sys >= 140 || dia >= 90
-          ? "caution"
-          : "ok";
-  const hr: Status =
-    latest.heart_rate === null
-      ? "unknown"
-      : latest.heart_rate < 50 || latest.heart_rate > 130
-        ? "negative"
-        : latest.heart_rate < 60 || latest.heart_rate > 100
-          ? "caution"
-          : "ok";
-  const spo2: Status =
-    latest.spo2 === null
-      ? "unknown"
-      : latest.spo2 < 90
-        ? "negative"
-        : latest.spo2 < 95
-          ? "caution"
-          : "ok";
-  const temp: Status =
-    latest.temperature === null
-      ? "unknown"
-      : latest.temperature < 35 || latest.temperature >= 39
-        ? "negative"
-        : latest.temperature >= 38
-          ? "caution"
-          : "ok";
-  const resp: Status =
-    latest.respiratory_rate === null
-      ? "unknown"
-      : latest.respiratory_rate < 10 || latest.respiratory_rate > 30
-        ? "negative"
-        : latest.respiratory_rate > 24
-          ? "caution"
-          : "ok";
-  return { bp, hr, spo2, temp, resp };
-}
-
-function MiniCard({
-  icon: Icon,
-  label,
-  value,
-  unit,
-  status,
-}: {
-  icon: typeof Heart;
-  label: string;
-  value: string;
-  unit?: string;
-  status: Status;
-}) {
-  return (
-    <div className={cn("flex flex-col gap-1 rounded-sm border px-3 py-2", TONE[status])}>
-      <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>{label}</span>
-        <span aria-hidden="true" className={cn("ml-auto h-1.5 w-1.5 rounded-full", DOT[status])} />
-      </div>
-      <div className="flex items-baseline gap-1">
-        <span className="tabular text-lg font-semibold text-foreground">{value}</span>
-        {unit && <span className="text-xs text-muted-foreground">{unit}</span>}
-      </div>
-    </div>
-  );
-}
 
 export function VitalsPanel({ encounterId }: { encounterId: string }) {
   const qc = useQueryClient();
@@ -123,14 +37,7 @@ export function VitalsPanel({ encounterId }: { encounterId: string }) {
     queryFn: () => fetchVitals(encounterId),
   });
 
-  const [values, setValues] = useState<Record<FieldKey, string>>({
-    bp_systolic: "",
-    bp_diastolic: "",
-    heart_rate: "",
-    respiratory_rate: "",
-    spo2: "",
-    temperature: "",
-  });
+  const [values, setValues] = useState<Record<FieldKey, string>>({ ..._EMPTY });
   const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
@@ -142,14 +49,7 @@ export function VitalsPanel({ encounterId }: { encounterId: string }) {
       return captureVitals(encounterId, input);
     },
     onSuccess: () => {
-      setValues({
-        bp_systolic: "",
-        bp_diastolic: "",
-        heart_rate: "",
-        respiratory_rate: "",
-        spo2: "",
-        temperature: "",
-      });
+      setValues({ ..._EMPTY });
       setError(null);
       qc.invalidateQueries({ queryKey: vitalsKeys.list(encounterId) });
     },
