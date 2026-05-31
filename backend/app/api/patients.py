@@ -3,22 +3,28 @@ import uuid
 from typing import cast
 
 from flask import Blueprint, Response, g, jsonify, request
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.exceptions.base import NotFoundError
 from app.core.rbac.decorators import require_role
 from app.core.rbac.patient_policy import filter_patient_detail_for_role
 from app.core.rbac.roles import Role
+from app.db.models.consent import Consent
 from app.db.models.facility import HealthcareFacility
 from app.db.models.patient import Patient
+from app.db.models.patient_history import PatientHistory
 from app.extensions import db
 from app.schemas.patient import DuplicateSuggestion, PatientCreate, PatientOut
+from app.services.consent.capture import capture_consent
+from app.services.consent.revoke import revoke_consent
 from app.services.patient.dedup import find_potential_duplicates
 from app.services.patient.delete import soft_delete_patient
 from app.services.patient.mask import mask_name
 from app.services.patient.register import register_patient
 from app.services.patient.reveal import get_patient_detail
 from app.services.patient.search import search_patients
+from app.services.patient_history.writer import add_history
 
 bp = Blueprint("patients", __name__, url_prefix="/api/patients")
 
@@ -224,3 +230,84 @@ def delete_patient(patient_id: str) -> Response:
     )
     session.commit()
     return jsonify(status="ok")
+
+
+@bp.post("/<patient_id>/consent")
+@require_role(Role.CLINICIAN, Role.NURSE)
+def capture_patient_consent(patient_id: str) -> tuple[Response, int]:
+    session = _session()
+    body = request.get_json() or {}
+    consent_type = body.get("consent_type", "")
+    pid = uuid.UUID(patient_id)
+    if body.get("status") == "revoked":
+        revoke_consent(
+            session, patient_id=pid, consent_type=consent_type, user_id=_user_id()
+        )
+    else:
+        capture_consent(
+            session, patient_id=pid, consent_type=consent_type, user_id=_user_id()
+        )
+    session.commit()
+    return jsonify(status="ok"), 201
+
+
+@bp.get("/<patient_id>/consent")
+@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+def list_patient_consent(patient_id: str) -> Response:
+    session = _session()
+    rows = session.scalars(
+        select(Consent)
+        .where(Consent.patient_id == uuid.UUID(patient_id))
+        .order_by(Consent.id.desc())
+    ).all()
+    items = [
+        {
+            "id": c.id,
+            "consent_type": c.consent_type,
+            "status": c.status,
+            "given_at": c.given_at.isoformat() if c.given_at else None,
+            "revoked_at": c.revoked_at.isoformat() if c.revoked_at else None,
+        }
+        for c in rows
+    ]
+    return jsonify(items=items)
+
+
+@bp.post("/<patient_id>/history")
+@require_role(Role.CLINICIAN, Role.NURSE)
+def add_patient_history(patient_id: str) -> tuple[Response, int]:
+    session = _session()
+    body = request.get_json() or {}
+    add_history(
+        session,
+        patient_id=uuid.UUID(patient_id),
+        condition_code=body.get("condition_code", ""),
+        user_id=_user_id(),
+        note=body.get("note"),
+    )
+    session.commit()
+    return jsonify(status="ok"), 201
+
+
+@bp.get("/<patient_id>/history")
+@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+def list_patient_history(patient_id: str) -> Response:
+    session = _session()
+    rows = session.scalars(
+        select(PatientHistory)
+        .where(PatientHistory.patient_id == uuid.UUID(patient_id))
+        .order_by(PatientHistory.id.desc())
+    ).all()
+    items = [
+        {
+            "id": h.id,
+            "condition_code": h.condition_code,
+            "onset_date_approx": (
+                h.onset_date_approx.isoformat() if h.onset_date_approx else None
+            ),
+            "note": h.note_encrypted,
+            "recorded_at": h.recorded_at.isoformat(),
+        }
+        for h in rows
+    ]
+    return jsonify(items=items)
