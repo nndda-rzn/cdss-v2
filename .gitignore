@@ -82,6 +82,11 @@ coverage/
 .turbo/
 *.tsbuildinfo
 
+# ===== Playwright (e2e) =====
+playwright-report/
+test-results/
+.playwright/
+
 # ===== Build output (frontend -> backend static) =====
 backend/app/static/assets/
 backend/app/static/index.html

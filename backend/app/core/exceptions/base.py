@@ -22,3 +22,6 @@ class NotFoundError(AppException):
 
 class ConflictError(AppException):
     http_status = 409
+
+class ForbiddenError(AppException):
+    http_status = 403

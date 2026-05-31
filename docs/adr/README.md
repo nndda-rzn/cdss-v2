@@ -39,3 +39,4 @@ For a research project targeting Scopus Q2/Q3 publication, ADRs provide methodol
 | [0012](0012-bilingual-id-en-output.md) | Bilingual ID + EN output | Accepted |
 | [0013](0013-inferno-heatmap-colormap.md) | Inferno heatmap colormap | Accepted |
 | [0014](0014-decision-tree-vs-triage-engine-split.md) | Decision tree vs triage engine split | Accepted |
+| [0015](0015-dedup-strategy.md) | Patient deduplication strategy | Accepted |

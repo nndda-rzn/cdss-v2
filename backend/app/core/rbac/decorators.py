@@ -5,12 +5,8 @@ from typing import Any
 
 from flask_jwt_extended import get_jwt, verify_jwt_in_request
 
-from app.core.exceptions.base import AppException
+from app.core.exceptions.base import ForbiddenError
 from app.core.rbac.roles import Role
-
-
-class ForbiddenError(AppException):
-    http_status = 403
 
 
 def require_role(*roles: Role) -> Callable[..., Any]:
