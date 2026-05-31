@@ -10,6 +10,7 @@ from app.db.models.phi_access_log import PHIAccessLog
 from app.db.models.refresh_token import RefreshToken
 from app.db.models.system_config import SystemConfig
 from app.db.models.user import User
+from app.db.models.vital_signs import VitalSigns
 
 __all__ = [
     "HealthcareFacility",
@@ -23,4 +24,5 @@ __all__ = [
     "Consent",
     "Encounter",
     "ClinicalContext",
+    "VitalSigns",
 ]
