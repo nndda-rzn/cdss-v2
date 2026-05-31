@@ -11,38 +11,38 @@
   :root {
     /* shadcn semantic tokens (HSL components without hsl() wrapper). */
     --background: 0 0% 100%;
-    --foreground: 215 23% 16%;          /* charcoal-700 */
+    --foreground: 215 23% 16%; /* charcoal-700 */
     --card: 0 0% 100%;
     --card-foreground: 215 23% 16%;
     --popover: 0 0% 100%;
     --popover-foreground: 215 23% 16%;
-    --primary: 192 78% 25%;             /* petrol-700 #0E5C6F */
+    --primary: 192 78% 25%; /* petrol-700 #0E5C6F */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 14% 95%;           /* charcoal-100 */
+    --secondary: 210 14% 95%; /* charcoal-100 */
     --secondary-foreground: 215 23% 16%;
     --muted: 210 14% 95%;
-    --muted-foreground: 213 14% 33%;    /* charcoal-600 */
-    --accent: 192 50% 96%;              /* petrol-50 */
+    --muted-foreground: 213 14% 33%; /* charcoal-600 */
+    --accent: 192 50% 96%; /* petrol-50 */
     --accent-foreground: 192 78% 25%;
-    --destructive: 350 70% 42%;         /* wine-600 — clinical, not bright red */
+    --destructive: 350 70% 42%; /* wine-600 — clinical, not bright red */
     --destructive-foreground: 0 0% 100%;
-    --border: 215 14% 88%;              /* charcoal-200 */
+    --border: 215 14% 88%; /* charcoal-200 */
     --input: 215 14% 88%;
-    --ring: 192 55% 50%;                /* petrol-400 — focus ring */
-    --radius: 0.125rem;                 /* 2px — clinical-sharp */
+    --ring: 192 55% 50%; /* petrol-400 — focus ring */
+    --radius: 0.125rem; /* 2px — clinical-sharp */
 
     /* Surface tokens for clinical document layering. */
     --paper: 0 0% 100%;
-    --sunken: 210 14% 98%;              /* charcoal-50 */
+    --sunken: 210 14% 98%; /* charcoal-50 */
     --elevated: 0 0% 100%;
-    --border-strong: 215 14% 80%;       /* charcoal-300 */
+    --border-strong: 215 14% 80%; /* charcoal-300 */
 
     /* Status tokens for clinical states. */
-    --status-affirmed: 192 78% 25%;     /* petrol-700 */
+    --status-affirmed: 192 78% 25%; /* petrol-700 */
     --status-affirmed-soft: 192 50% 96%;
-    --status-caution: 28 95% 38%;       /* amber-700 */
+    --status-caution: 28 95% 38%; /* amber-700 */
     --status-caution-soft: 35 100% 96%;
-    --status-negative: 350 75% 35%;     /* wine-700 */
+    --status-negative: 350 75% 35%; /* wine-700 */
     --status-negative-soft: 350 50% 96%;
   }
 }
@@ -83,16 +83,30 @@
     /* Inter Variable supports tnum / cv11 features. */
     font-feature-settings: "cv11" 1;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-foreground;
     font-weight: 700;
     letter-spacing: -0.005em;
     line-height: 1.25;
   }
-  h1 { font-size: 1.5rem; }
-  h2 { font-size: 1.25rem; }
-  h3 { font-size: 1.0625rem; }
-  h4 { font-size: 0.9375rem; font-weight: 600; }
+  h1 {
+    font-size: 1.5rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+  h3 {
+    font-size: 1.0625rem;
+  }
+  h4 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
   label {
     font-weight: 500;
   }
@@ -106,7 +120,7 @@
   }
   /* Section label — uppercase tracking-wide petrol-700, used in Card headers. */
   .section-label {
-    font-size: 0.6875rem;       /* 11px */
+    font-size: 0.6875rem; /* 11px */
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
