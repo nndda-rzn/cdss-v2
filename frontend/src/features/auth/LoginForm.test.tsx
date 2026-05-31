@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { LoginForm } from "./LoginForm";
 
 vi.mock("./api", () => ({ login: vi.fn(async () => undefined) }));
@@ -30,5 +31,15 @@ describe("LoginForm", () => {
       expect(login).toHaveBeenCalledWith({ email: "a@x.id", password: "secret" }),
     );
     await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+  });
+
+  it("shows validation error for invalid email", async () => {
+    const user = userEvent.setup();
+    render(<LoginForm onSuccess={vi.fn()} />);
+    await user.type(screen.getByLabelText(/email/i), "not-an-email");
+    await user.type(screen.getByLabelText(/password/i), "pass");
+    await user.click(screen.getByRole("button", { name: /masuk/i }));
+    expect(await screen.findByText(/email tidak valid/i)).toBeInTheDocument();
+    expect(login).not.toHaveBeenCalled();
   });
 });
