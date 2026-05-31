@@ -3,19 +3,13 @@ import { ScanLine } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 
+import { AuthedImage } from "@/components/ui/authed-image";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { QualityBadge } from "@/components/ui/quality-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { ecgKeys, fetchEcgStudies, type EcgStudyRow } from "./api";
-
-function imageHref(s: EcgStudyRow): string {
-  // Backend stores relative paths under storage/uploads/. The Vite proxy
-  // doesn't yet expose static uploads, so for now we link the server path
-  // textually; once a /uploads route exists it'll Just Work.
-  return `/${s.image_original_path}`;
-}
+import { ecgKeys, fetchEcgStudies } from "./api";
 
 export function EcgStudyList({ encounterId }: { encounterId: string }) {
   const { data, isLoading } = useQuery({
@@ -48,15 +42,10 @@ export function EcgStudyList({ encounterId }: { encounterId: string }) {
         <Card key={s.id} className="overflow-hidden">
           <div className="relative bg-charcoal-50">
             <Zoom>
-              <img
-                src={imageHref(s)}
+              <AuthedImage
+                path={s.image_original_path}
                 alt={`Studi EKG ${s.study_uid}`}
                 className="h-40 w-full object-cover"
-                loading="lazy"
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  img.style.display = "none";
-                }}
               />
             </Zoom>
             <div className="absolute right-2 top-2">
