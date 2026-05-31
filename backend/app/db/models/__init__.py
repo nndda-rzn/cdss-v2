@@ -1,5 +1,6 @@
 """Import all models so Alembic autogenerate and create_all see them."""
 from app.db.models.audit_log import AuditLog
+from app.db.models.clinical_context import ClinicalContext
 from app.db.models.consent import Consent
 from app.db.models.encounter import Encounter
 from app.db.models.facility import HealthcareFacility
@@ -21,4 +22,5 @@ __all__ = [
     "PatientHistory",
     "Consent",
     "Encounter",
+    "ClinicalContext",
 ]
