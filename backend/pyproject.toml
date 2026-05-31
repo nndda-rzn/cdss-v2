@@ -67,6 +67,13 @@ check_untyped_defs = false
 module = ["scripts.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# ultralytics/torch: heavy ML deps; treat as untyped third-party so strict
+# checks (e.g. implicit-reexport of YOLO) don't apply to vendored code.
+module = ["ultralytics.*", "torch.*"]
+ignore_missing_imports = true
+follow_imports = "skip"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q --import-mode=importlib"
