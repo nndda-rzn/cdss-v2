@@ -127,3 +127,33 @@
     background: hsl(var(--primary));
   }
 }
+
+/*
+ * G3 — Print stylesheet. Clinicians often print a patient summary.
+ * Hide chrome (.no-print), flatten cards, and expand content for paper.
+ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 11pt;
+  }
+  /* Flatten document-cards into plain bordered blocks. */
+  [class*="rounded"] {
+    box-shadow: none !important;
+  }
+  /* Avoid breaking a card across pages where possible. */
+  .print-block {
+    break-inside: avoid;
+  }
+  /* Expand the medical-chart grid to a single column for paper. */
+  .lg\:grid-cols-\[320px_1fr\] {
+    display: block !important;
+  }
+  a[href]::after {
+    content: "";
+  }
+}

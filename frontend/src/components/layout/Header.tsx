@@ -25,7 +25,7 @@ export function Header({ leading }: HeaderProps) {
   const clear = useAuthStore((s) => s.clear);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border-strong bg-paper px-4">
+    <header className="no-print sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border-strong bg-paper px-4">
       {leading}
       <div className="flex items-center gap-2 text-foreground">
         <EcgSweep className="text-primary" width={28} height={14} thickness={2.5} />

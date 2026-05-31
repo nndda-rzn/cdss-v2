@@ -117,7 +117,7 @@ export function AppShell() {
 
       <div className="flex flex-1">
         {/* Desktop sidebar. */}
-        <aside className="hidden w-56 shrink-0 border-r border-border-strong bg-paper md:block">
+        <aside className="no-print hidden w-56 shrink-0 border-r border-border-strong bg-paper md:block">
           <SidebarNav />
         </aside>
 
