@@ -81,7 +81,7 @@ jobs:
         id: check
         run: echo "exists=$([ -f package.json ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
         working-directory: .
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: steps.check.outputs.exists == 'true'
         with:
           node-version: "24"
