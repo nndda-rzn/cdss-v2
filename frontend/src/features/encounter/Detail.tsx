@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ContextForm } from "@/features/clinical_context/ContextForm";
+import { VitalsPanel } from "@/features/vital_signs/VitalsPanel";
 import { closeEncounter, encounterKeys, fetchEncounter } from "./api";
 
 export function Detail() {
@@ -84,8 +85,8 @@ export function Detail() {
         <CardHeader>
           <CardTitle>Tanda Vital</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          Form tanda vital (Sprint 2A — S6).
+        <CardContent>
+          <VitalsPanel encounterId={String(data.id)} />
         </CardContent>
       </Card>
 

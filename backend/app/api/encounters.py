@@ -16,6 +16,8 @@ from app.schemas.encounter import EncounterCreate, EncounterOut
 from app.services.clinical_context.writer import write_context
 from app.services.encounter.close import close_encounter
 from app.services.encounter.create import create_encounter
+from app.services.vital_signs.capture import capture_vitals
+from app.services.vital_signs.query import list_vitals
 
 bp = Blueprint("encounters", __name__, url_prefix="/api/encounters")
 
@@ -146,3 +148,48 @@ def get_context(encounter_id: int) -> Response:
         pain_onset_minutes=ctx.pain_onset_minutes,
         pain_duration_minutes=ctx.pain_duration_minutes,
     )
+
+
+@bp.post("/<int:encounter_id>/vital-signs")
+@require_role(Role.CLINICIAN, Role.NURSE)
+def create_vitals(encounter_id: int) -> tuple[Response, int]:
+    session = _session()
+    body = request.get_json() or {}
+    capture_vitals(
+        session,
+        encounter_id=encounter_id,
+        user_id=_user_id(),
+        bp_systolic=body.get("bp_systolic"),
+        bp_diastolic=body.get("bp_diastolic"),
+        heart_rate=body.get("heart_rate"),
+        respiratory_rate=body.get("respiratory_rate"),
+        spo2=body.get("spo2"),
+        temperature=body.get("temperature"),
+        weight=body.get("weight"),
+        height=body.get("height"),
+    )
+    session.commit()
+    return jsonify(status="ok"), 201
+
+
+@bp.get("/<int:encounter_id>/vital-signs")
+@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+def get_vitals(encounter_id: int) -> Response:
+    session = _session()
+    rows = list_vitals(session, encounter_id=encounter_id)
+    items = [
+        {
+            "id": v.id,
+            "measured_at": v.measured_at.isoformat(),
+            "bp_systolic": v.bp_systolic,
+            "bp_diastolic": v.bp_diastolic,
+            "heart_rate": v.heart_rate,
+            "respiratory_rate": v.respiratory_rate,
+            "spo2": v.spo2,
+            "temperature": v.temperature,
+            "weight": v.weight,
+            "height": v.height,
+        }
+        for v in rows
+    ]
+    return jsonify(items=items)
