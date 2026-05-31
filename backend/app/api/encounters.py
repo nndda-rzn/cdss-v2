@@ -10,17 +10,22 @@ from sqlalchemy.orm import Session
 from app.core.exceptions.base import NotFoundError
 from app.core.rbac.decorators import require_role
 from app.core.rbac.roles import Role
+from app.db.models.ai_analysis import AIAnalysis
 from app.db.models.clinical_context import ClinicalContext
 from app.db.models.ecg_study import ECGStudy
 from app.db.models.encounter import Encounter
+from app.db.models.model_metadata import ModelMetadata
 from app.extensions import db
+from app.schemas.ai_analysis import AIAnalysisOut
 from app.schemas.ecg_study import ECGStudyOut
 from app.schemas.encounter import EncounterCreate, EncounterOut
 from app.services.clinical_context.writer import write_context
+from app.services.ecg_study.consent_gate import ensure_ai_analysis_consent
 from app.services.ecg_study.create import create_ecg_study
 from app.services.ecg_study.query import list_studies
 from app.services.encounter.close import close_encounter
 from app.services.encounter.create import create_encounter
+from app.services.inference.orchestrate import analyze_study
 from app.services.vital_signs.capture import capture_vitals
 from app.services.vital_signs.query import list_vitals
 
@@ -80,6 +85,24 @@ def _study_to_out(s: ECGStudy) -> dict[str, object]:
         recorded_by_user_id=s.recorded_by_user_id,
         device_info=s.device_info,
         created_at=s.created_at.isoformat(),
+    ).model_dump()
+
+
+def _analysis_to_out(a: AIAnalysis, model: ModelMetadata) -> dict[str, object]:
+    return AIAnalysisOut(
+        id=a.id,
+        ecg_study_id=a.ecg_study_id,
+        model_metadata_id=a.model_metadata_id,
+        model_name=model.model_name,
+        architecture=model.architecture,
+        predicted_class=a.predicted_class,
+        confidence_score=a.confidence_score,
+        probability_json=a.probability_json,
+        inference_time_ms=a.inference_time_ms,
+        device_used=a.device_used,
+        status=a.status,
+        error_message=a.error_message,
+        created_at=a.created_at.isoformat(),
     ).model_dump()
 
 
@@ -262,4 +285,63 @@ def get_ecg_studies(encounter_id: int) -> Response:
             out.pop("patient_id", None)
             out.pop("device_info", None)
         items.append(out)
+    return jsonify(items=items)
+
+
+def _get_study_or_404(session: Session, *, encounter_id: int, study_id: int) -> ECGStudy:
+    study = session.get(ECGStudy, study_id)
+    if study is None or study.encounter_id != encounter_id:
+        raise NotFoundError(
+            code="ECG_STUDY_NOT_FOUND",
+            message_id="Studi EKG tidak ditemukan",
+            message_en="ECG study not found",
+        )
+    return study
+
+
+@bp.post("/<int:encounter_id>/ecg-studies/<int:study_id>/analyze")
+@require_role(Role.CLINICIAN, Role.NURSE)
+def analyze_ecg(encounter_id: int, study_id: int) -> tuple[Response, int]:
+    session = _session()
+    study = _get_study_or_404(session, encounter_id=encounter_id, study_id=study_id)
+    ensure_ai_analysis_consent(
+        session,
+        patient_id=uuid.UUID(str(study.patient_id)),
+        user_id=_user_id(),
+    )
+    model_dir = Path(current_app.config["MODEL_DIR"])
+    storage_root = Path(current_app.config["STORAGE_DIR"])
+    rows = analyze_study(
+        session,
+        study_id=study_id,
+        user_id=_user_id(),
+        model_dir=model_dir,
+        storage_root=storage_root,
+        **_ctx(),
+    )
+    session.commit()
+    analyses = []
+    for r in rows:
+        model = session.get(ModelMetadata, r.model_metadata_id)
+        if model is not None:
+            analyses.append(_analysis_to_out(r, model))
+    return jsonify(analyses=analyses), 201
+
+
+@bp.get("/<int:encounter_id>/ecg-studies/<int:study_id>/analyses")
+@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+def get_analyses(encounter_id: int, study_id: int) -> Response:
+    session = _session()
+    rows = list(
+        session.scalars(
+            select(AIAnalysis)
+            .where(AIAnalysis.ecg_study_id == study_id)
+            .order_by(AIAnalysis.model_metadata_id)
+        ).all()
+    )
+    items = []
+    for r in rows:
+        model = session.get(ModelMetadata, r.model_metadata_id)
+        if model is not None:
+            items.append(_analysis_to_out(r, model))
     return jsonify(items=items)
