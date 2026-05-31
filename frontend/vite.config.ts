@@ -11,7 +11,10 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    proxy: { "/api": "http://localhost:5000" },
+    proxy: {
+      "/api": "http://localhost:5000",
+      "/uploads": "http://localhost:5000",
+    },
   },
   build: { outDir: "../backend/app/static", emptyOutDir: true },
   test: {
