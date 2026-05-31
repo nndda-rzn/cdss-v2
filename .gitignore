@@ -26,7 +26,7 @@ heatmaps/
 reports/
 processed/
 
-# ===== Model Artifacts (large, external from Kaggle) =====
+# ===== Model Artifacts (large, external; weights not in git) =====
 models/**/*.pt
 models/**/*.onnx
 models/**/*.pth
@@ -34,6 +34,7 @@ models/**/*.weights
 !models/**/metadata.json
 !models/**/README.md
 !models/README.md
+!models/.gitkeep
 
 # ===== Litestream =====
 litestream-data/

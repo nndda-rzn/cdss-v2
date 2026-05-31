@@ -1,4 +1,4 @@
-# ADR-0004: Three YOLO models for comparison
+# ADR-0004: Multiple YOLO models for comparison (3, expanded to 5)
 
 - Status: Accepted
 - Date: 2026-05-30
@@ -12,6 +12,8 @@ The research contribution includes benchmarking lightweight classification model
 ## Decision
 
 Integrate and compare three classification models: YOLOv8n-cls, YOLOv11n-cls, and YOLOv26n-cls. Build a model registry supporting multi-model loading and switching from Sprint 1 onward (schema), with inference in Sprint 3.
+
+> **Amendment (2026-05-31, Sprint 3):** scope expanded from 3 to **5 models** after the training pass produced five comparable classifiers: `yolov8n-cls`, `yolov8s-cls`, `yolov11n-cls`, `yolov11s-cls`, `yolov26n-cls` (nano + small variants across three generations). All five share the same 4-class output (`normal` / `mi` / `homi` / `abnormal`). Every active model runs per ECG study (synchronous, CPU), producing one `AIAnalysis` row each for comparative metrics. The registry, multi-model loading, and per-model SHA256 checksum decisions below hold unchanged — only the count increased.
 
 ## Options Considered
 

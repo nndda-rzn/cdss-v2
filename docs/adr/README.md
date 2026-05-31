@@ -28,7 +28,7 @@ For a research project targeting Scopus Q2/Q3 publication, ADRs provide methodol
 | [0001](0001-flask-over-fastapi.md) | Flask over FastAPI for backend | Accepted |
 | [0002](0002-sqlite-with-litestream.md) | SQLite with Litestream for storage | Accepted |
 | [0003](0003-monorepo-unified-deployable.md) | Monorepo, unified deployable | Accepted |
-| [0004](0004-three-yolo-models-comparison.md) | Three YOLO models for comparison | Accepted |
+| [0004](0004-three-yolo-models-comparison.md) | Multiple YOLO models for comparison (3->5) | Accepted |
 | [0005](0005-phi-layered-encryption-strategy.md) | Layered PHI encryption strategy | Accepted |
 | [0006](0006-rbac-five-roles.md) | RBAC with five roles | Accepted |
 | [0007](0007-jwt-access-refresh-rotation.md) | JWT access + refresh rotation | Accepted |

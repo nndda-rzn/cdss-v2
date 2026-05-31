@@ -3,6 +3,7 @@ import { ScanLine } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 
+import { AnalysisPanel } from "@/features/ai_analysis/AnalysisPanel";
 import { AuthedImage } from "@/components/ui/authed-image";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -65,6 +66,14 @@ export function EcgStudyList({ encounterId }: { encounterId: string }) {
             <div className="tabular text-xs text-muted-foreground">
               {s.created_at.slice(0, 16).replace("T", " ")}
             </div>
+            <details className="group pt-2">
+              <summary className="cursor-pointer list-none text-xs font-medium text-primary marker:hidden hover:underline">
+                Analisis AI
+              </summary>
+              <div className="pt-2">
+                <AnalysisPanel encounterId={encounterId} studyId={String(s.id)} />
+              </div>
+            </details>
           </div>
         </Card>
       ))}
