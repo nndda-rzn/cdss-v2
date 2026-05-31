@@ -1,6 +1,7 @@
 """Image quality check tests (synthetic images)."""
 import cv2
 import numpy as np
+import pytest
 
 from app.services.ecg_study.quality import assess_quality
 
@@ -36,3 +37,8 @@ def test_returns_metrics_via_detailed():
     score, status, metrics = assess_quality(_encode(img), detailed=True)
     assert set(metrics) == {"blur", "noise", "brightness", "contrast"}
     assert all(isinstance(metrics[k], float) for k in metrics)
+
+
+def test_decode_failure_raises():
+    with pytest.raises(ValueError):
+        assess_quality(b"not an image at all")

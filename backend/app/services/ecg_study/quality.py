@@ -1,5 +1,5 @@
 """Compute an image-quality score and status from blur/brightness/contrast/noise."""
-from typing import overload
+from typing import Literal, overload
 
 import cv2
 import numpy as np
@@ -39,10 +39,12 @@ def _score(metrics: dict[str, float]) -> tuple[float, str]:
 
 
 @overload
-def assess_quality(data: bytes) -> tuple[float, str]: ...
+def assess_quality(
+    data: bytes, *, detailed: Literal[False] = False
+) -> tuple[float, str]: ...
 @overload
 def assess_quality(
-    data: bytes, *, detailed: bool
+    data: bytes, *, detailed: Literal[True]
 ) -> tuple[float, str, dict[str, float]]: ...
 
 
