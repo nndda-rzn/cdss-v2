@@ -3,6 +3,8 @@ import { LoginRoute } from "@/routes/login";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { AppShell } from "@/components/layout/AppShell";
 import { PatientRegisterRoute } from "@/routes/PatientRegisterRoute";
+import { PatientsRoute } from "@/routes/PatientsRoute";
+import { PatientDetailRoute } from "@/routes/PatientDetailRoute";
 
 export function App() {
   return (
@@ -12,8 +14,9 @@ export function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<div>Dashboard (Sprint 2+)</div>} />
-            <Route path="/patients" element={<div>Pasien (Sprint 2A)</div>} />
+            <Route path="/patients" element={<PatientsRoute />} />
             <Route path="/patients/new" element={<PatientRegisterRoute />} />
+            <Route path="/patients/:id" element={<PatientDetailRoute />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />

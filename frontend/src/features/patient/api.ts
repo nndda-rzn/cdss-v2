@@ -1,5 +1,10 @@
 import { apiFetch } from "@/lib/api/client";
-import type { PatientCreateValues, RegisterResponse } from "./schemas";
+import type {
+  PatientCreateValues,
+  PatientDetail,
+  PatientListResponse,
+  RegisterResponse,
+} from "./schemas";
 
 export const patientKeys = {
   all: ["patients"] as const,
@@ -33,4 +38,36 @@ export async function registerPatient(
     throw new Error(body.error?.message_id ?? "Registrasi gagal");
   }
   return body as RegisterResponse;
+}
+
+export async function fetchPatients(
+  params: Record<string, string> = {},
+): Promise<PatientListResponse> {
+  const qs = new URLSearchParams(params).toString();
+  const resp = await apiFetch(`/api/patients${qs ? `?${qs}` : ""}`);
+  const body = await resp.json();
+  if (!resp.ok) {
+    throw new Error(body.error?.message_id ?? "Gagal memuat pasien");
+  }
+  return body as PatientListResponse;
+}
+
+export async function fetchPatient(id: string): Promise<PatientDetail> {
+  const resp = await apiFetch(`/api/patients/${id}`);
+  const body = await resp.json();
+  if (!resp.ok) {
+    throw new Error(body.error?.message_id ?? "Gagal memuat detail pasien");
+  }
+  return body as PatientDetail;
+}
+
+export async function deletePatient(id: string, reason: string): Promise<void> {
+  const resp = await apiFetch(`/api/patients/${id}`, {
+    method: "DELETE",
+    body: JSON.stringify({ reason }),
+  });
+  if (!resp.ok) {
+    const body = await resp.json();
+    throw new Error(body.error?.message_id ?? "Gagal menghapus pasien");
+  }
 }
