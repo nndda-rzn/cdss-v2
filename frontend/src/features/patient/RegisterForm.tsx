@@ -19,14 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { DedupDialog } from "./DedupDialog";
 import { PatientCreateSchema, type DuplicateSuggestion, type PatientCreateValues } from "./schemas";
 import { registerPatient } from "./api";
 
@@ -182,42 +175,14 @@ export function RegisterForm() {
         </form>
       </Form>
 
-      <Dialog open={duplicates !== null} onOpenChange={(open) => !open && setDuplicates(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Pasien Serupa Ditemukan</DialogTitle>
-            <DialogDescription>
-              Sistem menemukan pasien dengan nama, tanggal lahir, dan jenis kelamin yang serupa.
-            </DialogDescription>
-          </DialogHeader>
-          <ul className="space-y-2">
-            {duplicates?.map((d) => (
-              <li key={d.id} className="rounded-md border p-3 text-sm">
-                <button
-                  type="button"
-                  className="text-left"
-                  onClick={() => navigate(`/patients/${d.id}`)}
-                >
-                  <span className="font-medium">{d.name_masked}</span>
-                  <br />
-                  {d.mrn} | {d.dob} | {d.gender}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDuplicates(null);
-                void submit(form.getValues(), true);
-              }}
-            >
-              Daftarkan sebagai pasien baru
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DedupDialog
+        duplicates={duplicates}
+        onClose={() => setDuplicates(null)}
+        onConfirmNew={() => {
+          setDuplicates(null);
+          void submit(form.getValues(), true);
+        }}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 {
   "frontend/**/*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-  "backend/**/*.py": ["ruff check --fix"]
+  "backend/**/*.py": ["ruff check --fix"],
+  "{backend/app,frontend/src}/**/*.{py,ts,tsx}": ["python scripts/check_file_size.py"]
 }
