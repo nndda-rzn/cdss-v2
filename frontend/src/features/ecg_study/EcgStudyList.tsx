@@ -1,56 +1,84 @@
 import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
+import { ScanLine } from "lucide-react";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
+
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { QualityBadge } from "@/components/ui/quality-badge";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import { ecgKeys, fetchEcgStudies, type EcgStudyRow } from "./api";
 
-const _STATUS_LABEL: Record<EcgStudyRow["image_quality_status"], string> = {
-  good: "Baik",
-  acceptable: "Cukup",
-  poor: "Buruk",
-};
-
-const _STATUS_VARIANT: Record<
-  EcgStudyRow["image_quality_status"],
-  "default" | "secondary" | "destructive"
-> = {
-  good: "default",
-  acceptable: "secondary",
-  poor: "destructive",
-};
+function imageHref(s: EcgStudyRow): string {
+  // Backend stores relative paths under storage/uploads/. The Vite proxy
+  // doesn't yet expose static uploads, so for now we link the server path
+  // textually; once a /uploads route exists it'll Just Work.
+  return `/${s.image_original_path}`;
+}
 
 export function EcgStudyList({ encounterId }: { encounterId: string }) {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ecgKeys.list(encounterId),
     queryFn: () => fetchEcgStudies(encounterId),
   });
 
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} variant="ecg" className="h-40 w-full" />
+        ))}
+      </div>
+    );
+  }
+
   if (!data || data.length === 0) {
-    return <p className="text-sm text-muted-foreground">Belum ada studi EKG.</p>;
+    return (
+      <EmptyState
+        title="Belum ada studi EKG di kunjungan ini"
+        description="Unggah berkas EKG (JPEG/PNG, maks 10 MB) untuk mulai analisis kualitas."
+      />
+    );
   }
 
   return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="border-b text-left">
-          <th className="py-1">Study UID</th>
-          <th className="py-1">Kualitas</th>
-          <th className="py-1">Skor</th>
-          <th className="py-1">Waktu</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((s) => (
-          <tr key={s.id} className="border-b">
-            <td className="py-1 font-mono text-xs">{s.study_uid}</td>
-            <td className="py-1">
-              <Badge variant={_STATUS_VARIANT[s.image_quality_status]}>
-                {_STATUS_LABEL[s.image_quality_status]}
-              </Badge>
-            </td>
-            <td className="py-1">{s.image_quality_score.toFixed(2)}</td>
-            <td className="py-1">{s.created_at.slice(0, 16)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {data.map((s) => (
+        <Card key={s.id} className="overflow-hidden">
+          <div className="relative bg-charcoal-50">
+            <Zoom>
+              <img
+                src={imageHref(s)}
+                alt={`Studi EKG ${s.study_uid}`}
+                className="h-40 w-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  img.style.display = "none";
+                }}
+              />
+            </Zoom>
+            <div className="absolute right-2 top-2">
+              <QualityBadge
+                status={s.image_quality_status}
+                score={s.image_quality_score}
+                metrics={s.image_quality_metrics_json}
+              />
+            </div>
+          </div>
+          <div className="space-y-1 p-3 text-sm">
+            <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+              <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Study UID</span>
+            </div>
+            <div className="tabular truncate font-mono text-xs text-foreground">{s.study_uid}</div>
+            <div className="tabular text-xs text-muted-foreground">
+              {s.created_at.slice(0, 16).replace("T", " ")}
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
   );
 }
