@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RoleGate } from "@/features/auth/RoleGate";
+import { ConsentPanel } from "@/features/consent/ConsentPanel";
+import { HistoryPanel } from "@/features/patient_history/HistoryPanel";
 import { fetchPatient, patientKeys } from "./api";
 import { DeleteDialog } from "./DeleteDialog";
 
@@ -67,6 +69,27 @@ export function PatientDetail() {
             <Row label="Alamat" value={data.address} />
           </CardContent>
         </Card>
+      )}
+
+      {!data.is_pseudonymized && (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Persetujuan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ConsentPanel patientId={data.id} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Riwayat Medis</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HistoryPanel patientId={data.id} />
+            </CardContent>
+          </Card>
+        </>
       )}
 
       <Link to="/patients" className="text-sm text-primary underline">
