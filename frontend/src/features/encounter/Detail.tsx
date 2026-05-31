@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ContextForm } from "@/features/clinical_context/ContextForm";
 import { closeEncounter, encounterKeys, fetchEncounter } from "./api";
 
 export function Detail() {
@@ -74,8 +75,8 @@ export function Detail() {
         <CardHeader>
           <CardTitle>Konteks Klinis</CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          Form konteks klinis (Sprint 2A — S5).
+        <CardContent>
+          <ContextForm encounterId={String(data.id)} />
         </CardContent>
       </Card>
 
