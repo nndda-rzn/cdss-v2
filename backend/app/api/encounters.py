@@ -1,8 +1,9 @@
 """Encounter endpoints: create (consent-gated), detail, close."""
 import uuid
+from pathlib import Path
 from typing import cast
 
-from flask import Blueprint, Response, g, jsonify, request
+from flask import Blueprint, Response, current_app, g, jsonify, request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -10,10 +11,14 @@ from app.core.exceptions.base import NotFoundError
 from app.core.rbac.decorators import require_role
 from app.core.rbac.roles import Role
 from app.db.models.clinical_context import ClinicalContext
+from app.db.models.ecg_study import ECGStudy
 from app.db.models.encounter import Encounter
 from app.extensions import db
+from app.schemas.ecg_study import ECGStudyOut
 from app.schemas.encounter import EncounterCreate, EncounterOut
 from app.services.clinical_context.writer import write_context
+from app.services.ecg_study.create import create_ecg_study
+from app.services.ecg_study.query import list_studies
 from app.services.encounter.close import close_encounter
 from app.services.encounter.create import create_encounter
 from app.services.vital_signs.capture import capture_vitals
@@ -57,6 +62,24 @@ def _to_out(e: Encounter) -> dict[str, object]:
         chief_complaint=e.chief_complaint,
         started_at=e.started_at.isoformat(),
         ended_at=e.ended_at.isoformat() if e.ended_at else None,
+    ).model_dump()
+
+
+def _study_to_out(s: ECGStudy) -> dict[str, object]:
+    return ECGStudyOut(
+        id=s.id,
+        encounter_id=s.encounter_id,
+        patient_id=str(s.patient_id),
+        study_uid=s.study_uid,
+        image_original_path=s.image_original_path,
+        image_processed_path=s.image_processed_path,
+        image_quality_status=s.image_quality_status,
+        image_quality_score=s.image_quality_score,
+        image_quality_metrics_json=s.image_quality_metrics_json,
+        acquired_at=s.acquired_at.isoformat(),
+        recorded_by_user_id=s.recorded_by_user_id,
+        device_info=s.device_info,
+        created_at=s.created_at.isoformat(),
     ).model_dump()
 
 
@@ -192,4 +215,51 @@ def get_vitals(encounter_id: int) -> Response:
         }
         for v in rows
     ]
+    return jsonify(items=items)
+
+
+@bp.post("/<int:encounter_id>/ecg-studies")
+@require_role(Role.CLINICIAN, Role.NURSE)
+def create_ecg(encounter_id: int) -> tuple[Response, int]:
+    session = _session()
+    file = request.files.get("file")
+    if file is None:
+        from app.core.exceptions.base import ValidationError
+
+        raise ValidationError(
+            code="FILE_REQUIRED",
+            message_id="Berkas EKG wajib diunggah",
+            message_en="An ECG file is required",
+        )
+    file_bytes = file.read()
+    storage_root = Path(current_app.config["STORAGE_DIR"])
+    study = create_ecg_study(
+        session,
+        encounter_id=encounter_id,
+        user_id=_user_id(),
+        storage_root=storage_root,
+        file_bytes=file_bytes,
+        content_type=file.mimetype,
+        device_info=request.form.get("device_info"),
+        **_ctx(),
+    )
+    session.commit()
+    return jsonify(study=_study_to_out(study)), 201
+
+
+@bp.get("/<int:encounter_id>/ecg-studies")
+@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+def get_ecg_studies(encounter_id: int) -> Response:
+    from flask_jwt_extended import get_jwt
+
+    session = _session()
+    rows = list_studies(session, encounter_id=encounter_id)
+    role = get_jwt().get("role")
+    items = []
+    for s in rows:
+        out = _study_to_out(s)
+        if role == "researcher":
+            out.pop("patient_id", None)
+            out.pop("device_info", None)
+        items.append(out)
     return jsonify(items=items)
