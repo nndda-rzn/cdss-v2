@@ -2,50 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens — ADR-0010 (petrol + charcoal) + ADR-0011 (clinical-sharp radius).
+ * Hex palette is defined in tailwind.config.js (petrol/charcoal/amber/wine).
+ * shadcn semantic tokens (HSL) are mapped to those palette steps below.
+ */
 @layer base {
   :root {
+    /* shadcn semantic tokens (HSL components without hsl() wrapper). */
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 215 23% 16%;          /* charcoal-700 */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 215 23% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
-  }
+    --popover-foreground: 215 23% 16%;
+    --primary: 192 78% 25%;             /* petrol-700 #0E5C6F */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 14% 95%;           /* charcoal-100 */
+    --secondary-foreground: 215 23% 16%;
+    --muted: 210 14% 95%;
+    --muted-foreground: 213 14% 33%;    /* charcoal-600 */
+    --accent: 192 50% 96%;              /* petrol-50 */
+    --accent-foreground: 192 78% 25%;
+    --destructive: 350 70% 42%;         /* wine-600 — clinical, not bright red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 14% 88%;              /* charcoal-200 */
+    --input: 215 14% 88%;
+    --ring: 192 55% 50%;                /* petrol-400 — focus ring */
+    --radius: 0.125rem;                 /* 2px — clinical-sharp */
 
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    /* Surface tokens for clinical document layering. */
+    --paper: 0 0% 100%;
+    --sunken: 210 14% 98%;              /* charcoal-50 */
+    --elevated: 0 0% 100%;
+    --border-strong: 215 14% 80%;       /* charcoal-300 */
+
+    /* Status tokens for clinical states. */
+    --status-affirmed: 192 78% 25%;     /* petrol-700 */
+    --status-affirmed-soft: 192 50% 96%;
+    --status-caution: 28 95% 38%;       /* amber-700 */
+    --status-caution-soft: 35 100% 96%;
+    --status-negative: 350 75% 35%;     /* wine-700 */
+    --status-negative-soft: 350 50% 96%;
   }
 }
 
@@ -53,7 +51,27 @@
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: light;
+  }
   body {
     @apply bg-background text-foreground;
+    /* Compact clinical density. */
+    font-size: 14px;
+    line-height: 1.45;
+    /* Tabular numerals available via .tabular utility (added in C2). */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Accessibility: respect user motion preference. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
