@@ -49,6 +49,10 @@ python ../scripts/init_secrets.py
 alembic upgrade head
 python ../scripts/seed_facility.py
 python ../scripts/seed_admin.py
+python ../scripts/seed_system_config.py
+# Sprint 3: register the 5 trained YOLO models (set MODEL_DIR to your weights folder)
+pip install -e ".[inference]"  # YOLO runtime (torch); not needed for tests
+$env:MODEL_DIR="path/to/Final Model"; python ../scripts/seed_models.py
 flask run
 
 # Frontend (separate terminal)
@@ -110,8 +114,8 @@ Dirancang untuk **low-resource settings**: inferensi CPU-only, dapat offline, ri
 | Sprint | Fokus | Status |
 | --- | --- | --- |
 | 1 | Project Foundation | Done (v0.1.0-sprint-1) |
-| 2 | Auth & Upload | In progress (2A: clinical context done) |
-| 3 | AI Inference | Planned |
+| 2 | Auth & Upload | Done (2A clinical context, 2B ECG study) |
+| 3 | AI Inference | Done (v0.5.0-sprint-3, 5 YOLO models) |
 | 4 | HiResCAM | Planned |
 | 5 | Recommendation | Planned |
 | 6 | History & PDF | Planned |
