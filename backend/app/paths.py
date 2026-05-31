@@ -11,6 +11,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO_ROOT / "data"
 SECRETS_DIR = REPO_ROOT / "secrets"
 STORAGE_DIR = REPO_ROOT / "storage"
+MODEL_DIR = REPO_ROOT / "models"
 
 DEFAULT_DB_PATH = DATA_DIR / "cdss.db"
 DEFAULT_MASTER_KEY_PATH = SECRETS_DIR / "master.key"
