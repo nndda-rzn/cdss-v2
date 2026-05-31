@@ -75,3 +75,55 @@
     }
   }
 }
+/*
+ * C2 — Typography rhythm: clinical hierarchy, tabular numerals, heading rule.
+ */
+@layer base {
+  body {
+    /* Inter Variable supports tnum / cv11 features. */
+    font-feature-settings: "cv11" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  h3 { font-size: 1.0625rem; }
+  h4 { font-size: 0.9375rem; font-weight: 600; }
+  label {
+    font-weight: 500;
+  }
+}
+
+@layer utilities {
+  /* Tabular numerals — apply to MRN, study UID, vital signs, dates, scores. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+  /* Section label — uppercase tracking-wide petrol-700, used in Card headers. */
+  .section-label {
+    font-size: 0.6875rem;       /* 11px */
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: hsl(var(--primary));
+  }
+  /* H-rule — heading underline accent (subtle petrol bar 2px). */
+  .h-rule {
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  .h-rule::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 2rem;
+    height: 2px;
+    background: hsl(var(--primary));
+  }
+}
