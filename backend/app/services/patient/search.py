@@ -24,13 +24,16 @@ def search_patients(
     nik_last4: str | None = None,
     dob: date | None = None,
     gender: str | None = None,
+    include_deleted: bool = False,
     page: int = 1,
     page_size: int = _DEFAULT_PAGE_SIZE,
 ) -> dict[str, Any]:
     page = max(page, 1)
     page_size = min(max(page_size, 1), _MAX_PAGE_SIZE)
 
-    filters = [Patient.facility_id == facility_id, Patient.deleted_at.is_(None)]
+    filters = [Patient.facility_id == facility_id]
+    if not include_deleted:
+        filters.append(Patient.deleted_at.is_(None))
     if mrn:
         filters.append(Patient.mrn == mrn)
     if nik_last4:
