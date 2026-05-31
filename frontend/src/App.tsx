@@ -5,6 +5,8 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PatientRegisterRoute } from "@/routes/PatientRegisterRoute";
 import { PatientsRoute } from "@/routes/PatientsRoute";
 import { PatientDetailRoute } from "@/routes/PatientDetailRoute";
+import { EncounterCreateRoute } from "@/routes/EncounterCreateRoute";
+import { EncounterDetailRoute } from "@/routes/EncounterDetailRoute";
 
 export function App() {
   return (
@@ -17,6 +19,8 @@ export function App() {
             <Route path="/patients" element={<PatientsRoute />} />
             <Route path="/patients/new" element={<PatientRegisterRoute />} />
             <Route path="/patients/:id" element={<PatientDetailRoute />} />
+            <Route path="/patients/:id/encounters/new" element={<EncounterCreateRoute />} />
+            <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />

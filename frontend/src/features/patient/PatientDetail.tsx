@@ -75,6 +75,19 @@ export function PatientDetail() {
         <>
           <Card>
             <CardHeader>
+              <CardTitle>Kunjungan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Link
+                to={`/patients/${data.id}/encounters/new`}
+                className="text-sm text-primary underline"
+              >
+                + Kunjungan Baru
+              </Link>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
               <CardTitle>Persetujuan</CardTitle>
             </CardHeader>
             <CardContent>
