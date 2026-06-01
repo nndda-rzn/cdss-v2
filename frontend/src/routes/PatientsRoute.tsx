@@ -1,4 +1,4 @@
-import { PatientList } from "@/features/patient/PatientList";
+import { PatientList } from "@/features/patient/pages/PatientList";
 
 export function PatientsRoute() {
   return <PatientList />;

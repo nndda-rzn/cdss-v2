@@ -1,19 +1,8 @@
 import { apiFetch } from "@/lib/api/client";
 
-export interface VitalRow {
-  id: number;
-  measured_at: string;
-  bp_systolic: number | null;
-  bp_diastolic: number | null;
-  heart_rate: number | null;
-  respiratory_rate: number | null;
-  spo2: number | null;
-  temperature: number | null;
-  weight: number | null;
-  height: number | null;
-}
+import type { VitalRow, VitalsInput } from "./types";
 
-export type VitalsInput = Partial<Omit<VitalRow, "id" | "measured_at">>;
+export type { VitalRow, VitalsInput } from "./types";
 
 export const vitalsKeys = {
   list: (encounterId: string) => ["vitals", encounterId] as const,

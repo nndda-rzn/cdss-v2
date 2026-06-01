@@ -1,12 +1,8 @@
 import { apiFetch } from "@/lib/api/client";
 
-export interface HistoryRow {
-  id: number;
-  condition_code: string;
-  onset_date_approx: string | null;
-  note: string | null;
-  recorded_at: string;
-}
+import type { HistoryRow } from "./types";
+
+export type { HistoryRow } from "./types";
 
 export async function fetchHistory(patientId: string): Promise<HistoryRow[]> {
   const resp = await apiFetch(`/api/patients/${patientId}/history`);

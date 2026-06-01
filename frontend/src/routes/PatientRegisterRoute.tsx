@@ -1,4 +1,4 @@
-import { RegisterForm } from "@/features/patient/RegisterForm";
+import { RegisterForm } from "@/features/patient/components/RegisterForm";
 
 export function PatientRegisterRoute() {
   return <RegisterForm />;

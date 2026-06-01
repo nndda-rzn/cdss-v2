@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginRoute } from "@/routes/login";
 import { NotFoundRoute } from "@/routes/NotFoundRoute";
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
+import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 import { AppShell } from "@/components/layout/AppShell";
-import { DashboardPage } from "@/features/dashboard/DashboardPage";
+import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import { PatientRegisterRoute } from "@/routes/PatientRegisterRoute";
 import { PatientsRoute } from "@/routes/PatientsRoute";
 import { PatientDetailRoute } from "@/routes/PatientDetailRoute";

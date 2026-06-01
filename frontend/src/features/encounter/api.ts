@@ -1,22 +1,8 @@
 import { apiFetch } from "@/lib/api/client";
 
-export interface EncounterOut {
-  id: number;
-  patient_id: string;
-  facility_id: number;
-  attending_user_id: number;
-  encounter_type: string;
-  status: string;
-  chief_complaint: string | null;
-  started_at: string;
-  ended_at: string | null;
-}
+import type { EncounterCreateInput, EncounterOut } from "./types";
 
-export interface EncounterCreateInput {
-  patient_id: string;
-  encounter_type: "rawat_jalan" | "igd";
-  chief_complaint?: string;
-}
+export type { EncounterCreateInput, EncounterOut, EncounterStatus, EncounterType } from "./types";
 
 export const encounterKeys = {
   detail: (id: number | string) => ["encounter", String(id)] as const,

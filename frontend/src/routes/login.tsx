@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 
 import { EcgSweep } from "@/components/brand/EcgSweep";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
-import { LoginBrandPanel } from "@/features/auth/LoginBrandPanel";
-import { LoginForm } from "@/features/auth/LoginForm";
+import { LoginBrandPanel } from "@/features/auth/components/LoginBrandPanel";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 import { useI18nStore } from "@/lib/i18n/store";
 
 /**
