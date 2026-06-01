@@ -1,21 +1,9 @@
 import { useAuthStore } from "@/features/auth/store";
 import { apiFetch } from "@/lib/api/client";
 
-export interface EcgStudyRow {
-  id: number;
-  encounter_id: number;
-  patient_id?: string;
-  study_uid: string;
-  image_original_path: string;
-  image_processed_path: string | null;
-  image_quality_status: "good" | "acceptable" | "poor";
-  image_quality_score: number;
-  image_quality_metrics_json: Record<string, number>;
-  acquired_at: string;
-  recorded_by_user_id: number;
-  device_info?: string | null;
-  created_at: string;
-}
+import type { EcgStudyRow } from "./types";
+
+export type { EcgStudyRow, ImageQualityStatus } from "./types";
 
 export const ecgKeys = {
   list: (encounterId: string) => ["ecg-studies", encounterId] as const,

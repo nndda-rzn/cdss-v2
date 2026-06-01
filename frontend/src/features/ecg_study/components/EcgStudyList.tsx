@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { QualityBadge } from "@/components/ui/quality-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { ecgKeys, fetchEcgStudies } from "./api";
+import { ecgKeys, fetchEcgStudies } from "../api";
 
 export function EcgStudyList({ encounterId }: { encounterId: string }) {
   const { data, isLoading } = useQuery({

@@ -6,7 +6,7 @@ import { ImageUp, UploadCloud, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import { ecgKeys, uploadEcgStudy } from "./api";
+import { ecgKeys, uploadEcgStudy } from "../api";
 
 const _ALLOWED = ["image/jpeg", "image/png"];
 const _MAX_BYTES = 10 * 1024 * 1024;
