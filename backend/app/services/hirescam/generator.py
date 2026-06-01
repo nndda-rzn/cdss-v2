@@ -132,7 +132,9 @@ def _preprocess_for_model(
     from ultralytics.data.augment import classify_transforms
 
     # Use YOLO's internal transforms
-    transforms = classify_transforms(model.args.imgsz)
+    args = model.args
+    imgsz = args.get("imgsz", 224) if isinstance(args, dict) else getattr(args, "imgsz", 224)
+    transforms = classify_transforms(imgsz)
     img_pil = Image.fromarray(img)
 
     tensor = transforms(img_pil)  # [C, H, W]
