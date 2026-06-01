@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginRoute } from "@/routes/login";
+import { NotFoundRoute } from "@/routes/NotFoundRoute";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { AppShell } from "@/components/layout/AppShell";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
@@ -25,7 +26,7 @@ export function App() {
             <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
           </Route>
         </Route>
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<NotFoundRoute />} />
       </Routes>
     </BrowserRouter>
   );
