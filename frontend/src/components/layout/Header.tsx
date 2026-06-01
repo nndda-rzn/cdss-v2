@@ -2,6 +2,7 @@ import { EcgSweep } from "@/components/brand/EcgSweep";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { Separator } from "@/components/ui/separator";
+import { GlobalSearchTrigger } from "@/features/search/GlobalSearchTrigger";
 import { useI18nStore } from "@/lib/i18n/store";
 
 interface HeaderProps {
@@ -13,9 +14,10 @@ interface HeaderProps {
 }
 
 /**
- * Top header bar — sticky 56px tall. Brand mark + wordmark on the left;
- * language toggle and user menu on the right. The plain logout button moved
- * into the user dropdown so the header stays visually clean.
+ * Top header bar — sticky 56px tall. Brand mark + wordmark on the left,
+ * global-search pill in the middle, language toggle and user menu on the
+ * right. The plain logout button moved into the user dropdown so the header
+ * stays visually clean.
  */
 export function Header({ leading }: HeaderProps) {
   const t = useI18nStore((s) => s.t);
@@ -32,6 +34,7 @@ export function Header({ leading }: HeaderProps) {
         {t("CDSS demo", "CDSS demo")}
       </span>
       <div className="ml-auto flex items-center gap-2">
+        <GlobalSearchTrigger />
         <LanguageToggle />
         <Separator orientation="vertical" className="h-6 bg-border-strong" />
         <UserMenu />
