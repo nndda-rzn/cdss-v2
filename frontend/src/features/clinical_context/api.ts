@@ -1,25 +1,8 @@
 import { apiFetch } from "@/lib/api/client";
 
-export interface ClinicalContextOut {
-  id: number;
-  encounter_id: number;
-  symptom_chest_pain: boolean;
-  symptom_dyspnea: boolean;
-  symptom_palpitation: boolean;
-  symptom_syncope: boolean;
-  symptom_other: string | null;
-  pain_onset_minutes: number | null;
-  pain_duration_minutes: number | null;
-}
+import type { ClinicalContextInput, ClinicalContextOut } from "./types";
 
-export interface ClinicalContextInput {
-  symptom_chest_pain: boolean;
-  symptom_dyspnea: boolean;
-  symptom_palpitation: boolean;
-  symptom_syncope: boolean;
-  symptom_other?: string;
-  pain_onset_minutes?: number;
-}
+export type { ClinicalContextInput, ClinicalContextOut } from "./types";
 
 export const contextKeys = {
   detail: (encounterId: string) => ["clinical-context", encounterId] as const,

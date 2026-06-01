@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { contextKeys, fetchContext, saveContext } from "./api";
+import { contextKeys, fetchContext, saveContext } from "../api";
 
 const _SYMPTOMS = [
   { key: "symptom_chest_pain", label: "Nyeri dada" },
