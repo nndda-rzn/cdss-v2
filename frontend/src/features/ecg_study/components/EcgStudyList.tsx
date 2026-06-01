@@ -5,6 +5,7 @@ import "react-medium-image-zoom/dist/styles.css";
 import { useNavigate } from "react-router-dom";
 
 import { AuthedImage } from "@/components/ui/authed-image";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { QualityBadge } from "@/components/ui/quality-badge";
