@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import type { VitalStatus } from "./ranges";
+import type { VitalStatus } from "../ranges";
 
 const TONE: Record<VitalStatus, string> = {
   ok: "border-border-strong bg-paper",

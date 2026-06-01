@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { VitalRow } from "./api";
-import { classify } from "./ranges";
+import type { VitalRow } from "../types";
+import { classify } from "../ranges";
 
 function row(overrides: Partial<VitalRow>): VitalRow {
   return {

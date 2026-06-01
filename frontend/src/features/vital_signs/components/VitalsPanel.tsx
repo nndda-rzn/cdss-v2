@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 
-import { captureVitals, fetchVitals, vitalsKeys, type VitalsInput } from "./api";
+import { captureVitals, fetchVitals, vitalsKeys, type VitalsInput } from "../api";
 import { MiniCard } from "./MiniCard";
-import { classify } from "./ranges";
+import { classify } from "../ranges";
 
 const _FIELDS = [
   { key: "bp_systolic", label: "Sistolik" },

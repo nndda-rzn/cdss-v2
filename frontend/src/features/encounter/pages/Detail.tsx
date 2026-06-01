@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ContextForm } from "@/features/clinical_context/components/ContextForm";
 import { EcgStudyList } from "@/features/ecg_study/components/EcgStudyList";
 import { EcgUploadForm } from "@/features/ecg_study/components/EcgUploadForm";
-import { VitalsPanel } from "@/features/vital_signs/VitalsPanel";
+import { VitalsPanel } from "@/features/vital_signs/components/VitalsPanel";
 import { closeEncounter, encounterKeys, fetchEncounter } from "../api";
 
 export function Detail() {

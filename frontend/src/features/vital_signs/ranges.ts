@@ -2,7 +2,7 @@
  * Clinical range classification for vital signs.
  * Pure domain logic — no React, independently testable.
  */
-import type { VitalRow } from "./api";
+import type { VitalRow } from "./types";
 
 export type VitalStatus = "ok" | "caution" | "negative" | "unknown";
 
