@@ -11,6 +11,27 @@ import numpy as np
 import torch
 
 
+def _disable_inplace(model: Any) -> list[tuple[Any, bool]]:
+    """Temporarily disable in-place operations in activation layers.
+
+    Returns a list of (module, old_inplace) tuples for restoration.
+    This is needed because in-place ops (e.g., SiLU inplace=True)
+    conflict with backward hooks used for gradient capture.
+    """
+    original_states: list[tuple[Any, bool]] = []
+    for module in model.modules():
+        if hasattr(module, "inplace"):
+            original_states.append((module, module.inplace))
+            module.inplace = False
+    return original_states
+
+
+def _restore_inplace(original_states: list[tuple[Any, bool]]) -> None:
+    """Restore in-place flags to their original values."""
+    for module, old_inplace in original_states:
+        module.inplace = old_inplace
+
+
 def generate_hirescam(
     model: Any,
     image_path: str,
@@ -45,7 +66,7 @@ def generate_hirescam(
         input: Any,
         output: torch.Tensor,
     ) -> None:
-        activations["target"] = output.detach()
+        activations["target"] = output
 
     def backward_hook(
         module: Any,
@@ -53,10 +74,13 @@ def generate_hirescam(
         grad_output: tuple[torch.Tensor | None, ...],
     ) -> None:
         if grad_output[0] is not None:
-            gradients["target"] = grad_output[0].detach()
+            gradients["target"] = grad_output[0]
 
     handle_fwd = target_layer.register_forward_hook(forward_hook)
     handle_bwd = target_layer.register_full_backward_hook(backward_hook)
+
+    # Disable in-place operations to avoid backward hook conflicts
+    inplace_states = _disable_inplace(model.model)
 
     try:
         orig_img = cv2.imread(image_path)
@@ -79,8 +103,8 @@ def generate_hirescam(
         target_score.backward()
 
         # Compute HiResCAM: sum(grads * activs, axis=features)
-        activs = activations["target"].cpu().numpy()  # [1, C, H, W]
-        grads = gradients["target"].cpu().numpy()  # [1, C, H, W]
+        activs = activations["target"].detach().cpu().numpy()  # [1, C, H, W]
+        grads = gradients["target"].detach().cpu().numpy()  # [1, C, H, W]
 
         # Element-wise multiply, then sum over feature dimension
         cams = np.multiply(grads, activs)  # [1, C, H, W]
@@ -105,6 +129,7 @@ def generate_hirescam(
     finally:
         handle_fwd.remove()
         handle_bwd.remove()
+        _restore_inplace(inplace_states)
         model.model.eval()
 
 
