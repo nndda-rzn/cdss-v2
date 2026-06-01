@@ -25,7 +25,7 @@ def test_seed_clinical_user_creates_user(tmp_path):
             s,
             name="Dr. Demo",
             email="dokter@x.id",
-            password="DokterDemo1!",  # noqa: S106
+            password="StrongPass1",  # noqa: S106
             facility_id=1,
             role="clinician",
             rounds=4,
@@ -34,7 +34,7 @@ def test_seed_clinical_user_creates_user(tmp_path):
         u = s.scalar(select(User).where(User.email == "dokter@x.id"))
         assert u is not None
         assert u.role == "clinician"
-        assert verify_password("DokterDemo1!", u.password_hash)
+        assert verify_password("StrongPass1", u.password_hash)
 
 
 def test_seed_clinical_user_idempotent(tmp_path):
