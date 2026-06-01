@@ -5,7 +5,7 @@ import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
 import { GlobalSearch } from "./GlobalSearch";
-import { useCommandKHotkey } from "./hooks";
+import { useCommandKHotkey } from "../hooks";
 
 /**
  * Header pill that looks like a search input. Clicking or hitting Ctrl+K

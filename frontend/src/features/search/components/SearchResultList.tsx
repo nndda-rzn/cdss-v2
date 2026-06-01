@@ -4,7 +4,7 @@ import { Search, User2, Stethoscope } from "lucide-react";
 import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
-import type { EncounterHit, PatientHit } from "./api";
+import type { EncounterHit, PatientHit } from "../types";
 
 interface ResultListProps {
   patients: PatientHit[];

@@ -2,7 +2,7 @@ import { EcgSweep } from "@/components/brand/EcgSweep";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { Separator } from "@/components/ui/separator";
-import { GlobalSearchTrigger } from "@/features/search/GlobalSearchTrigger";
+import { GlobalSearchTrigger } from "@/features/search/components/GlobalSearchTrigger";
 import { useI18nStore } from "@/lib/i18n/store";
 
 interface HeaderProps {

@@ -6,8 +6,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
-import { fetchSearch } from "./api";
-import { useDebouncedValue } from "./hooks";
+import { fetchSearch } from "../api";
+import { useDebouncedValue } from "../hooks";
 import { SearchResultList } from "./SearchResultList";
 
 interface GlobalSearchProps {
