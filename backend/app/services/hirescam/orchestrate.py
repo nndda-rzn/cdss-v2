@@ -29,6 +29,13 @@ def generate_artifacts(
     if analysis.status != "success" or analysis.predicted_class is None:
         return None
 
+    # Check if artifact already exists (idempotency)
+    existing = session.scalar(
+        select(HiResCAMArtifact).where(HiResCAMArtifact.ai_analysis_id == analysis.id)
+    )
+    if existing is not None:
+        return existing
+
     study = session.get(ECGStudy, analysis.ecg_study_id)
     if study is None:
         return None
