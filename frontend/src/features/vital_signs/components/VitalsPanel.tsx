@@ -130,7 +130,7 @@ export function VitalsPanel({ encounterId }: { encounterId: string }) {
       <Button
         disabled={mutation.isPending}
         onClick={() => mutation.mutate()}
-        className="cursor-pointer"
+        className="cursor-pointer w-full"
       >
         {mutation.isPending ? "Menyimpan..." : "Tambah Pengukuran"}
       </Button>

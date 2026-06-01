@@ -61,7 +61,7 @@ export function Detail() {
             <CardHeader>
               <CardTitle>{t("Tanda Vital", "Vital Signs")}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-5 pt-4">
               <VitalsPanel encounterId={String(data.id)} />
             </CardContent>
           </Card>
@@ -70,7 +70,7 @@ export function Detail() {
             <CardHeader>
               <CardTitle>{t("Konteks Klinis", "Clinical Context")}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-5 pt-4">
               <ContextForm encounterId={String(data.id)} />
             </CardContent>
           </Card>
@@ -79,7 +79,7 @@ export function Detail() {
             <CardHeader>
               <CardTitle>{t("Studi EKG", "ECG Studies")}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-5 pt-4">
               <EcgUploadForm encounterId={String(data.id)} />
               <EcgStudyList encounterId={String(data.id)} />
             </CardContent>

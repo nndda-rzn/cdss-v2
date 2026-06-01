@@ -64,23 +64,23 @@ export function EcgStudyList({ encounterId }: { encounterId: string }) {
               />
             </div>
           </div>
-          <div className="space-y-1 p-3 text-sm">
+          <div className="space-y-1.5 p-3 text-sm">
             <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Study UID</span>
             </div>
             <div className="tabular truncate font-mono text-xs text-foreground">{s.study_uid}</div>
-            <div className="tabular text-xs text-muted-foreground mb-2">
+            <div className="tabular text-xs text-muted-foreground mb-3">
               {s.created_at.slice(0, 16).replace("T", " ")}
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="w-fit h-7 px-2 -ml-2 text-xs font-medium text-primary hover:bg-accent cursor-pointer"
+              className="w-full justify-start h-8 px-2 text-xs font-medium text-primary hover:bg-primary/5 cursor-pointer"
               onClick={() => navigate(`/encounters/${encounterId}/ecg-studies/${s.id}/analyses`)}
             >
               {t("Lihat Analisis AI", "View AI Analysis")}
-              <ArrowUpRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
+              <ArrowUpRight className="ml-auto h-3.5 w-3.5" aria-hidden="true" />
             </Button>
           </div>
         </Card>

@@ -29,7 +29,7 @@ export interface MiniCardProps {
 /** A single clinical vital reading rendered as a compact status card. */
 export function MiniCard({ icon: Icon, label, value, unit, status }: MiniCardProps) {
   return (
-    <div className={cn("flex flex-col gap-1 rounded-sm border px-3 py-2", TONE[status])}>
+    <div className={cn("flex flex-col gap-1 rounded-md border px-3 py-2", TONE[status])}>
       <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
         <Icon className="h-3.5 w-3.5" aria-hidden={true} />
         <span>{label}</span>

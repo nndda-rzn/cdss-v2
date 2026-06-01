@@ -83,25 +83,23 @@ export function EcgUploadForm({
       <div
         {...getRootProps()}
         className={cn(
-          "flex items-center justify-between gap-4 rounded-sm border-2 border-dashed px-4 py-4 transition-colors",
+          "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-6 py-6 text-center transition-colors",
           isDragActive
             ? "border-primary bg-affirmed-soft"
             : "border-border-strong bg-sunken hover:bg-affirmed-soft/50",
         )}
       >
-        <div className="flex items-center gap-3">
-          <UploadCloud className="h-5 w-5 text-primary shrink-0" aria-hidden="true" />
-          <div className="text-sm">
-            <span className="font-medium text-foreground">Seret EKG ke sini</span>
-            <span className="text-muted-foreground hidden sm:inline"> atau pilih berkas</span>
-            <p className="text-xs text-muted-foreground mt-0.5">JPEG/PNG, maks 10 MB</p>
-          </div>
+        <div className="rounded-full bg-primary/10 p-2">
+          <UploadCloud className="h-6 w-6 text-primary shrink-0" aria-hidden="true" />
+        </div>
+        <div className="text-sm">
+          <span className="font-medium text-foreground block">Seret berkas EKG ke sini</span>
+          <span className="text-xs text-muted-foreground mt-0.5 block">JPEG/PNG, maks 10 MB</span>
         </div>
         <Button
           type="button"
           variant="outline"
-          size="sm"
-          className="cursor-pointer shrink-0"
+          className="w-full max-w-[220px] cursor-pointer mt-1"
           onClick={open}
         >
           <ImageUp className="mr-1.5 h-4 w-4" aria-hidden="true" />
@@ -115,32 +113,34 @@ export function EcgUploadForm({
       </div>
 
       {preview && file && (
-        <div className="flex items-center gap-3 rounded-sm border border-border-strong bg-paper p-2">
-          <img src={preview} alt="Pratinjau EKG" className="h-12 w-12 rounded-sm object-cover" />
-          <div className="flex flex-1 flex-col gap-0.5 text-sm">
+        <div className="flex items-center gap-3 rounded-lg border border-border-strong bg-card p-3">
+          <img src={preview} alt="Pratinjau EKG" className="h-10 w-10 rounded-md object-cover" />
+          <div className="flex flex-1 flex-col gap-0.5 text-sm min-w-0">
             <span className="truncate font-medium text-foreground">{file.name}</span>
             <span className="tabular text-xs text-muted-foreground">
               {formatBytes(file.size)} • {file.type.replace("image/", "").toUpperCase()}
             </span>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 cursor-pointer shrink-0"
-            onClick={clearFile}
-            aria-label="Hapus berkas terpilih"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          <Button
-            disabled={!file || mutation.isPending}
-            onClick={() => mutation.mutate()}
-            className="cursor-pointer shrink-0"
-            size="sm"
-          >
-            {mutation.isPending ? "Mengunggah..." : "Unggah"}
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-destructive"
+              onClick={clearFile}
+              aria-label="Hapus berkas terpilih"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            <Button
+              size="sm"
+              disabled={!file || mutation.isPending}
+              onClick={() => mutation.mutate()}
+              className="cursor-pointer"
+            >
+              {mutation.isPending ? "Mengunggah..." : "Unggah"}
+            </Button>
+          </div>
         </div>
       )}
 

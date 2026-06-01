@@ -62,8 +62,8 @@ export function ContextForm({ encounterId }: { encounterId: string }) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-2">
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 gap-2.5">
         {_SYMPTOMS.map((s) => {
           const isActive = symptoms[s.key];
           return (
@@ -72,10 +72,10 @@ export function ContextForm({ encounterId }: { encounterId: string }) {
               type="button"
               onClick={() => setSymptoms((prev) => ({ ...prev, [s.key]: !isActive }))}
               className={cn(
-                "rounded-full px-3 py-1.5 text-sm font-medium transition-colors border text-center cursor-pointer",
+                "rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 border text-center cursor-pointer",
                 isActive
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-sunken text-muted-foreground border-border hover:border-border-strong",
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-card text-muted-foreground border-border hover:border-primary/50 hover:bg-accent/50",
               )}
             >
               {s.label}
@@ -83,8 +83,8 @@ export function ContextForm({ encounterId }: { encounterId: string }) {
           );
         })}
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="text-sm font-medium whitespace-nowrap" htmlFor="pain-onset">
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium text-foreground" htmlFor="pain-onset">
           Onset nyeri
         </label>
         <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export function ContextForm({ encounterId }: { encounterId: string }) {
             inputMode="numeric"
             value={painOnset}
             onChange={(e) => setPainOnset(e.target.value)}
-            className="w-20 h-9"
+            className="w-24"
           />
           <span className="text-sm text-muted-foreground">menit</span>
         </div>
@@ -104,10 +104,9 @@ export function ContextForm({ encounterId }: { encounterId: string }) {
         </p>
       )}
       <Button
-        size="sm"
         disabled={mutation.isPending}
         onClick={() => mutation.mutate()}
-        className="cursor-pointer"
+        className="w-full mt-4 cursor-pointer"
       >
         Simpan Konteks
       </Button>
