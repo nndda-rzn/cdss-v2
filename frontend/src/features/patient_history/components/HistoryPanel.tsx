@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { addHistory, fetchHistory, historyKeys } from "./api";
+import { addHistory, fetchHistory, historyKeys } from "../api";
 
 const _CONDITIONS = ["MI", "DM", "HT", "CKD", "dyslipidemia", "smoker", "other"];
 

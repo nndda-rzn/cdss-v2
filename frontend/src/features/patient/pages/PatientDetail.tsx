@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RoleGate } from "@/features/auth/components/RoleGate";
 import { ConsentPanel } from "@/features/consent/components/ConsentPanel";
-import { HistoryPanel } from "@/features/patient_history/HistoryPanel";
+import { HistoryPanel } from "@/features/patient_history/components/HistoryPanel";
 
 import { fetchPatient, patientKeys } from "../api";
 import { DeleteDialog } from "../components/DeleteDialog";
