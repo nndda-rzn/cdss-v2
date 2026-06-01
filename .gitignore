@@ -115,6 +115,13 @@ $RECYCLE.BIN/
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.shared.json
+
+# ===== Code intelligence / dev tooling =====
+# codegraph plugin (https://github.com/colbymchenry/codegraph) — local SQLite
+# index of the code graph; regenerable, machine-specific.
+.codegraph/
+
+# ===== IDE (cont.) =====
 *.swp
 *.swo
 *~
