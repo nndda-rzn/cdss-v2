@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
-import type { RecentEncounter } from "./api";
+import type { RecentEncounter } from "../types";
 
 interface RecentEncountersListProps {
   rows: RecentEncounter[] | undefined;

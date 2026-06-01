@@ -4,10 +4,10 @@ import { Activity, ClipboardList, Sparkles, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useI18nStore } from "@/lib/i18n/store";
 
-import { dashboardKeys, fetchDashboardStats } from "./api";
-import { KpiCard } from "./KpiCard";
-import { QuickActions } from "./QuickActions";
-import { RecentEncountersList } from "./RecentEncountersList";
+import { dashboardKeys, fetchDashboardStats } from "../api";
+import { KpiCard } from "../components/KpiCard";
+import { QuickActions } from "../components/QuickActions";
+import { RecentEncountersList } from "../components/RecentEncountersList";
 
 /** Dashboard landing page — KPI cards + quick actions + recent encounters. */
 export function DashboardPage() {
