@@ -2,7 +2,7 @@
  * AI-analysis presentation constants + consensus calculation.
  * Pure (no React) so the consensus logic is independently testable.
  */
-import type { AnalysisRow, PredictedClass } from "./types";
+import type { AnalysisRow, ExplanationStatus, PredictedClass } from "./types";
 
 export const CLASS_LABEL: Record<PredictedClass, string> = {
   normal: "Normal",
@@ -63,3 +63,31 @@ export function computeConsensusDetail(rows: AnalysisRow[]): ConsensusDetail | n
     avgConfidence: avg,
   };
 }
+
+// ---------------------------------------------------------------------------
+// HiResCAM explanation-status labels + chip colours
+// ---------------------------------------------------------------------------
+
+export const STATUS_LABEL: Record<ExplanationStatus, string> = {
+  good: "Baik",
+  diffuse: "Menyebar",
+  "off-target": "Tidak Fokus",
+  "low-confidence": "Keyakinan Rendah",
+  "need-review": "Perlu Tinjauan",
+};
+
+export const STATUS_LABEL_EN: Record<ExplanationStatus, string> = {
+  good: "Good",
+  diffuse: "Diffuse",
+  "off-target": "Off-Target",
+  "low-confidence": "Low Confidence",
+  "need-review": "Need Review",
+};
+
+export const STATUS_CHIP: Record<ExplanationStatus, string> = {
+  good: "bg-affirmed-soft text-primary",
+  diffuse: "bg-caution-soft text-amber-700",
+  "off-target": "bg-negative-soft text-wine-700",
+  "low-confidence": "bg-caution-soft text-amber-700",
+  "need-review": "bg-negative-soft text-wine-700",
+};

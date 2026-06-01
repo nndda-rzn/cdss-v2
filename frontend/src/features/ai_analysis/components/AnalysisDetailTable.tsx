@@ -2,8 +2,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
+import { ExplanationStatusBadge } from "./ExplanationStatusBadge";
 import { CLASS_CHIP, CLASS_LABEL } from "../labels";
-import type { AnalysisRow, PredictedClass } from "../types";
+import type { AnalysisRow, HiResCAMRow, PredictedClass } from "../types";
 
 const CLASS_ORDER: PredictedClass[] = ["normal", "mi", "homi", "abnormal"];
 
@@ -63,12 +64,14 @@ function StatusCell({ row, t }: { row: AnalysisRow; t: (id: string, en: string) 
   );
 }
 
-/** Full-width 8-column comparison table for the analysis detail page. */
+/** Full-width comparison table for the analysis detail page. */
 export function AnalysisDetailTable({
   rows,
+  hirescam,
   describedById,
 }: {
   rows: AnalysisRow[];
+  hirescam?: HiResCAMRow[];
   describedById?: string;
 }) {
   const t = useI18nStore((s) => s.t);
@@ -88,6 +91,7 @@ export function AnalysisDetailTable({
           <th className="py-2 pr-3">{t("Keyakinan", "Confidence")}</th>
           <th className="py-2 pr-3">{t("Waktu", "Time")}</th>
           <th className="py-2 pr-3">{t("Status", "Status")}</th>
+          <th className="py-2 pr-3">{t("Status Penjelasan", "Explanation")}</th>
           {CLASS_ORDER.map((c) => (
             <th key={c} className="py-2 pr-3 text-right">
               {CLASS_LABEL[c].split(" ")[0]}
@@ -116,6 +120,20 @@ export function AnalysisDetailTable({
             </td>
             <td className="py-2 pr-3 align-middle">
               <StatusCell row={row} t={t} />
+            </td>
+            <td className="py-2 pr-3 align-middle">
+              {hirescam ? (
+                (() => {
+                  const hc = hirescam.find((h) => h.ai_analysis_id === row.id);
+                  return hc ? (
+                    <ExplanationStatusBadge status={hc.explanation_status} />
+                  ) : (
+                    <span className="text-xs text-muted-foreground">-</span>
+                  );
+                })()
+              ) : (
+                <span className="text-xs text-muted-foreground">-</span>
+              )}
             </td>
             {CLASS_ORDER.map((c) => (
               <td key={c} className="py-2 pr-3 text-right align-middle">
