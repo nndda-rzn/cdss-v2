@@ -83,48 +83,63 @@ export function EcgUploadForm({
       <div
         {...getRootProps()}
         className={cn(
-          "flex flex-col items-center justify-center gap-2 rounded-sm border-2 border-dashed px-6 py-8 text-center transition-colors",
+          "flex items-center justify-between gap-4 rounded-sm border-2 border-dashed px-4 py-4 transition-colors",
           isDragActive
             ? "border-primary bg-affirmed-soft"
             : "border-border-strong bg-sunken hover:bg-affirmed-soft/50",
         )}
       >
+        <div className="flex items-center gap-3">
+          <UploadCloud className="h-5 w-5 text-primary shrink-0" aria-hidden="true" />
+          <div className="text-sm">
+            <span className="font-medium text-foreground">Seret EKG ke sini</span>
+            <span className="text-muted-foreground hidden sm:inline"> atau pilih berkas</span>
+            <p className="text-xs text-muted-foreground mt-0.5">JPEG/PNG, maks 10 MB</p>
+          </div>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="cursor-pointer shrink-0"
+          onClick={open}
+        >
+          <ImageUp className="mr-1.5 h-4 w-4" aria-hidden="true" />
+          Pilih berkas
+        </Button>
         {/* The label keeps the accessible name "Pilih berkas" for tests + a11y. */}
         <label htmlFor="ecg-file" className="sr-only">
           Pilih berkas EKG
         </label>
         <input id="ecg-file" {...getInputProps()} />
-        <UploadCloud className="h-7 w-7 text-primary" aria-hidden="true" />
-        <div className="text-sm">
-          <span className="font-medium text-foreground">Seret berkas EKG ke sini</span>
-          <span className="text-muted-foreground"> atau</span>
-        </div>
-        <Button type="button" variant="outline" size="sm" className="cursor-pointer" onClick={open}>
-          <ImageUp className="mr-1.5 h-4 w-4" aria-hidden="true" />
-          Pilih berkas
-        </Button>
-        <p className="text-xs text-muted-foreground">JPEG atau PNG, maks 10 MB</p>
       </div>
 
       {preview && file && (
-        <div className="flex items-start gap-3 rounded-sm border border-border-strong bg-paper p-2">
-          <img src={preview} alt="Pratinjau EKG" className="h-24 w-24 rounded-sm object-cover" />
+        <div className="flex items-center gap-3 rounded-sm border border-border-strong bg-paper p-2">
+          <img src={preview} alt="Pratinjau EKG" className="h-12 w-12 rounded-sm object-cover" />
           <div className="flex flex-1 flex-col gap-0.5 text-sm">
             <span className="truncate font-medium text-foreground">{file.name}</span>
-            <span className="tabular text-xs text-muted-foreground">{formatBytes(file.size)}</span>
-            <span className="text-xs uppercase tracking-wide text-muted-foreground">
-              {file.type.replace("image/", "")}
+            <span className="tabular text-xs text-muted-foreground">
+              {formatBytes(file.size)} • {file.type.replace("image/", "").toUpperCase()}
             </span>
           </div>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7 cursor-pointer"
+            className="h-8 w-8 cursor-pointer shrink-0"
             onClick={clearFile}
             aria-label="Hapus berkas terpilih"
           >
             <X className="h-4 w-4" />
+          </Button>
+          <Button
+            disabled={!file || mutation.isPending}
+            onClick={() => mutation.mutate()}
+            className="cursor-pointer shrink-0"
+            size="sm"
+          >
+            {mutation.isPending ? "Mengunggah..." : "Unggah"}
           </Button>
         </div>
       )}
@@ -134,14 +149,6 @@ export function EcgUploadForm({
           {error}
         </p>
       )}
-
-      <Button
-        disabled={!file || mutation.isPending}
-        onClick={() => mutation.mutate()}
-        className="cursor-pointer"
-      >
-        {mutation.isPending ? "Mengunggah..." : "Unggah EKG"}
-      </Button>
     </div>
   );
 }

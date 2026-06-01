@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 import { ArrowUpRight, ScanLine } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { useNavigate } from "react-router-dom";
 
 import { AuthedImage } from "@/components/ui/authed-image";
 import { Card } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import { ecgKeys, fetchEcgStudies } from "../api";
 
 export function EcgStudyList({ encounterId }: { encounterId: string }) {
   const t = useI18nStore((s) => s.t);
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ecgKeys.list(encounterId),
     queryFn: () => fetchEcgStudies(encounterId),
@@ -42,7 +43,10 @@ export function EcgStudyList({ encounterId }: { encounterId: string }) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {data.map((s) => (
-        <Card key={s.id} className="overflow-hidden">
+        <Card
+          key={s.id}
+          className="overflow-hidden hover:shadow-elev-md hover:-translate-y-[1px] transition-all duration-200"
+        >
           <div className="relative bg-charcoal-50">
             <Zoom>
               <AuthedImage
@@ -65,16 +69,18 @@ export function EcgStudyList({ encounterId }: { encounterId: string }) {
               <span>Study UID</span>
             </div>
             <div className="tabular truncate font-mono text-xs text-foreground">{s.study_uid}</div>
-            <div className="tabular text-xs text-muted-foreground">
+            <div className="tabular text-xs text-muted-foreground mb-2">
               {s.created_at.slice(0, 16).replace("T", " ")}
             </div>
-            <Link
-              to={`/encounters/${encounterId}/ecg-studies/${s.id}/analyses`}
-              className="inline-flex items-center gap-1 pt-2 text-xs font-medium text-primary hover:underline"
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-fit h-7 px-2 -ml-2 text-xs font-medium text-primary hover:bg-accent cursor-pointer"
+              onClick={() => navigate(`/encounters/${encounterId}/ecg-studies/${s.id}/analyses`)}
             >
               {t("Lihat Analisis AI", "View AI Analysis")}
-              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </Link>
+              <ArrowUpRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
           </div>
         </Card>
       ))}
