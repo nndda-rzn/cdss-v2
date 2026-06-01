@@ -13,12 +13,14 @@ def register_blueprints(app: Flask) -> None:
     from app.api.patient_consent import bp as patient_consent_bp
     from app.api.patient_history import bp as patient_history_bp
     from app.api.patients import bp as patients_bp
+    from app.api.search import bp as search_bp
     from app.api.uploads import bp as uploads_bp
     from app.api.vital_signs import bp as vital_signs_bp
 
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(search_bp)
     app.register_blueprint(patients_bp)
     app.register_blueprint(patient_consent_bp)
     app.register_blueprint(patient_history_bp)
