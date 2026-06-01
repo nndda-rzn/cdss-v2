@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import * as api from "./api";
-import { AnalysisPanel } from "./AnalysisPanel";
+import * as api from "../api";
+import { AnalysisPanel } from "../components/AnalysisPanel";
 
 function renderWithClient(ui: React.ReactNode) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });

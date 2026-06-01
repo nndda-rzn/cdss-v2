@@ -3,7 +3,7 @@ import { ScanLine } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 
-import { AnalysisPanel } from "@/features/ai_analysis/AnalysisPanel";
+import { AnalysisPanel } from "@/features/ai_analysis/components/AnalysisPanel";
 import { AuthedImage } from "@/components/ui/authed-image";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";

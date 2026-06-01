@@ -4,9 +4,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 
-import { analysisKeys, fetchAnalyses, runAnalysis } from "./api";
+import { analysisKeys, fetchAnalyses, runAnalysis } from "../api";
+import { computeConsensus } from "../labels";
 import { AnalysisTable } from "./AnalysisTable";
-import { computeConsensus } from "./labels";
 
 export function AnalysisPanel({ encounterId, studyId }: { encounterId: string; studyId: string }) {
   const qc = useQueryClient();

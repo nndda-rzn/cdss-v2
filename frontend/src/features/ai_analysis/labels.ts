@@ -2,7 +2,7 @@
  * AI-analysis presentation constants + consensus calculation.
  * Pure (no React) so the consensus logic is independently testable.
  */
-import type { AnalysisRow, PredictedClass } from "./api";
+import type { AnalysisRow, PredictedClass } from "./types";
 
 export const CLASS_LABEL: Record<PredictedClass, string> = {
   normal: "Normal",

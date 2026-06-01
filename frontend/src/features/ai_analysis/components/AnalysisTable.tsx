@@ -1,8 +1,8 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-import type { AnalysisRow, PredictedClass } from "./api";
-import { CLASS_CHIP, CLASS_LABEL } from "./labels";
+import type { AnalysisRow, PredictedClass } from "../types";
+import { CLASS_CHIP, CLASS_LABEL } from "../labels";
 
 function PredictionChip({ value }: { value: PredictedClass }) {
   return (
