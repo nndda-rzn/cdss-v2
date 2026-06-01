@@ -1,12 +1,8 @@
 import { apiFetch } from "@/lib/api/client";
 
-export interface ConsentRow {
-  id: number;
-  consent_type: string;
-  status: string;
-  given_at: string | null;
-  revoked_at: string | null;
-}
+import type { ConsentRow, ConsentStatus } from "./types";
+
+export type { ConsentRow, ConsentStatus } from "./types";
 
 export async function fetchConsents(patientId: string): Promise<ConsentRow[]> {
   const resp = await apiFetch(`/api/patients/${patientId}/consent`);
@@ -18,7 +14,7 @@ export async function fetchConsents(patientId: string): Promise<ConsentRow[]> {
 export async function captureConsent(
   patientId: string,
   consentType: string,
-  status: "given" | "revoked" = "given",
+  status: ConsentStatus = "given",
 ): Promise<void> {
   const resp = await apiFetch(`/api/patients/${patientId}/consent`, {
     method: "POST",

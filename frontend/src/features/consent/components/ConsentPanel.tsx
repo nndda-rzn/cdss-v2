@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { captureConsent, consentKeys, fetchConsents, type ConsentRow } from "./api";
+import { captureConsent, consentKeys, fetchConsents, type ConsentRow } from "../api";
 
 const _TYPE_LABELS: Record<string, string> = {
   data_use: "Penggunaan Data",
