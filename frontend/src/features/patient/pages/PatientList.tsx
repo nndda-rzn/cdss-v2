@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RoleGate } from "@/features/auth/components/RoleGate";
 
 import { fetchPatients, patientKeys } from "../api";
+import { AdminModeBanner } from "../components/AdminModeBanner";
 
 export function PatientList() {
   const { data, isLoading, isError, error } = useQuery({
@@ -46,13 +48,17 @@ export function PatientList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Pasien</h1>
-        <Button asChild className="cursor-pointer">
-          <Link to="/patients/new">
-            <UserPlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-            Pasien Baru
-          </Link>
-        </Button>
+        <RoleGate allow={["clinician", "nurse"]}>
+          <Button asChild className="cursor-pointer">
+            <Link to="/patients/new">
+              <UserPlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              Pasien Baru
+            </Link>
+          </Button>
+        </RoleGate>
       </div>
+
+      <AdminModeBanner />
 
       <div className="relative max-w-sm">
         <Search
@@ -91,12 +97,14 @@ export function PatientList() {
           title="Belum ada pasien terdaftar"
           description="Daftarkan pasien pertama untuk mulai mencatat kunjungan dan studi EKG."
           action={
-            <Button asChild size="sm" className="cursor-pointer">
-              <Link to="/patients/new">
-                <UserPlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                Daftarkan pasien pertama
-              </Link>
-            </Button>
+            <RoleGate allow={["clinician", "nurse"]}>
+              <Button asChild size="sm" className="cursor-pointer">
+                <Link to="/patients/new">
+                  <UserPlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                  Daftarkan pasien pertama
+                </Link>
+              </Button>
+            </RoleGate>
           }
         />
       )}

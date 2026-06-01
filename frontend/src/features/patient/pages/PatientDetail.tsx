@@ -110,12 +110,14 @@ export function PatientDetail() {
                     title="Daftar kunjungan akan tampil di sini"
                     description="Mulai kunjungan baru untuk merekam keluhan, tanda vital, dan studi EKG."
                     action={
-                      <Button asChild size="sm" className="cursor-pointer">
-                        <Link to={`/patients/${data.id}/encounters/new`}>
-                          <FilePlus2 className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                          Kunjungan baru
-                        </Link>
-                      </Button>
+                      <RoleGate allow={["clinician", "nurse"]}>
+                        <Button asChild size="sm" className="cursor-pointer">
+                          <Link to={`/patients/${data.id}/encounters/new`}>
+                            <FilePlus2 className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                            Kunjungan baru
+                          </Link>
+                        </Button>
+                      </RoleGate>
                     }
                   />
                 </CardContent>
