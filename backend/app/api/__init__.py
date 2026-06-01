@@ -10,6 +10,7 @@ def register_blueprints(app: Flask) -> None:
     from app.api.ecg_studies import bp as ecg_studies_bp
     from app.api.encounters import bp as encounters_bp
     from app.api.health import bp as health_bp
+    from app.api.hirescam import bp as hirescam_bp
     from app.api.patient_consent import bp as patient_consent_bp
     from app.api.patient_history import bp as patient_history_bp
     from app.api.patients import bp as patients_bp
@@ -29,4 +30,5 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(vital_signs_bp)
     app.register_blueprint(ecg_studies_bp)
     app.register_blueprint(ai_analysis_bp)
+    app.register_blueprint(hirescam_bp)
     app.register_blueprint(uploads_bp)

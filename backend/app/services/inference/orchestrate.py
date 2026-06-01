@@ -77,6 +77,21 @@ def analyze_study(
     )
     session.flush()
 
+    # Auto-generate HiResCAM artifacts for successful analyses
+    try:
+        from app.services.hirescam.orchestrate import generate_for_study
+
+        generate_for_study(
+            session,
+            study_id=study_id,
+            storage_root=storage_root,
+            model_dir=model_dir,
+        )
+        session.flush()
+    except Exception as exc:  # noqa: BLE001 — HiResCAM failure must not block inference
+        import logging
+        logging.getLogger(__name__).warning("HiResCAM generation failed: %s", exc)
+
     return list(
         session.scalars(
             select(AIAnalysis)
