@@ -33,7 +33,7 @@ export function EcgSweep({
   return (
     <svg
       role="img"
-      aria-label="EKG-Insight wave motif"
+      aria-label="CardioVision-CDSS wave motif"
       viewBox="0 0 120 32"
       width={width}
       height={height}

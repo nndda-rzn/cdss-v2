@@ -33,7 +33,7 @@ export function FocusShell() {
 
       <header className="no-print sticky top-0 z-30 flex h-12 items-center gap-2 border-b border-border-strong bg-paper px-4">
         <EcgSweep className="text-primary" width={24} height={12} thickness={2.5} />
-        <span className="text-sm font-semibold tracking-tight">EKG-Insight</span>
+        <span className="text-sm font-semibold tracking-tight">CardioVision-CDSS</span>
         <Button asChild variant="ghost" size="sm" className="ml-auto cursor-pointer">
           <Link to={`/encounters/${id}`}>
             <LogOut className="mr-1.5 h-4 w-4" aria-hidden="true" />

@@ -27,11 +27,11 @@ export function Header({ leading }: HeaderProps) {
       {leading}
       <div className="flex items-center gap-2 text-foreground">
         <EcgSweep className="text-primary" width={28} height={14} thickness={2.5} />
-        <span className="text-base font-semibold tracking-tight">EKG-Insight</span>
+        <span className="text-base font-semibold tracking-tight">CardioVision-CDSS</span>
       </div>
       <Separator orientation="vertical" className="h-6 bg-border-strong" />
       <span className="hidden text-xs text-muted-foreground sm:inline">
-        {t("CDSS demo", "CDSS demo")}
+        {t("Sistem Pendukung Keputusan Klinis", "Clinical Decision Support System")}
       </span>
       <div className="ml-auto flex items-center gap-2">
         <GlobalSearchTrigger />

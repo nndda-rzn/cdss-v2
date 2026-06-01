@@ -28,7 +28,7 @@ export function LoginRoute() {
           {/* Mobile/tablet brand block — replaces the hidden left panel. */}
           <div className="mb-6 flex flex-col items-center gap-2 text-center lg:hidden">
             <EcgSweep className="text-primary" width={36} height={18} thickness={2.5} />
-            <h1 className="text-lg font-semibold tracking-tight">EKG-Insight</h1>
+            <h1 className="text-lg font-semibold tracking-tight">CardioVision-CDSS</h1>
             <p className="text-xs text-muted-foreground">
               {t("Sistem Pendukung Keputusan Klinis", "Clinical Decision Support System")}
             </p>

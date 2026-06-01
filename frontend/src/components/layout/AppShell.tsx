@@ -67,7 +67,7 @@ export function AppShell() {
             <SheetContent side="left" className="w-64 border-r border-border-strong bg-paper p-0">
               <div className="flex h-14 items-center gap-2 border-b border-border-strong px-4">
                 <ClipboardList className="h-4 w-4 text-primary" aria-hidden="true" />
-                <span className="text-base font-semibold tracking-tight">EKG-Insight</span>
+                <span className="text-base font-semibold tracking-tight">CardioVision-CDSS</span>
               </div>
               <SidebarNav onNavigate={() => setMobileOpen(false)} />
             </SheetContent>
