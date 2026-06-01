@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import type { DuplicateSuggestion } from "./schemas";
+import type { DuplicateSuggestion } from "../types";
 
 interface DedupDialogProps {
   duplicates: DuplicateSuggestion[] | null;

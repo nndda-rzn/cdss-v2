@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { RegisterForm } from "./RegisterForm";
+import { RegisterForm } from "../components/RegisterForm";
 
-vi.mock("./api", () => ({
+vi.mock("../api", () => ({
   registerPatient: vi.fn(),
   patientKeys: { all: ["patients"] },
 }));
-import { registerPatient } from "./api";
+import { registerPatient } from "../api";
 
 function renderForm() {
   return render(

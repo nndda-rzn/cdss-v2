@@ -20,8 +20,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DedupDialog } from "./DedupDialog";
-import { PatientCreateSchema, type DuplicateSuggestion, type PatientCreateValues } from "./schemas";
-import { registerPatient } from "./api";
+import {
+  PatientCreateSchema,
+  type DuplicateSuggestion,
+  type PatientCreateValues,
+} from "../schemas";
+import { registerPatient } from "../api";
 
 export function RegisterForm() {
   const navigate = useNavigate();

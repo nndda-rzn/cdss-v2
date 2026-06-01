@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { fetchPatients, patientKeys } from "./api";
+import { fetchPatients, patientKeys } from "../api";
 
 export function PatientList() {
   const { data, isLoading, isError, error } = useQuery({

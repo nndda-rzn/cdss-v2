@@ -12,9 +12,9 @@ import { RoleGate } from "@/features/auth/components/RoleGate";
 import { ConsentPanel } from "@/features/consent/components/ConsentPanel";
 import { HistoryPanel } from "@/features/patient_history/HistoryPanel";
 
-import { fetchPatient, patientKeys } from "./api";
-import { DeleteDialog } from "./DeleteDialog";
-import { IdentitySidebar } from "./IdentitySidebar";
+import { fetchPatient, patientKeys } from "../api";
+import { DeleteDialog } from "../components/DeleteDialog";
+import { IdentitySidebar } from "../components/IdentitySidebar";
 
 function PanelFallback({ error }: { error: unknown }) {
   const message = error instanceof Error ? error.message : "Tidak dapat memuat panel";

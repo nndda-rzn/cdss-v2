@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deletePatient, patientKeys } from "./api";
+import { deletePatient, patientKeys } from "../api";
 
 export function DeleteDialog({ patientId }: { patientId: string }) {
   const navigate = useNavigate();
