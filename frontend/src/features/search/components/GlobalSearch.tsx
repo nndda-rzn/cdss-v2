@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +46,12 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
         aria-label={t("Pencarian global", "Global search")}
       >
         <DialogTitle className="sr-only">{t("Pencarian", "Search")}</DialogTitle>
+        <DialogDescription className="sr-only">
+          {t(
+            "Cari pasien atau kunjungan dari command palette.",
+            "Search patients or encounters from the command palette.",
+          )}
+        </DialogDescription>
         <div className="flex items-center gap-2 border-b border-border px-3 py-3">
           <Search className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <input
