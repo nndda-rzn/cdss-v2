@@ -116,7 +116,7 @@ Dirancang untuk **low-resource settings**: inferensi CPU-only, dapat offline, ri
 | 1 | Project Foundation | Done (v0.1.0-sprint-1) |
 | 2 | Auth & Upload | Done (2A clinical context, 2B ECG study) |
 | 3 | AI Inference | Done (v0.5.0-sprint-3, 5 YOLO models) |
-| 4 | HiResCAM | Planned |
+| 4 | HiResCAM | Done |
 | 5 | Recommendation | Planned |
 | 6 | History & PDF | Planned |
 | 7 | Research Dashboard | Planned |
