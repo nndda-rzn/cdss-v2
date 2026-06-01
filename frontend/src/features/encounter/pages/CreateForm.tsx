@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createEncounter } from "./api";
+import { createEncounter } from "../api";
 
 const EncounterSchema = z.object({
   encounter_type: z.enum(["rawat_jalan", "igd"]),
