@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PatientIdentityStrip } from "@/components/layout/PatientIdentityStrip";
 import { RoleGate } from "@/features/auth/components/RoleGate";
 import { ecgKeys, fetchEcgStudy } from "@/features/ecg_study/api";
+import { fetchPatient, patientKeys } from "@/features/patient/api";
 import { useI18nStore } from "@/lib/i18n/store";
 
 import { analysisKeys, fetchAnalyses, runAnalysis } from "../api";
@@ -32,6 +34,14 @@ export function AnalysisDetailPage() {
     queryKey: ecgKeys.detail(id, studyId),
     queryFn: () => fetchEcgStudy(id, studyId),
     enabled: !!id && !!studyId,
+    retry: false,
+  });
+
+  const patientId = study.data?.patient_id;
+  const patient = useQuery({
+    queryKey: patientKeys.detail(patientId ?? ""),
+    queryFn: () => fetchPatient(patientId as string),
+    enabled: !!patientId,
     retry: false,
   });
 
@@ -65,17 +75,22 @@ export function AnalysisDetailPage() {
         {t("Kembali ke Kunjungan", "Back to Encounter")} #{id}
       </Link>
 
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("Analisis AI", "AI Analysis")}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t(
-            "Perbandingan lima model YOLO untuk studi EKG ini.",
-            "Five-model YOLO comparison for this ECG study.",
-          )}
-        </p>
+      <header className="flex flex-col gap-2">
+        {patient.data && <PatientIdentityStrip patient={patient.data} />}
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t("Analisis AI", "AI Analysis")}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {t(
+              "Perbandingan lima model YOLO untuk studi EKG ini.",
+              "Five-model YOLO comparison for this ECG study.",
+            )}
+          </p>
+        </div>
       </header>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[3fr_1fr]">
         {study.isLoading ? (
           <Skeleton variant="ecg" className="h-80 w-full" />
         ) : study.data ? (
