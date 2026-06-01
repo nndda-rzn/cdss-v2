@@ -23,7 +23,7 @@ export function LoginBrandPanel() {
 
       <header className="relative z-10 flex items-center gap-2">
         <EcgSweep className="text-white" width={36} height={18} thickness={2.5} />
-        <span className="text-base font-semibold tracking-tight">EKG-Insight</span>
+        <span className="text-base font-semibold tracking-tight">CardioVision-CDSS</span>
       </header>
 
       <div className="relative z-10 flex max-w-md flex-col gap-4">
