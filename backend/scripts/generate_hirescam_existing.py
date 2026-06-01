@@ -13,7 +13,7 @@ from app.paths import MODEL_DIR, STORAGE_DIR, default_database_url
 from app.services.hirescam.orchestrate import generate_for_study
 
 
-def main():
+def main() -> None:
     from app.db.engine import create_db_engine
 
     engine = create_db_engine(default_database_url())
