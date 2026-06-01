@@ -57,7 +57,10 @@ export function AnalysisDetailPage() {
 
   const mutation = useMutation({
     mutationFn: () => runAnalysis(id, studyId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: analysisKeys.list(id, studyId) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: analysisKeys.list(id, studyId) });
+      qc.invalidateQueries({ queryKey: hirescamKeys.study(id, studyId) });
+    },
   });
 
   // Access denied (403 from either query) -> informative empty state.
