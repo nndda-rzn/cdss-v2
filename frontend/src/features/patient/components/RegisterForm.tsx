@@ -2,33 +2,34 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { DedupDialog } from "./DedupDialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useI18nStore } from "@/lib/i18n/store";
+
+import { registerPatient } from "../api";
 import {
   PatientCreateSchema,
   type DuplicateSuggestion,
   type PatientCreateValues,
 } from "../schemas";
-import { registerPatient } from "../api";
+import { ContactSection } from "./ContactSection";
+import { DedupDialog } from "./DedupDialog";
+import { IdentitySection } from "./IdentitySection";
 
+/**
+ * Patient register form — SaaS card + grid layout
+ * (2026-06-01-saas-register-form-design.md). Sections live in their own
+ * focused files; this component owns the form state machine, the page
+ * chrome, and the action footer.
+ */
 export function RegisterForm() {
   const navigate = useNavigate();
+  const t = useI18nStore((s) => s.t);
   const [serverError, setServerError] = useState<string | null>(null);
   const [duplicates, setDuplicates] = useState<DuplicateSuggestion[] | null>(null);
   const form = useForm<PatientCreateValues>({
@@ -61,132 +62,88 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="max-w-lg">
-      <h1 className="mb-4 text-xl font-semibold">Pasien Baru</h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit((v) => submit(v))} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nama Lengkap</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+    <div className="flex justify-center pb-8">
+      <Card className="w-full max-w-3xl">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl">{t("Pasien Baru", "New Patient")}</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {t(
+              "Daftarkan pasien baru ke fasilitas Anda.",
+              "Register a new patient to your facility.",
             )}
-          />
-          <FormField
-            control={form.control}
-            name="dob"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tanggal Lahir</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Jenis Kelamin</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="male">Laki-laki</SelectItem>
-                    <SelectItem value="female">Perempuan</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="nik"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>NIK (opsional)</FormLabel>
-                <FormControl>
-                  <Input inputMode="numeric" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Telepon (opsional)</FormLabel>
-                <FormControl>
-                  <Input inputMode="tel" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Alamat (opsional)</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="consent_data_use"
-            render={({ field }) => (
-              <FormItem>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                  />
-                  Pasien menyetujui penggunaan data untuk pelayanan
-                </label>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {serverError && (
-            <p role="alert" className="text-sm text-destructive">
-              {serverError}
-            </p>
-          )}
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            Daftar
-          </Button>
-        </form>
-      </Form>
+          </p>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit((v) => submit(v))} className="space-y-6">
+              <IdentitySection control={form.control} />
 
-      <DedupDialog
-        duplicates={duplicates}
-        onClose={() => setDuplicates(null)}
-        onConfirmNew={() => {
-          setDuplicates(null);
-          void submit(form.getValues(), true);
-        }}
-      />
+              <Separator />
+
+              <ContactSection control={form.control} />
+
+              <Separator />
+
+              <FormField
+                control={form.control}
+                name="consent_data_use"
+                render={({ field }) => (
+                  <FormItem>
+                    <label className="flex items-start gap-2 text-sm">
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(v) => field.onChange(v === true)}
+                        className="mt-0.5"
+                      />
+                      <span>
+                        {t(
+                          "Pasien menyetujui penggunaan data untuk pelayanan",
+                          "Patient consents to data use for clinical services",
+                        )}
+                      </span>
+                    </label>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {serverError && (
+                <p role="alert" className="text-sm text-destructive">
+                  {serverError}
+                </p>
+              )}
+
+              <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate(-1)}
+                  className="cursor-pointer"
+                >
+                  <ArrowLeft className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                  {t("Batal", "Cancel")}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                  className="cursor-pointer"
+                >
+                  {t("Daftar", "Register")}
+                </Button>
+              </div>
+            </form>
+          </Form>
+
+          <DedupDialog
+            duplicates={duplicates}
+            onClose={() => setDuplicates(null)}
+            onConfirmNew={() => {
+              setDuplicates(null);
+              void submit(form.getValues(), true);
+            }}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
