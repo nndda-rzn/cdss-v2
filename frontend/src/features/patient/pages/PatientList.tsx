@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RoleGate } from "@/features/auth/components/RoleGate";
 
 import { fetchPatients, patientKeys } from "../api";
+import { AdminModeBanner } from "../components/AdminModeBanner";
 
 export function PatientList() {
   const { data, isLoading, isError, error } = useQuery({
@@ -56,6 +57,8 @@ export function PatientList() {
           </Button>
         </RoleGate>
       </div>
+
+      <AdminModeBanner />
 
       <div className="relative max-w-sm">
         <Search
