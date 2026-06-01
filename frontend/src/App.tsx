@@ -3,6 +3,7 @@ import { LoginRoute } from "@/routes/login";
 import { NotFoundRoute } from "@/routes/NotFoundRoute";
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 import { AppShell } from "@/components/layout/AppShell";
+import { FocusShell } from "@/components/layout/FocusShell";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import { PatientRegisterRoute } from "@/routes/PatientRegisterRoute";
 import { PatientsRoute } from "@/routes/PatientsRoute";
@@ -25,6 +26,8 @@ export function App() {
             <Route path="/patients/:id" element={<PatientDetailRoute />} />
             <Route path="/patients/:id/encounters/new" element={<EncounterCreateRoute />} />
             <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
+          </Route>
+          <Route element={<FocusShell />}>
             <Route
               path="/encounters/:id/ecg-studies/:studyId/analyses"
               element={<AnalysisDetailRoute />}
