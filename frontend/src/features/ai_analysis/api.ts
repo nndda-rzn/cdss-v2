@@ -81,5 +81,8 @@ export async function generateHiResCAM(
 }
 
 export function heatmapUrl(path: string): string {
-  return `/api/heatmaps/${path}`;
+  // Backend stores paths relative to STORAGE_DIR/heatmaps (e.g. "21/overlay.png")
+  // Strip any leading "heatmaps/" for backwards compatibility with old data
+  const cleanPath = path.replace(/^heatmaps\//, "");
+  return `/api/heatmaps/${cleanPath}`;
 }
