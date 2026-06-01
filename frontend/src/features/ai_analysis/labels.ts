@@ -24,8 +24,15 @@ export interface Consensus {
   total: number;
 }
 
-/** Majority predicted class across successful analyses (null if none). */
-export function computeConsensus(rows: AnalysisRow[]): Consensus | null {
+export interface ConsensusDetail extends Consensus {
+  /** The dominant predicted class (enum), for tone/colour selection. */
+  dominantClass: PredictedClass;
+  /** Mean confidence across successful analyses of the dominant class (0..1). */
+  avgConfidence: number;
+}
+
+/** Richer consensus: dominant class enum + mean confidence of that class. */
+export function computeConsensusDetail(rows: AnalysisRow[]): ConsensusDetail | null {
   const successful = rows.filter((r) => r.status === "success" && r.predicted_class);
   if (successful.length === 0) return null;
 
@@ -44,5 +51,15 @@ export function computeConsensus(rows: AnalysisRow[]): Consensus | null {
     }
   }
   if (best === null) return null;
-  return { label: CLASS_LABEL[best], count: bestCount, total: successful.length };
+
+  const ofClass = successful.filter((r) => r.predicted_class === best);
+  const avg = ofClass.reduce((sum, r) => sum + (r.confidence_score ?? 0), 0) / ofClass.length;
+
+  return {
+    label: CLASS_LABEL[best],
+    count: bestCount,
+    total: successful.length,
+    dominantClass: best,
+    avgConfidence: avg,
+  };
 }

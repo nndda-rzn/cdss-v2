@@ -9,6 +9,7 @@ import { PatientsRoute } from "@/routes/PatientsRoute";
 import { PatientDetailRoute } from "@/routes/PatientDetailRoute";
 import { EncounterCreateRoute } from "@/routes/EncounterCreateRoute";
 import { EncounterDetailRoute } from "@/routes/EncounterDetailRoute";
+import { AnalysisDetailRoute } from "@/routes/AnalysisDetailRoute";
 
 export function App() {
   return (
@@ -24,6 +25,10 @@ export function App() {
             <Route path="/patients/:id" element={<PatientDetailRoute />} />
             <Route path="/patients/:id/encounters/new" element={<EncounterCreateRoute />} />
             <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
+            <Route
+              path="/encounters/:id/ecg-studies/:studyId/analyses"
+              element={<AnalysisDetailRoute />}
+            />
           </Route>
         </Route>
         <Route path="*" element={<NotFoundRoute />} />
