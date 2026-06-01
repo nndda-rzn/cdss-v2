@@ -94,12 +94,27 @@ export default {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(2px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        shimmer: "shimmer 2s infinite",
+        fadeIn: "fadeIn 150ms ease-out forwards",
+      },
+      boxShadow: {
+        // Progressive elevation scale (warm-tinted, low alpha) — SaaS polish.
+        // Replaces the previous near-zero shadow used by the clinical-sharp pass.
+        "elev-sm": "0 1px 2px 0 rgb(15 30 40 / 0.04), 0 1px 3px 0 rgb(15 30 40 / 0.05)",
+        "elev-md": "0 2px 4px -1px rgb(15 30 40 / 0.05), 0 4px 12px -2px rgb(15 30 40 / 0.08)",
+        "elev-lg": "0 4px 8px -2px rgb(15 30 40 / 0.06), 0 12px 24px -6px rgb(15 30 40 / 0.10)",
       },
       borderRadius: {
-        // ADR-0011: clinical-sharp radius scale anchored at 2px.
+        // SaaS pass: anchored at 6px via --radius (lg). Keep stepped scale.
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 1px)",
-        sm: "calc(var(--radius) - 2px)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
         sans: [

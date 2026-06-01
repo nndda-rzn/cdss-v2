@@ -3,19 +3,31 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /*
- * Document-card pattern (ADR-0011 compliant): sharp radius, prominent border,
- * near-zero shadow. Mirrors a clinical lab report rather than a SaaS card.
- * The header supports an optional section-label slot (icon + uppercase label)
- * that gives each Card a one-line domain marker.
+ * Card primitive — SaaS-polished pass (2026-06-01-saas-ui-polish-design.md).
+ * Rounded radius (lg = 6px), subtle progressive shadow (elev-sm), and a
+ * gentle shadow lift on hover. The header still supports an optional
+ * section-label slot (icon + uppercase label) for one-line domain markers,
+ * preserving the clinical document feel inside a more modern container.
  */
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * When true, the card lifts and shadow intensifies on hover. Use for
+   * KPI cards, list rows, or anything actually clickable. Defaults to false
+   * so static layout cards (patient detail, encounter info) feel stable.
+   */
+  interactive?: boolean;
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, interactive = false, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        "rounded-sm border border-border-strong bg-card text-card-foreground",
-        "shadow-[0_1px_0_rgb(0_0_0_/_0.04)]",
+        "rounded-lg border border-border bg-card text-card-foreground shadow-elev-sm",
+        "transition-shadow duration-200",
+        interactive && "cursor-pointer hover:shadow-elev-md hover:-translate-y-[1px]",
+        interactive && "transition-all duration-200",
         className,
       )}
       {...props}
@@ -33,7 +45,7 @@ interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
   ({ className, sectionLabel, sectionIcon, children, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-1 p-4", className)} {...props}>
+    <div ref={ref} className={cn("flex flex-col space-y-1 p-5", className)} {...props}>
       {sectionLabel && (
         <div className="section-label flex items-center gap-1.5">
           {sectionIcon}
@@ -66,14 +78,14 @@ CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("p-4 pt-0", className)} {...props} />
+    <div ref={ref} className={cn("p-5 pt-0", className)} {...props} />
   ),
 );
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center p-4 pt-0", className)} {...props} />
+    <div ref={ref} className={cn("flex items-center p-5 pt-0", className)} {...props} />
   ),
 );
 CardFooter.displayName = "CardFooter";

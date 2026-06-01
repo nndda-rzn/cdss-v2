@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,6 +13,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useI18nStore } from "@/lib/i18n/store";
+
 import { login } from "./api";
 
 const LoginSchema = z.object({
@@ -22,6 +25,7 @@ const LoginSchema = z.object({
 type LoginValues = z.infer<typeof LoginSchema>;
 
 export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
+  const t = useI18nStore((s) => s.t);
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
@@ -59,7 +63,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t("Kata sandi", "Password")}</FormLabel>
               <FormControl>
                 <Input type="password" autoComplete="current-password" {...field} />
               </FormControl>
@@ -72,8 +76,12 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
             {serverError}
           </p>
         )}
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          Masuk
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+          className="w-full cursor-pointer"
+        >
+          {form.formState.isSubmitting ? t("Memuat...", "Signing in...") : t("Masuk", "Sign in")}
         </Button>
       </form>
     </Form>

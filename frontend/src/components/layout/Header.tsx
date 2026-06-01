@@ -1,9 +1,9 @@
-import { LogOut } from "lucide-react";
-
 import { EcgSweep } from "@/components/brand/EcgSweep";
-import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/layout/LanguageToggle";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { Separator } from "@/components/ui/separator";
-import { useAuthStore } from "@/features/auth/store";
+import { GlobalSearchTrigger } from "@/features/search/GlobalSearchTrigger";
+import { useI18nStore } from "@/lib/i18n/store";
 
 interface HeaderProps {
   /**
@@ -14,15 +14,13 @@ interface HeaderProps {
 }
 
 /**
- * Top header bar: brand mark + wordmark on the left, user controls on the
- * right. Sticky 56px tall, sits above the sidebar + main content.
- *
- * The role label is read from the auth store (decoded into the JWT). The
- * facility name is not yet available client-side; once a `/api/me` endpoint
- * exists we can replace the placeholder.
+ * Top header bar — sticky 56px tall. Brand mark + wordmark on the left,
+ * global-search pill in the middle, language toggle and user menu on the
+ * right. The plain logout button moved into the user dropdown so the header
+ * stays visually clean.
  */
 export function Header({ leading }: HeaderProps) {
-  const clear = useAuthStore((s) => s.clear);
+  const t = useI18nStore((s) => s.t);
 
   return (
     <header className="no-print sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border-strong bg-paper px-4">
@@ -32,12 +30,14 @@ export function Header({ leading }: HeaderProps) {
         <span className="text-base font-semibold tracking-tight">EKG-Insight</span>
       </div>
       <Separator orientation="vertical" className="h-6 bg-border-strong" />
-      <span className="hidden text-xs text-muted-foreground sm:inline">CDSS demo</span>
+      <span className="hidden text-xs text-muted-foreground sm:inline">
+        {t("CDSS demo", "CDSS demo")}
+      </span>
       <div className="ml-auto flex items-center gap-2">
-        <Button variant="ghost" size="sm" className="cursor-pointer" onClick={() => clear()}>
-          <LogOut className="mr-1.5 h-4 w-4" aria-hidden="true" />
-          Keluar
-        </Button>
+        <GlobalSearchTrigger />
+        <LanguageToggle />
+        <Separator orientation="vertical" className="h-6 bg-border-strong" />
+        <UserMenu />
       </div>
     </header>
   );

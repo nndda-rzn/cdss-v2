@@ -6,6 +6,8 @@ import { LoginForm } from "./LoginForm";
 vi.mock("./api", () => ({ login: vi.fn(async () => undefined) }));
 import { login } from "./api";
 
+const PASSWORD_LABEL = /kata sandi|password/i;
+
 describe("LoginForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -14,7 +16,7 @@ describe("LoginForm", () => {
   it("renders email and password fields", () => {
     render(<LoginForm onSuccess={() => {}} />);
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(PASSWORD_LABEL)).toBeInTheDocument();
   });
 
   it("calls login on submit", async () => {
@@ -23,10 +25,10 @@ describe("LoginForm", () => {
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: "a@x.id" },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByLabelText(PASSWORD_LABEL), {
       target: { value: "secret" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /masuk|login/i }));
+    fireEvent.click(screen.getByRole("button", { name: /masuk|sign in/i }));
     await waitFor(() =>
       expect(login).toHaveBeenCalledWith({ email: "a@x.id", password: "secret" }),
     );
@@ -37,8 +39,8 @@ describe("LoginForm", () => {
     const user = userEvent.setup();
     render(<LoginForm onSuccess={vi.fn()} />);
     await user.type(screen.getByLabelText(/email/i), "not-an-email");
-    await user.type(screen.getByLabelText(/password/i), "pass");
-    await user.click(screen.getByRole("button", { name: /masuk/i }));
+    await user.type(screen.getByLabelText(PASSWORD_LABEL), "pass");
+    await user.click(screen.getByRole("button", { name: /masuk|sign in/i }));
     expect(await screen.findByText(/email tidak valid/i)).toBeInTheDocument();
     expect(login).not.toHaveBeenCalled();
   });

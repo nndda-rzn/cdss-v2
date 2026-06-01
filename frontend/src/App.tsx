@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginRoute } from "@/routes/login";
+import { NotFoundRoute } from "@/routes/NotFoundRoute";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { AppShell } from "@/components/layout/AppShell";
+import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { PatientRegisterRoute } from "@/routes/PatientRegisterRoute";
 import { PatientsRoute } from "@/routes/PatientsRoute";
 import { PatientDetailRoute } from "@/routes/PatientDetailRoute";
@@ -15,7 +17,8 @@ export function App() {
         <Route path="/login" element={<LoginRoute />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
-            <Route path="/dashboard" element={<div>Dashboard (Sprint 2+)</div>} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/patients" element={<PatientsRoute />} />
             <Route path="/patients/new" element={<PatientRegisterRoute />} />
             <Route path="/patients/:id" element={<PatientDetailRoute />} />
@@ -23,7 +26,7 @@ export function App() {
             <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
           </Route>
         </Route>
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<NotFoundRoute />} />
       </Routes>
     </BrowserRouter>
   );
