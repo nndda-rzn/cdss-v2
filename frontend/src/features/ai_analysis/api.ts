@@ -84,5 +84,5 @@ export function heatmapUrl(path: string): string {
   // Backend stores paths relative to STORAGE_DIR/heatmaps (e.g. "21/overlay.png")
   // Strip any leading "heatmaps/" for backwards compatibility with old data
   const cleanPath = path.replace(/^heatmaps\//, "");
-  return `/api/heatmaps/${cleanPath}`;
+  return `/api/encounters/heatmaps/${cleanPath}`;
 }
