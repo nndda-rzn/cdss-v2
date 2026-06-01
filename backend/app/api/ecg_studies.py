@@ -86,3 +86,15 @@ def get_ecg_studies(encounter_id: int) -> Response:
             out.pop("device_info", None)
         items.append(out)
     return jsonify(items=items)
+
+
+@bp.get("/<int:encounter_id>/ecg-studies/<int:study_id>")
+@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+def get_ecg_study(encounter_id: int, study_id: int) -> Response:
+    s = session()
+    study = get_study_or_404(s, encounter_id=encounter_id, study_id=study_id)
+    out = study_to_out(study)
+    if current_role() == "researcher":
+        out.pop("patient_id", None)
+        out.pop("device_info", None)
+    return jsonify(study=out)

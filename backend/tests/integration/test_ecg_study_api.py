@@ -161,3 +161,28 @@ def test_upload_forbidden_for_researcher(client):
     e = _encounter(client)
     resp = _upload(client, e["id"], role="researcher")
     assert resp.status_code == 403
+
+
+def test_get_single_study_200(client):
+    e = _encounter(client)
+    study = _upload(client, e["id"]).get_json()["study"]
+    resp = client.get(
+        f"/api/encounters/{e['id']}/ecg-studies/{study['id']}",
+        headers=_headers(client),
+    )
+    assert resp.status_code == 200
+    body = resp.get_json()["study"]
+    assert body["id"] == study["id"]
+    assert body["study_uid"] == study["study_uid"]
+
+
+def test_get_single_study_404_wrong_encounter(client):
+    e = _encounter(client)
+    study = _upload(client, e["id"]).get_json()["study"]
+    # Same study id but a non-matching encounter id -> 404.
+    resp = client.get(
+        f"/api/encounters/9999/ecg-studies/{study['id']}",
+        headers=_headers(client),
+    )
+    assert resp.status_code == 404
+    assert resp.get_json()["error"]["code"] == "ECG_STUDY_NOT_FOUND"

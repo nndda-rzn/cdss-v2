@@ -1,18 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { ScanLine } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowUpRight, ScanLine } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 
-import { AnalysisPanel } from "@/features/ai_analysis/components/AnalysisPanel";
 import { AuthedImage } from "@/components/ui/authed-image";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { QualityBadge } from "@/components/ui/quality-badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useI18nStore } from "@/lib/i18n/store";
 
 import { ecgKeys, fetchEcgStudies } from "../api";
 
 export function EcgStudyList({ encounterId }: { encounterId: string }) {
+  const t = useI18nStore((s) => s.t);
   const { data, isLoading } = useQuery({
     queryKey: ecgKeys.list(encounterId),
     queryFn: () => fetchEcgStudies(encounterId),
@@ -66,14 +68,13 @@ export function EcgStudyList({ encounterId }: { encounterId: string }) {
             <div className="tabular text-xs text-muted-foreground">
               {s.created_at.slice(0, 16).replace("T", " ")}
             </div>
-            <details className="group pt-2">
-              <summary className="cursor-pointer list-none text-xs font-medium text-primary marker:hidden hover:underline">
-                Analisis AI
-              </summary>
-              <div className="pt-2">
-                <AnalysisPanel encounterId={encounterId} studyId={String(s.id)} />
-              </div>
-            </details>
+            <Link
+              to={`/encounters/${encounterId}/ecg-studies/${s.id}/analyses`}
+              className="inline-flex items-center gap-1 pt-2 text-xs font-medium text-primary hover:underline"
+            >
+              {t("Lihat Analisis AI", "View AI Analysis")}
+              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
           </div>
         </Card>
       ))}
