@@ -1,10 +1,9 @@
 import { apiFetch } from "@/lib/api/client";
-import { useAuthStore } from "./store";
 
-export interface LoginInput {
-  email: string;
-  password: string;
-}
+import { useAuthStore } from "./store";
+import type { AuthUser, LoginInput } from "./types";
+
+export type { AuthUser, JwtClaims, LoginInput } from "./types";
 
 export async function login(input: LoginInput): Promise<void> {
   const resp = await fetch("/api/auth/login", {
@@ -20,11 +19,7 @@ export async function login(input: LoginInput): Promise<void> {
   useAuthStore.getState().setTokens(data.access_token, data.refresh_token);
 }
 
-export async function fetchMe(): Promise<{
-  id: number;
-  name: string;
-  role: string;
-}> {
+export async function fetchMe(): Promise<AuthUser> {
   const resp = await apiFetch("/api/auth/me");
   const data = await resp.json();
   return data.user;

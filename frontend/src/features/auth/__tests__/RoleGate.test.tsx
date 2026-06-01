@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RoleGate, getRoleFromToken } from "./RoleGate";
-import { useAuthStore } from "./store";
+import { RoleGate, getRoleFromToken } from "../components/RoleGate";
+import { useAuthStore } from "../store";
 
 function tokenWithRole(role: string): string {
   const payload = btoa(JSON.stringify({ role }));

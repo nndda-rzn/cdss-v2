@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useAuthStore } from "./store";
+import { useAuthStore } from "../store";
 import { loadTokens } from "@/lib/api/auth-token";
 
 describe("auth store", () => {

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { useI18nStore } from "@/lib/i18n/store";
 
-import { login } from "./api";
+import { login } from "../api";
 
 const LoginSchema = z.object({
   email: z.string().email("Email tidak valid"),

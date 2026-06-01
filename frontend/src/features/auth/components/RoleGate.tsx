@@ -1,14 +1,12 @@
 import { useAuthStore } from "@/features/auth/store";
 
-interface JwtPayload {
-  role?: string;
-}
+import type { JwtClaims } from "../types";
 
 export function getRoleFromToken(token: string | null): string | null {
   if (!token) return null;
   try {
     const payload = token.split(".")[1];
-    const decoded = JSON.parse(atob(payload)) as JwtPayload;
+    const decoded = JSON.parse(atob(payload)) as JwtClaims;
     return decoded.role ?? null;
   } catch {
     return null;

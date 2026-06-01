@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RoleGate } from "@/features/auth/RoleGate";
+import { RoleGate } from "@/features/auth/components/RoleGate";
 import { ConsentPanel } from "@/features/consent/ConsentPanel";
 import { HistoryPanel } from "@/features/patient_history/HistoryPanel";
 

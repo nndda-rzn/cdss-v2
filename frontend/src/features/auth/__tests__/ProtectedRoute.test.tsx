@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
-import { ProtectedRoute } from "./ProtectedRoute";
-import { useAuthStore } from "./store";
+import { ProtectedRoute } from "../components/ProtectedRoute";
+import { useAuthStore } from "../store";
 
 function renderAt(initial: string) {
   return render(
