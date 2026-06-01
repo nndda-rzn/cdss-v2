@@ -2,10 +2,11 @@ import { cn } from "@/lib/utils";
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
-   * Render an ECG-line shimmer instead of the default pulse rectangle.
-   * Useful for table rows / detail panels where a flat block looks lifeless.
+   * - `block` (default): plain pulsing rectangle.
+   * - `ecg`: ECG-line shimmer (clinical motif) — better for table rows.
+   * - `card`: rounded-lg pulsing block sized for KPI/dashboard cards.
    */
-  variant?: "block" | "ecg";
+  variant?: "block" | "ecg" | "card";
 }
 
 function Skeleton({ className, variant = "block", ...props }: SkeletonProps) {
@@ -15,7 +16,7 @@ function Skeleton({ className, variant = "block", ...props }: SkeletonProps) {
         role="status"
         aria-label="Memuat..."
         className={cn(
-          "relative overflow-hidden rounded-sm bg-sunken",
+          "relative overflow-hidden rounded-md bg-sunken",
           "before:absolute before:inset-0 before:-translate-x-full",
           "before:animate-[shimmer_1.6s_infinite]",
           "before:bg-gradient-to-r before:from-transparent before:via-primary/15 before:to-transparent",
@@ -26,11 +27,21 @@ function Skeleton({ className, variant = "block", ...props }: SkeletonProps) {
       />
     );
   }
+  if (variant === "card") {
+    return (
+      <div
+        role="status"
+        aria-label="Memuat..."
+        className={cn("animate-pulse rounded-lg bg-sunken shadow-elev-sm", className)}
+        {...props}
+      />
+    );
+  }
   return (
     <div
       role="status"
       aria-label="Memuat..."
-      className={cn("animate-pulse rounded-sm bg-muted", className)}
+      className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
   );
