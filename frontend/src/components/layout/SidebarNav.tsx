@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Sliders, Building2, type LucideIcon } from "lucide-react";
+import { LayoutDashboard, Users, Building2, type LucideIcon } from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRole } from "@/features/auth/components/RoleGate";
@@ -31,7 +31,6 @@ const ADMIN_SECTION = {
   items: [
     { to: "/admin/users", label: "User", labelEn: "Users", icon: Users },
     { to: "/admin/facilities", label: "Fasilitas", labelEn: "Facilities", icon: Building2 },
-    { to: "/tuning", label: "Tuning", labelEn: "Tuning", icon: Sliders },
   ],
 };
 
