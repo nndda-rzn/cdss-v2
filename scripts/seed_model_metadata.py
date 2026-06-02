@@ -10,7 +10,7 @@ from sqlalchemy import select
 
 from app.db.models.model_metadata import ModelMetadata
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[1]
 MODELS_DIR = REPO_ROOT / "models"
 
 
