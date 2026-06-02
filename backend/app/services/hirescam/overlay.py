@@ -6,7 +6,9 @@ from PIL import Image
 ALPHA = 0.4  # Heatmap transparency on overlay
 
 
-def compose_overlay(original_path: str, heatmap_png: bytes) -> bytes:
+def compose_overlay(
+    original_path: str, heatmap_png: bytes, *, alpha: float = ALPHA,
+) -> bytes:
     """Blend heatmap over original ECG image.
 
     Args:
@@ -22,7 +24,7 @@ def compose_overlay(original_path: str, heatmap_png: bytes) -> bytes:
     # Resize heatmap to match original
     heatmap = heatmap.resize(orig.size, Image.Resampling.LANCZOS)
 
-    blended = Image.blend(orig, heatmap, ALPHA)
+    blended = Image.blend(orig, heatmap, alpha)
     return _image_to_png_bytes(blended)
 
 

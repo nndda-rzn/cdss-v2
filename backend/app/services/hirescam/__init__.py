@@ -1,5 +1,7 @@
 """HiResCAM explainability services."""
 from app.services.hirescam.colormap import SUPPORTED_COLORMAPS, array_to_png
+from app.services.hirescam.config import HiResCAMConfig
+from app.services.hirescam.config_store import get_config, save_config
 from app.services.hirescam.generator import generate_hirescam
 from app.services.hirescam.generator_v2 import (
     find_conv_layers,
@@ -10,6 +12,9 @@ from app.services.hirescam.letterbox import LetterboxParams, letterbox, reverse_
 from app.services.hirescam.postprocess import postprocess_heatmap
 
 __all__ = [
+    "HiResCAMConfig",
+    "get_config",
+    "save_config",
     "LetterboxParams",
     "letterbox",
     "reverse_letterbox",
