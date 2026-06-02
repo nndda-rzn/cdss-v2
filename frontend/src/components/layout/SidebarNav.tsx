@@ -29,6 +29,7 @@ const ADMIN_SECTION = {
   titleId: "Admin",
   titleEn: "Admin",
   items: [
+    { to: "/admin", label: "Dashboard", labelEn: "Dashboard", icon: LayoutDashboard },
     { to: "/admin/users", label: "User", labelEn: "Users", icon: Users },
     { to: "/admin/facilities", label: "Fasilitas", labelEn: "Facilities", icon: Building2 },
   ],
