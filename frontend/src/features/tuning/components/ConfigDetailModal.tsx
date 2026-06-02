@@ -1,7 +1,13 @@
 // frontend/src/features/tuning/components/ConfigDetailModal.tsx
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchTuningConfig, tuningImageUrl, tuningKeys } from "../api";
@@ -37,6 +43,9 @@ export function ConfigDetailModal({ config, open, onOpenChange }: ConfigDetailMo
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Config #{config.config_index}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Detail konfigurasi HiResCAM #{config.config_index}
+          </DialogDescription>
         </DialogHeader>
 
         {/* View mode toggle */}
