@@ -74,7 +74,7 @@ def _encounter(client: object) -> dict[str, object]:
         },
         headers=_headers(c),
     ).get_json()["patient"]
-    return c.post(
+    return c.post(  # type: ignore[no-any-return]
         "/api/encounters",
         json={"patient_id": p["id"]},
         headers=_headers(c),
@@ -85,7 +85,7 @@ def _upload(client: object, encounter_id: int) -> dict[str, object]:
     from flask.testing import FlaskClient
 
     c: FlaskClient = client  # type: ignore[assignment]
-    return c.post(
+    return c.post(  # type: ignore[no-any-return]
         f"/api/encounters/{encounter_id}/ecg-studies",
         data={"file": (io.BytesIO(_JPEG), "ecg.jpg", "image/jpeg")},
         content_type="multipart/form-data",

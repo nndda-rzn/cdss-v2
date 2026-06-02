@@ -91,6 +91,7 @@ def analyze_study(
     except Exception as exc:  # noqa: BLE001 — HiResCAM failure must not block inference
         import logging
         logging.getLogger(__name__).warning("HiResCAM generation failed: %s", exc)
+        session.rollback()  # Prevent PendingRollbackError on subsequent queries
 
     return list(
         session.scalars(

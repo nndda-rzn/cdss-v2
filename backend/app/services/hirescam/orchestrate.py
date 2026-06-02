@@ -29,6 +29,13 @@ def generate_artifacts(
     if analysis.status != "success" or analysis.predicted_class is None:
         return None
 
+    # Check if artifact already exists (idempotency)
+    existing = session.scalar(
+        select(HiResCAMArtifact).where(HiResCAMArtifact.ai_analysis_id == analysis.id)
+    )
+    if existing is not None:
+        return existing
+
     study = session.get(ECGStudy, analysis.ecg_study_id)
     if study is None:
         return None
@@ -68,12 +75,15 @@ def generate_artifacts(
         )
 
         # Save artifacts to storage
-        artifact_dir = _artifact_dir(storage_root, analysis.id)
-        heatmap_path = artifact_dir / "heatmap.png"
-        overlay_path = artifact_dir / "overlay.png"
-        side_by_side_path = artifact_dir / "side_by_side.png"
+        # Store paths relative to STORAGE_DIR/heatmaps (not STORAGE_DIR)
+        # So paths are "21/heatmap.png" not "heatmaps/21/heatmap.png"
+        heatmap_dir = storage_root / "heatmaps" / str(analysis.id)
+        heatmap_dir.mkdir(parents=True, exist_ok=True)
 
-        heatmap_path.parent.mkdir(parents=True, exist_ok=True)
+        heatmap_path = heatmap_dir / "heatmap.png"
+        overlay_path = heatmap_dir / "overlay.png"
+        side_by_side_path = heatmap_dir / "side_by_side.png"
+
         heatmap_path.write_bytes(heatmap_png)
         overlay_path.write_bytes(overlay_png)
         side_by_side_path.write_bytes(side_by_side_png)
@@ -81,9 +91,9 @@ def generate_artifacts(
         # Persist artifact
         artifact = HiResCAMArtifact(
             ai_analysis_id=analysis.id,
-            heatmap_path=str(heatmap_path.relative_to(storage_root)),
-            overlay_path=str(overlay_path.relative_to(storage_root)),
-            side_by_side_path=str(side_by_side_path.relative_to(storage_root)),
+            heatmap_path=str(heatmap_path.relative_to(heatmap_dir.parent)),
+            overlay_path=str(overlay_path.relative_to(heatmap_dir.parent)),
+            side_by_side_path=str(side_by_side_path.relative_to(heatmap_dir.parent)),
             explanation_status=status,
             focus_metric=focus_metric,
             colormap_used="inferno",
@@ -134,5 +144,5 @@ def _class_to_index(predicted_class: str) -> int:
 
 
 def _artifact_dir(storage_root: Path, analysis_id: int) -> Path:
-    """Get storage directory for an analysis's artifacts."""
+    """Returns directory path for analysis artifacts."""
     return storage_root / "heatmaps" / str(analysis_id)

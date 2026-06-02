@@ -118,10 +118,11 @@ def get_study_hirescam(encounter_id: int, study_id: int) -> Response:
 def serve_heatmap(filepath: str) -> Response:
     """Serve a heatmap/overlay/side-by-side PNG file."""
     storage_root = Path(current_app.config["STORAGE_DIR"])
-    full_path = (storage_root / filepath).resolve()
+    heatmaps_dir = storage_root / "heatmaps"
+    full_path = (heatmaps_dir / filepath).resolve()
 
     # Security: prevent path traversal
-    if not full_path.is_relative_to(storage_root.resolve()):
+    if not full_path.is_relative_to(heatmaps_dir.resolve()):
         raise NotFoundError(
             code="FILE_NOT_FOUND",
             message_id="File tidak ditemukan",

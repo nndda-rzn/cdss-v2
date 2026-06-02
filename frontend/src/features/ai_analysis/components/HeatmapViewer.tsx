@@ -52,21 +52,21 @@ export function HeatmapViewer({ artifact, className }: Props) {
         <Zoom>
           {viewMode === "heatmap" && (
             <AuthedImage
-              path={`api/heatmaps/${artifact.heatmap_path}`}
+              path={`api/encounters/heatmaps/${artifact.heatmap_path}`}
               alt={t("Heatmap HiResCAM", "HiResCAM Heatmap")}
               className="max-h-[600px] w-full object-contain"
             />
           )}
           {viewMode === "overlay" && (
             <AuthedImage
-              path={`api/heatmaps/${artifact.overlay_path}`}
+              path={`api/encounters/heatmaps/${artifact.overlay_path}`}
               alt={t("Overlay Heatmap", "Heatmap Overlay")}
               className="max-h-[600px] w-full object-contain"
             />
           )}
           {viewMode === "side-by-side" && (
             <AuthedImage
-              path={`api/heatmaps/${artifact.side_by_side_path}`}
+              path={`api/encounters/heatmaps/${artifact.side_by_side_path}`}
               alt={t("Perbandingan", "Side-by-side comparison")}
               className="max-h-[600px] w-full object-contain"
             />

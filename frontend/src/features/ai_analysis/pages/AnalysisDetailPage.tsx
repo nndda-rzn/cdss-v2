@@ -57,7 +57,10 @@ export function AnalysisDetailPage() {
 
   const mutation = useMutation({
     mutationFn: () => runAnalysis(id, studyId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: analysisKeys.list(id, studyId) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: analysisKeys.list(id, studyId) });
+      qc.invalidateQueries({ queryKey: hirescamKeys.study(id, studyId) });
+    },
   });
 
   // Access denied (403 from either query) -> informative empty state.
@@ -110,18 +113,16 @@ export function AnalysisDetailPage() {
       </div>
 
       {/* HiResCAM section */}
-      {hirescam.data && hirescam.data.length > 0 && (
+      {hirescam.data && hirescam.data.length > 0 ? (
         <div className="space-y-4">
           <header className="flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight">
               {t("Penjelasan Visual", "Visual Explanation")}
             </h2>
-            {hirescam.data[0] && (
-              <ExplanationStatusBadge
-                status={hirescam.data[0].explanation_status}
-                focusMetric={hirescam.data[0].focus_metric}
-              />
-            )}
+            <ExplanationStatusBadge
+              status={hirescam.data[0].explanation_status}
+              focusMetric={hirescam.data[0].focus_metric}
+            />
           </header>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {hirescam.data.map((hc: HiResCAMRow) => (
@@ -133,6 +134,19 @@ export function AnalysisDetailPage() {
             ))}
           </div>
         </div>
+      ) : (
+        <Card>
+          <CardContent className="py-6">
+            <EmptyState
+              title={t("HiResCAM belum tersedia", "HiResCAM not yet available")}
+              description={t(
+                "Klik 'Analisis ulang' untuk generate penjelasan visual.",
+                "Click 'Re-run analysis' to generate visual explanation.",
+              )}
+              hideMotif
+            />
+          </CardContent>
+        </Card>
       )}
 
       <Card>
