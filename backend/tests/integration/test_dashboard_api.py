@@ -110,3 +110,26 @@ def test_dashboard_scoped_by_facility(client):
     body = resp.get_json()
     assert body["total_patients"] == 0
     assert body["active_encounters"] == 0
+
+
+def test_dashboard_encounter_trend_returns_7_days(client):
+    resp = client.get("/api/dashboard/stats", headers=_headers(client))
+    body = resp.get_json()
+    assert "encounter_trend" in body
+    assert len(body["encounter_trend"]) == 7
+    assert "date" in body["encounter_trend"][0]
+    assert "count" in body["encounter_trend"][0]
+
+
+def test_dashboard_diagnosis_distribution(client):
+    resp = client.get("/api/dashboard/stats", headers=_headers(client))
+    body = resp.get_json()
+    assert "diagnosis_distribution" in body
+    assert isinstance(body["diagnosis_distribution"], dict)
+
+
+def test_dashboard_ecg_quality_distribution(client):
+    resp = client.get("/api/dashboard/stats", headers=_headers(client))
+    body = resp.get_json()
+    assert "ecg_quality_distribution" in body
+    assert isinstance(body["ecg_quality_distribution"], dict)

@@ -3,7 +3,7 @@
 Scoped by the caller's `facility_id` claim so multi-facility deployments stay
 isolated, consistent with the rest of the API surface.
 """
-from datetime import UTC, datetime, time
+from datetime import UTC, datetime, time, timedelta
 
 from flask import Blueprint, Response, jsonify
 from sqlalchemy import func, select
@@ -52,7 +52,6 @@ def get_stats() -> Response:
         .where(AIAnalysis.created_at >= today)
     ) or 0
 
-    # "Pending tasks" = open encounters; will broaden once we add task models.
     pending_tasks = active_encounters
 
     recent_rows = s.scalars(
@@ -73,10 +72,45 @@ def get_stats() -> Response:
         for e in recent_rows
     ]
 
+    # Encounter trend (7 days)
+    encounter_trend = []
+    for i in range(7):
+        day = today - timedelta(days=6 - i)
+        next_day = day + timedelta(days=1)
+        count = s.scalar(
+            select(func.count(Encounter.id))
+            .where(Encounter.facility_id == facility_id)
+            .where(Encounter.started_at >= day)
+            .where(Encounter.started_at < next_day)
+        ) or 0
+        encounter_trend.append({"date": day.strftime("%Y-%m-%d"), "count": count})
+
+    # Diagnosis distribution
+    diagnosis_rows = s.execute(
+        select(AIAnalysis.predicted_class, func.count(AIAnalysis.id))
+        .join(ECGStudy, ECGStudy.id == AIAnalysis.ecg_study_id)
+        .join(Encounter, Encounter.id == ECGStudy.encounter_id)
+        .where(Encounter.facility_id == facility_id)
+        .group_by(AIAnalysis.predicted_class)
+    ).all()
+    diagnosis_distribution = {row[0]: row[1] for row in diagnosis_rows}
+
+    # ECG quality distribution
+    quality_rows = s.execute(
+        select(ECGStudy.image_quality_status, func.count(ECGStudy.id))
+        .join(Encounter, Encounter.id == ECGStudy.encounter_id)
+        .where(Encounter.facility_id == facility_id)
+        .group_by(ECGStudy.image_quality_status)
+    ).all()
+    ecg_quality_distribution = {row[0]: row[1] for row in quality_rows}
+
     return jsonify(
         total_patients=total_patients,
         active_encounters=active_encounters,
         analyses_today=analyses_today,
         pending_tasks=pending_tasks,
         recent_encounters=recent,
+        encounter_trend=encounter_trend,
+        diagnosis_distribution=diagnosis_distribution,
+        ecg_quality_distribution=ecg_quality_distribution,
     )
