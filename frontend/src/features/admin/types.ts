@@ -28,3 +28,32 @@ export interface AdminUserListResponse {
 export interface AdminFacilityListResponse {
   items: AdminFacility[];
 }
+
+export interface AdminAiStats {
+  analyses_today: number;
+  yesterday: number;
+  avg_inference_ms: number;
+  avg_confidence: number;
+  inference_trend: { date: string; avg_ms: number | null }[];
+  confidence_trend: { date: string; avg: number | null }[];
+}
+
+export interface AdminAuditEntry {
+  user_id: number | null;
+  action: string;
+  entity_type: string | null;
+  entity_id: number | null;
+  created_at: string | null;
+}
+
+export interface AdminStats {
+  users: { total: number; active: number; by_role: Record<string, number> };
+  facilities: { total: number };
+  sessions: { active: number };
+  model: { name: string | null; version: string | null; is_active: boolean };
+  patients: { total: number };
+  encounters: { today: number; yesterday: number };
+  ecg: { today: number; yesterday: number };
+  ai: AdminAiStats;
+  audit: AdminAuditEntry[];
+}
