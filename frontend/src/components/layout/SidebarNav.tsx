@@ -12,6 +12,7 @@ interface NavItem {
   label: string;
   labelEn: string;
   icon: LucideIcon;
+  exact?: boolean;
 }
 
 const BASE_SECTIONS: { titleId: string; titleEn: string; items: NavItem[] }[] = [
@@ -29,7 +30,7 @@ const ADMIN_SECTION = {
   titleId: "Admin",
   titleEn: "Admin",
   items: [
-    { to: "/admin", label: "Dashboard", labelEn: "Dashboard", icon: LayoutDashboard },
+    { to: "/admin", label: "Dashboard", labelEn: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/admin/users", label: "User", labelEn: "Users", icon: Users },
     { to: "/admin/facilities", label: "Fasilitas", labelEn: "Facilities", icon: Building2 },
   ],
@@ -60,7 +61,7 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
               <div className="section-label px-2 pb-1">{t(section.titleId, section.titleEn)}</div>
             )}
             {section.items.map((item) => {
-              const active = pathname.startsWith(item.to);
+              const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
               const Icon = item.icon;
               const label = t(item.label, item.labelEn);
               const link = (
