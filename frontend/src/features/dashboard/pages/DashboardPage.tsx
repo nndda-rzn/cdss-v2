@@ -8,8 +8,11 @@ import { dashboardKeys, fetchDashboardStats } from "../api";
 import { KpiCard } from "../components/KpiCard";
 import { QuickActions } from "../components/QuickActions";
 import { RecentEncountersList } from "../components/RecentEncountersList";
+import { EncounterTrendChart } from "../components/EncounterTrendChart";
+import { DiagnosisDistributionChart } from "../components/DiagnosisDistributionChart";
+import { EcgQualityChart } from "../components/EcgQualityChart";
 
-/** Dashboard landing page — KPI cards + quick actions + recent encounters. */
+/** Dashboard landing page — KPI cards + charts + quick actions + recent encounters. */
 export function DashboardPage() {
   const t = useI18nStore((s) => s.t);
   const { data, isLoading, isError, error } = useQuery({
@@ -61,6 +64,13 @@ export function DashboardPage() {
           hint={t("Kunjungan terbuka", "Open encounters")}
         />
       </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <EncounterTrendChart data={data?.encounter_trend ?? []} loading={isLoading} />
+        <DiagnosisDistributionChart data={data?.diagnosis_distribution ?? {}} loading={isLoading} />
+      </div>
+
+      <EcgQualityChart data={data?.ecg_quality_distribution ?? {}} loading={isLoading} />
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
