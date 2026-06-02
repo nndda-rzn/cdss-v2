@@ -25,6 +25,7 @@ uploads/
 heatmaps/
 reports/
 processed/
+outputs/
 
 # ===== Model Artifacts (large, external; weights not in git) =====
 models/**/*.pt
