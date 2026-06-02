@@ -112,7 +112,7 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/1/images/overlay.png", headers=_auth())
+        resp = client.get("/api/tuning/grid/1/images/overlay.png")
         assert resp.status_code == 200
         assert resp.content_type == "image/png"
 
@@ -121,7 +121,7 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/1/images/nonexistent.png", headers=_auth())
+        resp = client.get("/api/tuning/grid/1/images/nonexistent.png")
         assert resp.status_code == 404
 
     def test_config_not_found(self, client, tmp_path, monkeypatch):
@@ -129,7 +129,7 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/99999/images/overlay.png", headers=_auth())
+        resp = client.get("/api/tuning/grid/99999/images/overlay.png")
         assert resp.status_code == 404
 
     def test_path_traversal_blocked(self, client, tmp_path, monkeypatch):
@@ -137,7 +137,7 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/1/images/../../etc/passwd", headers=_auth())
+        resp = client.get("/api/tuning/grid/1/images/../../etc/passwd")
         assert resp.status_code in (400, 404)
 
 

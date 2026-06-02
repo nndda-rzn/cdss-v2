@@ -122,7 +122,6 @@ def get_config_detail(config_index: int):
 
 
 @bp.get("/grid/<int:config_index>/images/<filename>")
-@require_role(Role.ADMIN)
 def get_config_image(config_index: int, filename: str):
     """Serve a PNG image from a config directory."""
     if filename not in ALLOWED_IMAGES:
