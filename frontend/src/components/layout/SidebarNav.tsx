@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, type LucideIcon } from "lucide-react";
+import { LayoutDashboard, Users, Sliders, type LucideIcon } from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useI18nStore } from "@/lib/i18n/store";
@@ -20,6 +20,7 @@ const NAV_SECTIONS: { titleId: string; titleEn: string; items: NavItem[] }[] = [
     items: [
       { to: "/dashboard", label: "Dashboard", labelEn: "Dashboard", icon: LayoutDashboard },
       { to: "/patients", label: "Pasien", labelEn: "Patients", icon: Users },
+      { to: "/tuning", label: "Tuning", labelEn: "Tuning", icon: Sliders },
     ],
   },
 ];
