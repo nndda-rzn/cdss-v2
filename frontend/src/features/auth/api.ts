@@ -5,7 +5,7 @@ import type { AuthUser, LoginInput } from "./types";
 
 export type { AuthUser, JwtClaims, LoginInput } from "./types";
 
-export async function login(input: LoginInput): Promise<void> {
+export async function login(input: LoginInput): Promise<{ role: string }> {
   const resp = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -17,6 +17,7 @@ export async function login(input: LoginInput): Promise<void> {
   }
   const data = await resp.json();
   useAuthStore.getState().setTokens(data.access_token, data.refresh_token);
+  return { role: data.user.role };
 }
 
 export async function fetchMe(): Promise<AuthUser> {

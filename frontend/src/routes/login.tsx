@@ -44,7 +44,7 @@ export function LoginRoute() {
             </p>
           </div>
 
-          <LoginForm onSuccess={() => navigate("/dashboard")} />
+          <LoginForm onSuccess={(role) => navigate(role === "admin" ? "/admin" : "/dashboard")} />
         </div>
       </section>
     </main>

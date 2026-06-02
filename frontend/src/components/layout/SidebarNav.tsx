@@ -45,7 +45,7 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
   const { pathname } = useLocation();
   const t = useI18nStore((s) => s.t);
   const role = useRole();
-  const sections = role === "admin" ? [...BASE_SECTIONS, ADMIN_SECTION] : BASE_SECTIONS;
+  const sections = role === "admin" ? [ADMIN_SECTION] : BASE_SECTIONS;
 
   return (
     <TooltipProvider delayDuration={200}>

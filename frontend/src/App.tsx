@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LoginRoute } from "@/routes/login";
 import { NotFoundRoute } from "@/routes/NotFoundRoute";
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
@@ -14,6 +14,8 @@ import { AnalysisDetailRoute } from "@/routes/AnalysisDetailRoute";
 import { TuningRoute } from "@/routes/TuningRoute";
 import { AdminUsersRoute } from "@/routes/AdminUsersRoute";
 import { AdminFacilitiesRoute } from "@/routes/AdminFacilitiesRoute";
+import { AdminDashboardRoute } from "@/routes/AdminDashboardRoute";
+import { RoleRedirect } from "@/features/auth/components/RoleRedirect";
 
 export function App() {
   return (
@@ -22,7 +24,7 @@ export function App() {
         <Route path="/login" element={<LoginRoute />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<RoleRedirect />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/patients" element={<PatientsRoute />} />
             <Route path="/patients/new" element={<PatientRegisterRoute />} />
@@ -30,6 +32,7 @@ export function App() {
             <Route path="/patients/:id/encounters/new" element={<EncounterCreateRoute />} />
             <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
             <Route path="/tuning" element={<TuningRoute />} />
+            <Route path="/admin" element={<AdminDashboardRoute />} />
             <Route path="/admin/users" element={<AdminUsersRoute />} />
             <Route path="/admin/facilities" element={<AdminFacilitiesRoute />} />
           </Route>

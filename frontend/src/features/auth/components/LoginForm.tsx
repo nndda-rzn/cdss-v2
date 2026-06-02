@@ -24,7 +24,7 @@ const LoginSchema = z.object({
 
 type LoginValues = z.infer<typeof LoginSchema>;
 
-export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
+export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) {
   const t = useI18nStore((s) => s.t);
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<LoginValues>({
@@ -35,8 +35,8 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   async function onSubmit(values: LoginValues) {
     setServerError(null);
     try {
-      await login(values);
-      onSuccess();
+      const { role } = await login(values);
+      onSuccess(role);
     } catch (err) {
       setServerError(err instanceof Error ? err.message : "Login failed");
     }

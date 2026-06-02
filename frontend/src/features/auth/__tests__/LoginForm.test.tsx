@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LoginForm } from "../components/LoginForm";
 
-vi.mock("../api", () => ({ login: vi.fn(async () => undefined) }));
+vi.mock("../api", () => ({ login: vi.fn(async () => ({ role: "admin" })) }));
 import { login } from "../api";
 
 const PASSWORD_LABEL = /kata sandi|password/i;
