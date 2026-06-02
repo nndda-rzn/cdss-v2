@@ -73,9 +73,11 @@ export function ConfigDetailModal({ config, open, onOpenChange }: ConfigDetailMo
               <div>Layer: {metadata.target_layer}</div>
               <div>Smooth: {metadata.smooth_sigma}</div>
               <div>Top%: {metadata.top_percent}</div>
-              <div>Focus: {metadata.focus_metric.toFixed(3)}</div>
               <div>
-                <Badge variant="secondary">{metadata.explanation_status}</Badge>
+                Focus: {metadata.focus_metric != null ? metadata.focus_metric.toFixed(3) : "N/A"}
+              </div>
+              <div>
+                <Badge variant="secondary">{metadata.explanation_status ?? "N/A"}</Badge>
               </div>
             </div>
           )
