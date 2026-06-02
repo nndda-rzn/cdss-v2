@@ -1,48 +1,48 @@
-"""Render 2D numpy arrays to inferno-colormap PNGs (ADR-0013)."""
+"""Apply colormaps to normalized heatmaps."""
+from __future__ import annotations
+
 import io
 
 import matplotlib
 
-matplotlib.use("Agg")  # Non-interactive backend for headless servers
-import matplotlib.cm as cm  # noqa: E402
-import matplotlib.colors as mcolors  # noqa: E402
+matplotlib.use("Agg")
 import numpy as np
+from matplotlib.colors import Normalize
 from PIL import Image
 
-_COLORMAP = cm.inferno  # type: ignore[attr-defined]
-_NORMALIZER = mcolors.Normalize(vmin=0.0, vmax=1.0)
+SUPPORTED_COLORMAPS = ["inferno", "turbo", "jet", "viridis", "plasma"]
+
+_COLORMAP_REGISTRY = {
+    name: matplotlib.colormaps[name] for name in SUPPORTED_COLORMAPS
+}
 
 
-def array_to_png(
-    arr: np.ndarray,
-    *,
-    colormap: str = "inferno",
-) -> bytes:
-    """Convert a 2D float array [0..1] to PNG bytes using inferno colormap.
+def array_to_png(arr: np.ndarray, *, colormap: str = "inferno") -> bytes:
+    """Convert a 2D float array [0..1] to PNG bytes using the given colormap.
 
     Args:
-        arr: 2D numpy array, values in [0, 1].
-        colormap: Colormap name (default "inferno").
+        arr: 2D numpy array with values in [0, 1].
+        colormap: Name of matplotlib colormap.
 
     Returns:
-        PNG image bytes.
+        PNG-encoded bytes.
+
+    Raises:
+        ValueError: If arr is not 2D or colormap is unsupported.
     """
     if arr.ndim != 2:
         raise ValueError(f"Expected 2D array, got {arr.ndim}D")
+    if colormap not in _COLORMAP_REGISTRY:
+        raise ValueError(
+            f"Unsupported colormap '{colormap}'. "
+            f"Choose from: {SUPPORTED_COLORMAPS}"
+        )
 
-    rgb = _apply_colormap(arr)
-    return _to_png_bytes(rgb)
-
-
-def _apply_colormap(arr: np.ndarray) -> np.ndarray:
-    """Apply inferno colormap to normalized 2D array, return uint8 RGB."""
-    rgba: np.ndarray = _COLORMAP(_NORMALIZER(arr))  # (H, W, 4), values [0, 1]
+    cmap = _COLORMAP_REGISTRY[colormap]
+    norm = Normalize(0, 1)
+    rgba = cmap(norm(arr))
     rgb = (rgba[:, :, :3] * 255).astype(np.uint8)
-    return rgb
 
-
-def _to_png_bytes(rgb: np.ndarray) -> bytes:
-    """Convert uint8 RGB array to PNG bytes."""
     img = Image.fromarray(rgb, mode="RGB")
     buf = io.BytesIO()
     img.save(buf, format="PNG", optimize=True)
