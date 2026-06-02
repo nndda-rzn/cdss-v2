@@ -180,15 +180,16 @@ def run_experiment(
             "colormap": config["colormap"],
             "overlay_alpha": overlay_alpha,
         })
-        with open(cfg_dir / "metadata.json", "w") as f:
-            json.dump(metadata, f, indent=2)
 
-        # Evaluate
+        # Evaluate (before writing metadata.json so focus_metric is included)
         status, focus_metric = evaluate_explanation(
             processed["heatmap_norm"], confidence=confidence
         )
         metadata["explanation_status"] = status
         metadata["focus_metric"] = focus_metric
+
+        with open(cfg_dir / "metadata.json", "w") as f:
+            json.dump(metadata, f, indent=2)
 
         return metadata
 
