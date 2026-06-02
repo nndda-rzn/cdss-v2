@@ -10,7 +10,7 @@ from app.db.models.hirescam_artifact import HiResCAMArtifact
 from app.db.models.model_metadata import ModelMetadata
 from app.services.hirescam.colormap import array_to_png
 from app.services.hirescam.evaluator import evaluate_explanation
-from app.services.hirescam.generator import generate_hirescam
+from app.services.hirescam.generator_v2 import generate_hirescam_v2
 from app.services.hirescam.overlay import compose_overlay, compose_side_by_side
 from app.services.inference.loader import load_model
 
@@ -56,8 +56,11 @@ def generate_artifacts(
         # Map predicted_class to class index
         class_idx = _class_to_index(analysis.predicted_class)
 
-        heatmap_arr = generate_hirescam(
-            yolo_model, str(image_path), class_idx, device="cpu"
+        heatmap_arr, lb_params, _ = generate_hirescam_v2(
+            yolo_model, str(image_path), class_idx,
+            target_layer_name="last_conv",
+            input_size=1600,
+            device="cpu",
         )
 
         # Render heatmap PNG
