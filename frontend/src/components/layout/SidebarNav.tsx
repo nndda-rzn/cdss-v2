@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Sliders, type LucideIcon } from "lucide-react";
+import { LayoutDashboard, Users, Sliders, Building2, type LucideIcon } from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRole } from "@/features/auth/components/RoleGate";
 import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
@@ -13,17 +14,26 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const NAV_SECTIONS: { titleId: string; titleEn: string; items: NavItem[] }[] = [
+const BASE_SECTIONS: { titleId: string; titleEn: string; items: NavItem[] }[] = [
   {
     titleId: "Klinis",
     titleEn: "Clinical",
     items: [
       { to: "/dashboard", label: "Dashboard", labelEn: "Dashboard", icon: LayoutDashboard },
       { to: "/patients", label: "Pasien", labelEn: "Patients", icon: Users },
-      { to: "/tuning", label: "Tuning", labelEn: "Tuning", icon: Sliders },
     ],
   },
 ];
+
+const ADMIN_SECTION = {
+  titleId: "Admin",
+  titleEn: "Admin",
+  items: [
+    { to: "/admin/users", label: "User", labelEn: "Users", icon: Users },
+    { to: "/admin/facilities", label: "Fasilitas", labelEn: "Facilities", icon: Building2 },
+    { to: "/tuning", label: "Tuning", labelEn: "Tuning", icon: Sliders },
+  ],
+};
 
 export interface SidebarNavProps {
   /** Render in icon-only collapsed mode (uses tooltips for labels). */
@@ -35,6 +45,8 @@ export interface SidebarNavProps {
 export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
   const { pathname } = useLocation();
   const t = useI18nStore((s) => s.t);
+  const role = useRole();
+  const sections = role === "admin" ? [...BASE_SECTIONS, ADMIN_SECTION] : BASE_SECTIONS;
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -42,7 +54,7 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
         aria-label={t("Navigasi utama", "Main navigation")}
         className={cn("flex flex-col gap-4 py-4", collapsed ? "px-2" : "px-3")}
       >
-        {NAV_SECTIONS.map((section) => (
+        {sections.map((section) => (
           <div key={section.titleId} className="flex flex-col gap-1">
             {!collapsed && (
               <div className="section-label px-2 pb-1">{t(section.titleId, section.titleEn)}</div>

@@ -3,6 +3,7 @@ import csv
 import json
 
 from app import create_app
+from app.core.security.jwt import make_access_token
 from app.services.hirescam.config_store import get_config
 
 
@@ -14,6 +15,14 @@ def app():
 
 def client(app):
     return app.test_client()
+
+
+def _admin_token():
+    return make_access_token(user_id=1, role="admin", facility_id=1)
+
+
+def _auth():
+    return {"Authorization": f"Bearer {_admin_token()}"}
 
 
 def _write_grid(root):
@@ -54,7 +63,7 @@ class TestTuningGrid:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid")
+        resp = client.get("/api/tuning/grid", headers=_auth())
         assert resp.status_code == 200
         data = resp.get_json()
         assert "items" in data
@@ -65,7 +74,7 @@ class TestTuningGrid:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid")
+        resp = client.get("/api/tuning/grid", headers=_auth())
         data = resp.get_json()
         if data["items"]:
             item = data["items"][0]
@@ -82,7 +91,7 @@ class TestTuningConfig:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/1")
+        resp = client.get("/api/tuning/grid/1", headers=_auth())
         assert resp.status_code == 200
         data = resp.get_json()
         assert "config_index" in data
@@ -93,7 +102,7 @@ class TestTuningConfig:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/99999")
+        resp = client.get("/api/tuning/grid/99999", headers=_auth())
         assert resp.status_code == 404
 
 
@@ -103,7 +112,7 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/1/images/overlay.png")
+        resp = client.get("/api/tuning/grid/1/images/overlay.png", headers=_auth())
         assert resp.status_code == 200
         assert resp.content_type == "image/png"
 
@@ -112,7 +121,7 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/1/images/nonexistent.png")
+        resp = client.get("/api/tuning/grid/1/images/nonexistent.png", headers=_auth())
         assert resp.status_code == 404
 
     def test_config_not_found(self, client, tmp_path, monkeypatch):
@@ -120,7 +129,7 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/99999/images/overlay.png")
+        resp = client.get("/api/tuning/grid/99999/images/overlay.png", headers=_auth())
         assert resp.status_code == 404
 
     def test_path_traversal_blocked(self, client, tmp_path, monkeypatch):
@@ -128,14 +137,14 @@ class TestTuningImage:
         monkeypatch.setattr(
             "app.api.tuning._grid_dir", lambda: grid
         )
-        resp = client.get("/api/tuning/grid/1/images/../../etc/passwd")
+        resp = client.get("/api/tuning/grid/1/images/../../etc/passwd", headers=_auth())
         assert resp.status_code in (400, 404)
 
 
 class TestTuningActiveConfig:
     def test_get_active_returns_defaults(self, client, app):
         with app.app_context():
-            resp = client.get("/api/tuning/active")
+            resp = client.get("/api/tuning/active", headers=_auth())
             assert resp.status_code == 200
             data = resp.get_json()
             assert data["colormap"] == "inferno"
@@ -213,3 +222,25 @@ class TestTuningActiveConfig:
             cfg = get_config(db.session)
             assert cfg.colormap == "inferno"
             assert cfg.smooth_sigma == 0.0
+
+
+class TestTuningRBAC:
+    def test_grid_requires_admin(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr("app.api.tuning._grid_dir", lambda: grid)
+        nurse_token = make_access_token(user_id=1, role="nurse", facility_id=1)
+        resp = client.get("/api/tuning/grid",
+                          headers={"Authorization": f"Bearer {nurse_token}"})
+        assert resp.status_code == 403
+
+    def test_grid_allows_admin(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr("app.api.tuning._grid_dir", lambda: grid)
+        resp = client.get("/api/tuning/grid", headers=_auth())
+        assert resp.status_code == 200
+
+    def test_active_requires_admin(self, client, monkeypatch):
+        nurse_token = make_access_token(user_id=1, role="nurse", facility_id=1)
+        resp = client.get("/api/tuning/active",
+                          headers={"Authorization": f"Bearer {nurse_token}"})
+        assert resp.status_code == 403

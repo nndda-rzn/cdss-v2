@@ -4,35 +4,32 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
 
 from scripts.seed_facility import seed_facility
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app.db.base import Base
-from app.db.models.facility import HealthcareFacility
 
 
-def test_seed_facility_creates_row(tmp_path):
-    engine = create_engine(f"sqlite:///{tmp_path / 's.db'}")
+def test_seed_facility_creates(tmp_path):
+    engine = create_engine(f"sqlite:///{tmp_path / 'fac.db'}")
     Base.metadata.create_all(engine)
     with Session(engine) as s:
-        seed_facility(
-            s,
-            name="Puskesmas A",
-            code="PKM-A",
-            facility_type="puskesmas",
-            address="Jl. Sehat 1",
+        fac = seed_facility(
+            s, name="Puskesmas Contoh", code="PUSK-001",
+            facility_type="puskesmas", address="Jl. Contoh No. 1",
         )
         s.commit()
-        f = s.scalar(select(HealthcareFacility).where(HealthcareFacility.code == "PKM-A"))
-        assert f is not None
+        assert fac.id is not None
+        assert fac.code == "PUSK-001"
 
 
 def test_seed_facility_idempotent(tmp_path):
-    engine = create_engine(f"sqlite:///{tmp_path / 's2.db'}")
+    engine = create_engine(f"sqlite:///{tmp_path / 'fac2.db'}")
     Base.metadata.create_all(engine)
     with Session(engine) as s:
-        seed_facility(s, name="A", code="PKM-A", facility_type="puskesmas", address="x")
+        f1 = seed_facility(s, name="A", code="X-001", facility_type="puskesmas")
         s.commit()
-        seed_facility(s, name="A", code="PKM-A", facility_type="puskesmas", address="x")
+        f2 = seed_facility(s, name="B", code="X-001", facility_type="klinik")
         s.commit()
-        assert s.query(HealthcareFacility).filter_by(code="PKM-A").count() == 1
+        assert f1.id == f2.id
+        assert f2.name == "A"  # existing returned, not updated

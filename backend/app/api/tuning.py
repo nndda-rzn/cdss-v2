@@ -43,6 +43,7 @@ def _read_summary_row(config_index: int) -> dict[str, str] | None:
 
 
 @bp.get("/grid")
+@require_role(Role.ADMIN)
 def get_grid():
     """Return summary.csv as JSON array."""
     summary_path = _grid_dir() / "summary.csv"
@@ -71,6 +72,7 @@ def get_grid():
 
 
 @bp.get("/active")
+@require_role(Role.ADMIN)
 def get_active_config():
     """Return the currently active HiResCAM config from DB."""
     s = session()
@@ -104,6 +106,7 @@ def apply_config(config_index: int):
 
 
 @bp.get("/grid/<int:config_index>")
+@require_role(Role.ADMIN)
 def get_config_detail(config_index: int):
     """Return metadata.json for a specific config."""
     config_dir = _grid_dir() / f"config_{config_index:03d}"
@@ -119,6 +122,7 @@ def get_config_detail(config_index: int):
 
 
 @bp.get("/grid/<int:config_index>/images/<filename>")
+@require_role(Role.ADMIN)
 def get_config_image(config_index: int, filename: str):
     """Serve a PNG image from a config directory."""
     if filename not in ALLOWED_IMAGES:
