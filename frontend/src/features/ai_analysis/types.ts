@@ -19,3 +19,22 @@ export interface AnalysisRow {
   error_message: string | null;
   created_at: string;
 }
+
+export type ExplanationStatus =
+  | "good"
+  | "diffuse"
+  | "off-target"
+  | "low-confidence"
+  | "need-review";
+
+export interface HiResCAMRow {
+  id: number;
+  ai_analysis_id: number;
+  heatmap_path: string;
+  overlay_path: string;
+  side_by_side_path: string;
+  explanation_status: ExplanationStatus;
+  focus_metric: number;
+  colormap_used: string;
+  generated_at: string;
+}
