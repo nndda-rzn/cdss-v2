@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api/client";
 import type {
   AdminFacility,
   AdminFacilityListResponse,
+  AdminStats,
   AdminUser,
   AdminUserListResponse,
 } from "./types";
@@ -9,6 +10,7 @@ import type {
 export const adminKeys = {
   users: ["admin", "users"] as const,
   facilities: ["admin", "facilities"] as const,
+  stats: ["admin", "stats"] as const,
 };
 
 export async function fetchUsers(): Promise<AdminUserListResponse> {
@@ -90,5 +92,12 @@ export async function updateFacility(
   });
   const body = await resp.json();
   if (!resp.ok) throw new Error(body.error?.message_en ?? "Failed to update facility");
+  return body;
+}
+
+export async function fetchAdminStats(): Promise<AdminStats> {
+  const resp = await apiFetch("/api/admin/stats");
+  const body = await resp.json();
+  if (!resp.ok) throw new Error(body.error?.message_en ?? "Failed to load stats");
   return body;
 }

@@ -1,29 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
-import { Building2, Users } from "lucide-react";
+import { Building2, Cpu, Users, Activity, Heart, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useI18nStore } from "@/lib/i18n/store";
-import { fetchUsers, fetchFacilities, adminKeys } from "../api";
+import { fetchAdminStats, adminKeys } from "../api";
+import { AdminKpiCard } from "../components/AdminKpiCard";
+import { AiPerformanceChart } from "../components/AiPerformanceChart";
+import { RecentAuditTable } from "../components/RecentAuditTable";
+
+const FALLBACK_AI = {
+  analyses_today: 0,
+  yesterday: 0,
+  avg_inference_ms: 0,
+  avg_confidence: 0,
+  inference_trend: [],
+  confidence_trend: [],
+};
 
 export function AdminDashboardPage() {
   const t = useI18nStore((s) => s.t);
-
-  const { data: users, isLoading: loadingUsers } = useQuery({
-    queryKey: adminKeys.users,
-    queryFn: fetchUsers,
+  const { data, isLoading } = useQuery({
+    queryKey: adminKeys.stats,
+    queryFn: fetchAdminStats,
   });
-
-  const { data: facilities, isLoading: loadingFacilities } = useQuery({
-    queryKey: adminKeys.facilities,
-    queryFn: fetchFacilities,
-  });
-
-  const totalUsers = users?.items.length ?? 0;
-  const activeUsers = users?.items.filter((u) => u.is_active).length ?? 0;
-  const totalFacilities = facilities?.items.length ?? 0;
 
   return (
     <div className="space-y-5">
@@ -32,61 +33,104 @@ export function AdminDashboardPage() {
           {t("Admin Dashboard", "Admin Dashboard")}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {t("Kelola pengguna dan fasilitas sistem.", "Manage system users and facilities.")}
+          {t("Pantau sistem dan kelola data.", "Monitor system and manage data.")}
         </p>
       </header>
 
+      {/* Row 1: System Health */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t("Total Pengguna", "Total Users")}
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {loadingUsers ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <div className="text-2xl font-bold">
-                {activeUsers} / {totalUsers}
-              </div>
-            )}
-            <p className="text-xs text-muted-foreground">{t("aktif / total", "active / total")}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t("Total Fasilitas", "Total Facilities")}
-            </CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {loadingFacilities ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <div className="text-2xl font-bold">{totalFacilities}</div>
-            )}
-          </CardContent>
-        </Card>
+        <AdminKpiCard
+          label={t("Total Pengguna", "Total Users")}
+          value={data ? `${data.users.active} / ${data.users.total}` : 0}
+          icon={Users}
+          hint={t("aktif / total", "active / total")}
+          loading={isLoading}
+        />
+        <AdminKpiCard
+          label={t("Sesi Aktif", "Active Sessions")}
+          value={data?.sessions.active ?? 0}
+          icon={Activity}
+          loading={isLoading}
+        />
+        <AdminKpiCard
+          label={t("Model AI", "AI Model")}
+          value={data?.model.name ?? "-"}
+          icon={Cpu}
+          hint={data?.model.version ? `v${data.model.version}` : undefined}
+          loading={isLoading}
+        />
       </div>
 
-      <div className="flex gap-3">
-        <Button asChild>
-          <Link to="/admin/users">
-            <Users className="mr-1.5 h-4 w-4" />
-            {t("Kelola Pengguna", "Manage Users")}
-          </Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link to="/admin/facilities">
-            <Building2 className="mr-1.5 h-4 w-4" />
-            {t("Kelola Fasilitas", "Manage Facilities")}
-          </Link>
-        </Button>
+      {/* Row 2: Clinical Activity */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <AdminKpiCard
+          label={t("Total Pasien", "Total Patients")}
+          value={data?.patients.total ?? 0}
+          icon={Users}
+          loading={isLoading}
+        />
+        <AdminKpiCard
+          label={t("Kunjungan Hari Ini", "Encounters Today")}
+          value={data?.encounters.today ?? 0}
+          icon={Heart}
+          trend={
+            data
+              ? {
+                  value: data.encounters.today - data.encounters.yesterday,
+                  label: t("vs kemarin", "vs yesterday"),
+                }
+              : undefined
+          }
+          loading={isLoading}
+        />
+        <AdminKpiCard
+          label={t("ECG Hari Ini", "ECG Today")}
+          value={data?.ecg.today ?? 0}
+          icon={Zap}
+          trend={
+            data
+              ? {
+                  value: data.ecg.today - data.ecg.yesterday,
+                  label: t("vs kemarin", "vs yesterday"),
+                }
+              : undefined
+          }
+          loading={isLoading}
+        />
       </div>
+
+      {/* Row 3: AI Performance */}
+      <AiPerformanceChart ai={data?.ai ?? FALLBACK_AI} loading={isLoading} />
+
+      {/* Row 4: Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("Aksi Cepat", "Quick Actions")}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-3">
+          <Button asChild>
+            <Link to="/admin/users">
+              <Users className="mr-1.5 h-4 w-4" />
+              {t("Kelola User", "Manage Users")}
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/admin/facilities">
+              <Building2 className="mr-1.5 h-4 w-4" />
+              {t("Kelola Fasilitas", "Manage Facilities")}
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/tuning">
+              <Cpu className="mr-1.5 h-4 w-4" />
+              {t("Tuning AI", "AI Tuning")}
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Row 5: Recent Activity */}
+      <RecentAuditTable entries={data?.audit ?? []} loading={isLoading} />
     </div>
   );
 }
