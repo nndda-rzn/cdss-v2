@@ -17,7 +17,7 @@ ALLOWED_IMAGES = {
 
 def _repo_root() -> Path:
     """Get project root from STORAGE_DIR config."""
-    return Path(current_app.config.get("STORAGE_DIR", "")).parent.parent
+    return Path(current_app.config.get("STORAGE_DIR", "")).parent
 
 
 def _grid_dir() -> Path:

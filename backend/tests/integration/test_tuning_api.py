@@ -1,4 +1,7 @@
 """Integration tests for tuning API endpoints."""
+import csv
+import json
+
 from app import create_app
 
 
@@ -12,15 +15,55 @@ def client(app):
     return app.test_client()
 
 
+def _write_grid(root):
+    grid = root / "outputs" / "hirescam_tuning_grid"
+    grid.mkdir(parents=True, exist_ok=True)
+    summary = grid / "summary.csv"
+    with open(summary, "w", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "image_path", "original_size", "input_size", "target_layer",
+                "target_layer_info", "target_class_id", "confidence",
+                "letterbox_ratio", "letterbox_padding", "config_index",
+                "clip_percentile", "smooth_sigma", "top_percent",
+                "colormap", "overlay_alpha", "explanation_status", "focus_metric",
+            ],
+        )
+        writer.writeheader()
+        writer.writerow({
+            "image_path": "x.jpg", "original_size": "[1572, 2213]", "input_size": 1600,
+            "target_layer": "last_conv", "target_layer_info": "Conv2d",
+            "target_class_id": 3, "confidence": -1.5,
+            "letterbox_ratio": 0.72, "letterbox_padding": "{}",
+            "config_index": 1, "clip_percentile": 99.0, "smooth_sigma": 0.0,
+            "top_percent": 15.0, "colormap": "inferno", "overlay_alpha": 0.45,
+            "explanation_status": "good", "focus_metric": 0.63,
+        })
+    cfg = grid / "config_001"
+    cfg.mkdir()
+    (cfg / "metadata.json").write_text(json.dumps({"config_index": 1, "focus_metric": 0.63}))
+    (cfg / "overlay.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+    return grid
+
+
 class TestTuningGrid:
-    def test_get_grid_returns_items(self, client):
+    def test_get_grid_returns_items(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid")
         assert resp.status_code == 200
         data = resp.get_json()
         assert "items" in data
         assert isinstance(data["items"], list)
 
-    def test_get_grid_has_required_fields(self, client):
+    def test_get_grid_has_required_fields(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid")
         data = resp.get_json()
         if data["items"]:
@@ -33,32 +76,56 @@ class TestTuningGrid:
 
 
 class TestTuningConfig:
-    def test_get_config_returns_metadata(self, client):
+    def test_get_config_returns_metadata(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid/1")
         assert resp.status_code == 200
         data = resp.get_json()
         assert "config_index" in data
         assert data["config_index"] == 1
 
-    def test_get_config_not_found(self, client):
+    def test_get_config_not_found(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid/99999")
         assert resp.status_code == 404
 
 
 class TestTuningImage:
-    def test_serves_image(self, client):
+    def test_serves_image(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid/1/images/overlay.png")
         assert resp.status_code == 200
         assert resp.content_type == "image/png"
 
-    def test_image_not_found(self, client):
+    def test_image_not_found(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid/1/images/nonexistent.png")
         assert resp.status_code == 404
 
-    def test_config_not_found(self, client):
+    def test_config_not_found(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid/99999/images/overlay.png")
         assert resp.status_code == 404
 
-    def test_path_traversal_blocked(self, client):
+    def test_path_traversal_blocked(self, client, tmp_path, monkeypatch):
+        grid = _write_grid(tmp_path)
+        monkeypatch.setattr(
+            "app.api.tuning._grid_dir", lambda: grid
+        )
         resp = client.get("/api/tuning/grid/1/images/../../etc/passwd")
         assert resp.status_code in (400, 404)
