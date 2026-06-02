@@ -123,9 +123,9 @@ def generate_hirescam_v2(
 
         # To tensor (ImageNet normalization)
         tensor = padded.astype(np.float32) / 255.0
-        tensor = (tensor - np.array([0.485, 0.456, 0.406])) / np.array(
-            [0.229, 0.224, 0.225]
-        )
+        mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+        std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+        tensor = (tensor - mean) / std
         tensor = tensor.transpose(2, 0, 1)  # CHW
         tensor = torch.from_numpy(tensor).unsqueeze(0).to(device)
         tensor.requires_grad_(True)
