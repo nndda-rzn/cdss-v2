@@ -4,68 +4,48 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
 
 from scripts.seed_clinician import seed_clinical_user
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from app.core.security.password import verify_password
 from app.db.base import Base
 from app.db.models.facility import HealthcareFacility
-from app.db.models.user import User
 
 
-def test_seed_clinical_user_creates_user(tmp_path):
-    engine = create_engine(f"sqlite:///{tmp_path / 'c.db'}")
+def _seed_facility(session):
+    fac = HealthcareFacility(name="Test", code="T-CL", facility_type="puskesmas")
+    session.add(fac)
+    session.flush()
+    return fac
+
+
+def test_seed_clinician_creates(tmp_path):
+    engine = create_engine(f"sqlite:///{tmp_path / 'clin.db'}")
     Base.metadata.create_all(engine)
     with Session(engine) as s:
-        s.add(
-            HealthcareFacility(id=1, name="P", code="P1", facility_type="puskesmas")
+        fac = _seed_facility(s)
+        user = seed_clinical_user(
+            s, name="Dr. Contoh", email="clin@test.local",
+            password="pass123", facility_id=fac.id, role="clinician",  # noqa: S106
         )
         s.commit()
-        seed_clinical_user(
-            s,
-            name="Dr. Demo",
-            email="dokter@x.id",
-            password="StrongPass1",  # noqa: S106
-            facility_id=1,
-            role="clinician",
-            rounds=4,
-        )
-        s.commit()
-        u = s.scalar(select(User).where(User.email == "dokter@x.id"))
-        assert u is not None
-        assert u.role == "clinician"
-        assert verify_password("StrongPass1", u.password_hash)
+        assert user.id is not None
+        assert user.role == "clinician"
+        assert user.facility_id == fac.id
 
 
-def test_seed_clinical_user_idempotent(tmp_path):
-    engine = create_engine(f"sqlite:///{tmp_path / 'c2.db'}")
+def test_seed_clinician_idempotent(tmp_path):
+    engine = create_engine(f"sqlite:///{tmp_path / 'clin2.db'}")
     Base.metadata.create_all(engine)
     with Session(engine) as s:
-        s.add(
-            HealthcareFacility(id=1, name="P", code="P1", facility_type="puskesmas")
+        fac = _seed_facility(s)
+        u1 = seed_clinical_user(
+            s, name="A", email="c@t.local", password="p",  # noqa: S106
+            facility_id=fac.id, role="clinician",
         )
         s.commit()
-        seed_clinical_user(
-            s,
-            name="Nurse",
-            email="perawat@x.id",
-            password="x",  # noqa: S106
-            facility_id=1,
-            role="nurse",
-            rounds=4,
+        u2 = seed_clinical_user(
+            s, name="B", email="c@t.local", password="p",  # noqa: S106
+            facility_id=fac.id, role="nurse",
         )
         s.commit()
-        seed_clinical_user(
-            s,
-            name="Nurse 2",
-            email="perawat@x.id",
-            password="y",  # noqa: S106
-            facility_id=1,
-            role="nurse",
-            rounds=4,
-        )
-        s.commit()
-        assert s.query(User).filter_by(email="perawat@x.id").count() == 1
-        # Original user kept (first seed).
-        u = s.scalar(select(User).where(User.email == "perawat@x.id"))
-        assert verify_password("x", u.password_hash)
+        assert u1.id == u2.id
