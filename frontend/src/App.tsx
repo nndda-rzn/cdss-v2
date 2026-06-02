@@ -12,6 +12,8 @@ import { EncounterCreateRoute } from "@/routes/EncounterCreateRoute";
 import { EncounterDetailRoute } from "@/routes/EncounterDetailRoute";
 import { AnalysisDetailRoute } from "@/routes/AnalysisDetailRoute";
 import { TuningRoute } from "@/routes/TuningRoute";
+import { AdminUsersRoute } from "@/routes/AdminUsersRoute";
+import { AdminFacilitiesRoute } from "@/routes/AdminFacilitiesRoute";
 
 export function App() {
   return (
@@ -28,6 +30,8 @@ export function App() {
             <Route path="/patients/:id/encounters/new" element={<EncounterCreateRoute />} />
             <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
             <Route path="/tuning" element={<TuningRoute />} />
+            <Route path="/admin/users" element={<AdminUsersRoute />} />
+            <Route path="/admin/facilities" element={<AdminFacilitiesRoute />} />
           </Route>
           <Route element={<FocusShell />}>
             <Route
