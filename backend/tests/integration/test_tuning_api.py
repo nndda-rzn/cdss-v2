@@ -223,6 +223,58 @@ class TestTuningActiveConfig:
             assert cfg.colormap == "inferno"
             assert cfg.smooth_sigma == 0.0
 
+    def test_post_active_saves_config(self, client, app, monkeypatch):
+        with app.app_context():
+            from app.core.security.password import hash_password
+            from app.db.models.facility import HealthcareFacility
+            from app.db.models.user import User
+            from app.extensions import db
+
+            # Avoid unique constraints violations if facility/user already exists
+            db.session.query(User).delete()
+            db.session.query(HealthcareFacility).delete()
+
+            db.session.add(
+                HealthcareFacility(id=1, name="P", code="P1", facility_type="puskesmas")
+            )
+            db.session.add(User(
+                id=1, name="admin", email="admin@x.id",
+                password_hash=hash_password("StrongPass1", rounds=4),
+                role="admin", facility_id=1,
+            ))
+            db.session.commit()
+
+            login_payload = {"email": "admin@x.id", "password": "StrongPass1"}
+            login_resp = client.post("/api/auth/login", json=login_payload)
+            token = login_resp.get_json()["access_token"]
+            
+            update_payload = {
+                "use_roi_crop": True,
+                "roi_x1": 0.05,
+                "roi_y1": 0.25,
+                "roi_x2": 0.95,
+                "roi_y2": 0.90,
+                "colormap": "turbo",
+            }
+            resp = client.post(
+                "/api/tuning/active",
+                json=update_payload,
+                headers={"Authorization": f"Bearer {token}"},
+            )
+            assert resp.status_code == 200
+            data = resp.get_json()
+            assert data["status"] == "updated"
+            assert data["config"]["use_roi_crop"] is True
+            assert data["config"]["roi_x1"] == 0.05
+            assert data["config"]["colormap"] == "turbo"
+
+            # Verify it persists
+            cfg = get_config(db.session)
+            assert cfg.use_roi_crop is True
+            assert cfg.roi_x1 == 0.05
+            assert cfg.colormap == "turbo"
+
+
 
 class TestTuningRBAC:
     def test_grid_requires_admin(self, client, tmp_path, monkeypatch):

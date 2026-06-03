@@ -80,6 +80,39 @@ def get_active_config():
     return jsonify(config.to_dict())
 
 
+@bp.post("/active")
+@require_role(Role.ADMIN)
+def update_active_config():
+    """Update the currently active HiResCAM config in the DB."""
+    from flask import request
+
+    data = request.get_json() or {}
+    s = session()
+    # Get current config as baseline
+    config = get_config(s)
+    
+    # Update fields from data
+    updated_dict = config.to_dict()
+    for k, v in data.items():
+        if k in updated_dict:
+            # Handle float/int/bool conversions if necessary
+            if isinstance(updated_dict[k], bool) and v is not None:
+                updated_dict[k] = bool(v)
+            elif isinstance(updated_dict[k], float) and v is not None:
+                updated_dict[k] = float(v)
+            elif isinstance(updated_dict[k], int) and v is not None:
+                updated_dict[k] = int(v)
+            else:
+                updated_dict[k] = v
+
+    new_config = HiResCAMConfig.from_dict(updated_dict)
+    uid = current_user_id()
+    save_config(s, new_config, user_id=uid)
+    s.commit()
+
+    return jsonify(status="updated", config=new_config.to_dict())
+
+
 @bp.post("/apply/<int:config_index>")
 @require_role(Role.ADMIN)
 def apply_config(config_index: int):
