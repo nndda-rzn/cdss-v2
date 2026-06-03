@@ -93,7 +93,7 @@ export function AnalysisDetailTable({
           <th className="py-2 pr-3">{t("Status", "Status")}</th>
           <th className="py-2 pr-3">{t("Status Penjelasan", "Explanation")}</th>
           {CLASS_ORDER.map((c) => (
-            <th key={c} className="py-2 pr-3 text-right">
+            <th key={c} className="hidden py-2 pr-3 text-right md:table-cell">
               {CLASS_LABEL[c].split(" ")[0]}
             </th>
           ))}
@@ -136,7 +136,7 @@ export function AnalysisDetailTable({
               )}
             </td>
             {CLASS_ORDER.map((c) => (
-              <td key={c} className="py-2 pr-3 text-right align-middle">
+              <td key={c} className="hidden py-2 pr-3 text-right align-middle md:table-cell">
                 <ProbCell value={row.probability_json[c]} />
               </td>
             ))}
