@@ -2,7 +2,7 @@
 import uuid
 from pathlib import Path
 
-from flask import Blueprint, Response, current_app, jsonify
+from flask import Blueprint, Response, current_app, jsonify, request
 from sqlalchemy import select
 
 from app.api._shared import current_user_id, request_ctx, session
@@ -39,6 +39,11 @@ def analysis_to_out(a: AIAnalysis, model: ModelMetadata) -> dict[str, object]:
 @bp.post("/<int:encounter_id>/ecg-studies/<int:study_id>/analyze")
 @require_role(Role.CLINICIAN, Role.NURSE)
 def analyze_ecg(encounter_id: int, study_id: int) -> tuple[Response, int]:
+    body = request.get_json(silent=True) or {}
+    model_ids = body.get("model_ids")
+    if model_ids is not None and not isinstance(model_ids, list):
+        return jsonify(error="model_ids must be a list of integers"), 400
+
     s = session()
     study = get_study_or_404(s, encounter_id=encounter_id, study_id=study_id)
     ensure_ai_analysis_consent(
@@ -46,6 +51,7 @@ def analyze_ecg(encounter_id: int, study_id: int) -> tuple[Response, int]:
         patient_id=uuid.UUID(str(study.patient_id)),
         user_id=current_user_id(),
     )
+
     model_dir = Path(current_app.config["MODEL_DIR"])
     storage_root = Path(current_app.config["STORAGE_DIR"])
     rows = analyze_study(
@@ -54,6 +60,7 @@ def analyze_ecg(encounter_id: int, study_id: int) -> tuple[Response, int]:
         user_id=current_user_id(),
         model_dir=model_dir,
         storage_root=storage_root,
+        model_ids=model_ids,
         **request_ctx(),
     )
     s.commit()

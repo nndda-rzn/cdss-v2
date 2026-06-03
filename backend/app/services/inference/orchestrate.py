@@ -18,7 +18,7 @@ from app.db.models.model_metadata import ModelMetadata
 from app.services.audit.writer import write_audit
 from app.services.inference.loader import load_model
 from app.services.inference.predict import run_inference
-from app.services.model_registry.query import list_active_models
+from app.services.model_registry.query import list_models_by_ids
 
 
 def analyze_study(
@@ -31,6 +31,7 @@ def analyze_study(
     ip_address: str | None = None,
     user_agent: str | None = None,
     request_id: str | None = None,
+    model_ids: list[int] | None = None,
 ) -> list[AIAnalysis]:
     study = session.get(ECGStudy, study_id)
     if study is None:
@@ -52,7 +53,7 @@ def analyze_study(
         ).all()
     }
 
-    for model in list_active_models(session):
+    for model in list_models_by_ids(session, model_ids or []):
         if model.id in done:
             continue
         _run_one(
