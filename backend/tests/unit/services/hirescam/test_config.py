@@ -6,17 +6,17 @@ class TestHiResCAMConfig:
     def test_defaults(self):
         cfg = HiResCAMConfig()
         assert cfg.target_layer_name == "last_conv"
-        assert cfg.input_size == 1600
+        assert cfg.input_size == 640
         assert cfg.device == "cpu"
-        assert cfg.clip_percentile == 99.0
+        assert cfg.clip_percentile == 98.0
         assert cfg.smooth_sigma == 1.0
         assert cfg.top_percent == 20.0
-        assert cfg.colormap == "inferno"
+        assert cfg.colormap == "jet"
         assert cfg.overlay_alpha == 0.45
         assert cfg.roi_x1 == 0.03
-        assert cfg.roi_y1 == 0.23
+        assert cfg.roi_y1 == 0.18
         assert cfg.roi_x2 == 0.98
-        assert cfg.roi_y2 == 0.94
+        assert cfg.roi_y2 == 0.96
         assert cfg.use_roi_crop is True
 
     def test_to_dict_round_trip(self):
@@ -35,7 +35,7 @@ class TestHiResCAMConfig:
         d["unknown_key"] = "value"
         d["another"] = 42
         cfg = HiResCAMConfig.from_dict(d)
-        assert cfg.colormap == "inferno"
+        assert cfg.colormap == "jet"
 
     def test_from_dict_empty(self):
         cfg = HiResCAMConfig.from_dict({})
