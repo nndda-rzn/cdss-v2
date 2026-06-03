@@ -10,6 +10,7 @@ from app.services.hirescam.generator_v2 import (
 )
 from app.services.hirescam.letterbox import LetterboxParams, letterbox, reverse_letterbox
 from app.services.hirescam.postprocess import postprocess_heatmap
+from app.services.hirescam.signal_mask import create_signal_mask
 
 __all__ = [
     "HiResCAMConfig",
@@ -25,4 +26,5 @@ __all__ = [
     "select_target_layer",
     "array_to_png",
     "SUPPORTED_COLORMAPS",
+    "create_signal_mask",
 ]
