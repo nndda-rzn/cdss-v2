@@ -59,3 +59,36 @@ def test_sets_only_first_as_active(tmp_path, monkeypatch):
         s.commit()
         active = s.query(ModelMetadata).filter_by(is_active=True).all()
         assert len(active) == 1
+
+
+def test_seed_kaggle_naming(tmp_path, monkeypatch):
+    monkeypatch.setattr("scripts.seed_model_metadata.MODELS_DIR", tmp_path)
+    models_dir = tmp_path / "yolov8n_cls"
+    models_dir.mkdir()
+    (models_dir / "yolov8n_cls_ecg_roi_best.pt").write_bytes(b"fake-model-data")
+
+    engine = create_engine(f"sqlite:///{tmp_path / 'kaggle.db'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as s:
+        seed_model_metadata(s)
+        s.commit()
+        models = s.scalars(select(ModelMetadata)).all()
+        assert len(models) == 1
+        assert models[0].model_name == "yolov8n"
+        assert models[0].model_file_path == "yolov8n_cls/yolov8n_cls_ecg_roi_best.pt"
+
+
+def test_best_pt_takes_fallback(tmp_path, monkeypatch):
+    monkeypatch.setattr("scripts.seed_model_metadata.MODELS_DIR", tmp_path)
+    models_dir = tmp_path / "yolov8n_cls"
+    models_dir.mkdir()
+    (models_dir / "best.pt").write_bytes(b"fallback-model")
+
+    engine = create_engine(f"sqlite:///{tmp_path / 'fallback.db'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as s:
+        seed_model_metadata(s)
+        s.commit()
+        models = s.scalars(select(ModelMetadata)).all()
+        assert len(models) == 1
+        assert models[0].model_file_path == "yolov8n_cls/best.pt"
