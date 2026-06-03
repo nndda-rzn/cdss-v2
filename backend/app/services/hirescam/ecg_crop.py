@@ -48,14 +48,14 @@ def crop_ecg_roi(
 
 def paste_overlay_to_full(
     full_image_path: str | Path,
-    overlay_image_path: str | Path,
+    overlay_image: bytes | str | Path,
     roi_bbox: tuple[int, int, int, int],
 ) -> bytes:
     """Paste overlay image back onto full report at ROI coordinates.
 
     Args:
         full_image_path: Path to original full ECG report.
-        overlay_image_path: Path to overlay image (heatmap blended with crop).
+        overlay_image: PNG bytes or path to overlay image.
         roi_bbox: (abs_x1, abs_y1, abs_x2, abs_y2) pixel coordinates.
 
     Returns:
@@ -64,7 +64,10 @@ def paste_overlay_to_full(
     import io
 
     full = Image.open(full_image_path).convert("RGB")
-    overlay = Image.open(overlay_image_path).convert("RGB")
+    if isinstance(overlay_image, bytes):
+        overlay = Image.open(io.BytesIO(overlay_image)).convert("RGB")
+    else:
+        overlay = Image.open(overlay_image).convert("RGB")
 
     # Resize overlay to match ROI dimensions
     roi_w = roi_bbox[2] - roi_bbox[0]

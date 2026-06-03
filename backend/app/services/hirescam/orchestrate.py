@@ -28,11 +28,7 @@ def generate_artifacts(
     model_dir: Path,
     config: HiResCAMConfig | None = None,
 ) -> HiResCAMArtifact | None:
-    """Generate HiResCAM artifacts for a single successful AIAnalysis row.
-
-    If *config* is ``None``, the active config is read from the DB.
-    Returns the persisted HiResCAMArtifact, or ``None`` on failure.
-    """
+    """Generate HiResCAM artifacts for a single successful AIAnalysis row."""
     if analysis.status != "success" or analysis.predicted_class is None:
         return None
 
@@ -58,14 +54,31 @@ def generate_artifacts(
     if not image_path.exists():
         return None
 
+    crop_path = None
     try:
+        from app.services.hirescam.ecg_crop import crop_ecg_roi, paste_overlay_to_full
+
         model_path = Path(model_dir) / model.model_file_path
         yolo_model = load_model(str(model_path))
 
         class_idx = _class_to_index(analysis.predicted_class)
 
+        # Crop ROI if enabled
+        if config.use_roi_crop:
+            crop_path, roi_bbox = crop_ecg_roi(
+                str(image_path),
+                roi_x1=config.roi_x1,
+                roi_y1=config.roi_y1,
+                roi_x2=config.roi_x2,
+                roi_y2=config.roi_y2,
+            )
+            cam_source = str(crop_path)
+        else:
+            cam_source = str(image_path)
+            roi_bbox = None
+
         heatmap_arr, lb_params, _ = generate_hirescam_v2(
-            yolo_model, str(image_path), class_idx,
+            yolo_model, cam_source, class_idx,
             target_layer_name=config.target_layer_name,
             input_size=config.input_size,
             device=config.device,
@@ -82,10 +95,10 @@ def generate_artifacts(
         )
 
         # Apply signal mask to focus heatmap on ECG signals
+        rgb_img = np.array(Image.open(cam_source).convert("RGB"))
         if config.use_signal_mask:
             from app.services.hirescam.signal_mask import create_signal_mask
 
-            rgb_img = np.array(Image.open(str(image_path)).convert("RGB"))
             sig_mask = create_signal_mask(
                 rgb_img,
                 blur_radius=config.signal_mask_blur_radius,
@@ -105,12 +118,27 @@ def generate_artifacts(
 
         heatmap_png = array_to_png(processed["heatmap_norm"], colormap=config.colormap)
 
+        # Generate overlay on the cropped source
         overlay_png = compose_overlay(
-            str(image_path), heatmap_png, alpha=config.overlay_alpha,
+            cam_source, heatmap_png, alpha=config.overlay_alpha,
         )
-        side_by_side_png = compose_side_by_side(
-            str(image_path), heatmap_png, overlay_png
-        )
+
+        # Paste back onto full image if cropped
+        if config.use_roi_crop and roi_bbox is not None:
+            full_overlay_png = paste_overlay_to_full(
+                str(image_path),
+                overlay_png,
+                roi_bbox,
+            )
+            # side-by-side: original | heatmap | overlay
+            side_by_side_png = compose_side_by_side(
+                str(image_path), heatmap_png, full_overlay_png,
+            )
+        else:
+            full_overlay_png = overlay_png
+            side_by_side_png = compose_side_by_side(
+                str(image_path), heatmap_png, overlay_png,
+            )
 
         status, focus_metric = evaluate_explanation(
             heatmap_arr,
@@ -126,7 +154,7 @@ def generate_artifacts(
         side_by_side_path = heatmap_dir / "side_by_side.png"
 
         heatmap_path.write_bytes(heatmap_png)
-        overlay_path.write_bytes(overlay_png)
+        overlay_path.write_bytes(full_overlay_png)
         side_by_side_path.write_bytes(side_by_side_png)
 
         artifact = HiResCAMArtifact(
@@ -143,6 +171,9 @@ def generate_artifacts(
 
     except Exception:
         return None
+    finally:
+        if crop_path is not None and crop_path.exists():
+            crop_path.unlink(missing_ok=True)
 
 
 def generate_for_study(
