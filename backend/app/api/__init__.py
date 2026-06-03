@@ -12,6 +12,7 @@ def register_blueprints(app: Flask) -> None:
     from app.api.encounters import bp as encounters_bp
     from app.api.health import bp as health_bp
     from app.api.hirescam import bp as hirescam_bp
+    from app.api.models import bp as models_bp
     from app.api.patient_consent import bp as patient_consent_bp
     from app.api.patient_history import bp as patient_history_bp
     from app.api.patients import bp as patients_bp
@@ -36,3 +37,4 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(uploads_bp)
     app.register_blueprint(tuning_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(models_bp)

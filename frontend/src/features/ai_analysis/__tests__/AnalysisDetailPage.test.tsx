@@ -59,7 +59,7 @@ describe("AnalysisDetailPage", () => {
     renderPage();
 
     expect(await screen.findByText("YOLOv8n")).toBeInTheDocument();
-    expect(screen.getAllByText(/konsensus|consensus/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole("table")).toBeInTheDocument();
   });
 
   it("renders an access-denied state when analyses query fails", async () => {

@@ -13,12 +13,14 @@ def evaluate_explanation(
     heatmap: np.ndarray,
     *,
     confidence: float | None = None,
+    rgb_image: np.ndarray | None = None,
 ) -> tuple[str, float]:
     """Evaluate HiResCAM explanation quality.
 
     Args:
         heatmap: 2D numpy array [0..1] of the heatmap.
         confidence: Model confidence score (0..1), optional.
+        rgb_image: Optional RGB image for signal-mask IoU evaluation.
 
     Returns:
         Tuple of (explanation_status, focus_metric).
@@ -26,12 +28,46 @@ def evaluate_explanation(
     if heatmap.ndim != 2:
         raise ValueError(f"Expected 2D heatmap, got {heatmap.ndim}D")
 
-    focus_metric = _compute_signal_region_iou(heatmap)
+    if rgb_image is not None:
+        focus_metric = compute_signal_mask_iou(heatmap, rgb_image)
+    else:
+        focus_metric = _compute_signal_region_iou(heatmap)
 
     # Determine status
     status = _classify_status(focus_metric, confidence)
 
     return status, float(focus_metric)
+
+
+def compute_signal_mask_iou(
+    heatmap: np.ndarray,
+    rgb_image: np.ndarray,
+    *,
+    signal_threshold: int = 120,
+    blur_radius: int = 5,
+) -> float:
+    """Compute fraction of heatmap activation overlapping with ECG signal regions.
+
+    More accurate than center-crop for ECG images where signals may not
+    be centered.
+    """
+    import cv2
+
+    from app.services.hirescam.signal_mask import create_signal_mask
+
+    mask = create_signal_mask(rgb_image, signal_threshold=signal_threshold, blur_radius=blur_radius)
+
+    if mask.shape != heatmap.shape:
+        mask = cv2.resize(
+            mask, (heatmap.shape[1], heatmap.shape[0]), interpolation=cv2.INTER_LINEAR
+        )
+
+    total = float(heatmap.sum())
+    if total == 0:
+        return 0.0
+
+    masked_activation = float((heatmap * mask).sum())
+    return masked_activation / total
 
 
 def _compute_signal_region_iou(heatmap: np.ndarray) -> float:

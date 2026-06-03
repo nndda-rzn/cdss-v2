@@ -1,6 +1,8 @@
 """Orchestrate HiResCAM generation for AIAnalysis rows and persist artifacts."""
 from pathlib import Path
 
+import numpy as np
+from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -79,6 +81,28 @@ def generate_artifacts(
             colormap=config.colormap,
         )
 
+        # Apply signal mask to focus heatmap on ECG signals
+        if config.use_signal_mask:
+            from app.services.hirescam.signal_mask import create_signal_mask
+
+            rgb_img = np.array(Image.open(str(image_path)).convert("RGB"))
+            sig_mask = create_signal_mask(
+                rgb_img,
+                blur_radius=config.signal_mask_blur_radius,
+            )
+            norm_heatmap = processed["heatmap_norm"]
+            masked = (
+                (1.0 - config.signal_mask_strength) * norm_heatmap
+                + config.signal_mask_strength * (norm_heatmap * sig_mask)
+            )
+            # Re-normalize
+            m_min, m_max = masked.min(), masked.max()
+            if m_max - m_min > 1e-8:
+                masked = (masked - m_min) / (m_max - m_min)
+            else:
+                masked = np.zeros_like(masked)
+            processed["heatmap_norm"] = masked
+
         heatmap_png = array_to_png(processed["heatmap_norm"], colormap=config.colormap)
 
         overlay_png = compose_overlay(
@@ -89,7 +113,9 @@ def generate_artifacts(
         )
 
         status, focus_metric = evaluate_explanation(
-            heatmap_arr, confidence=analysis.confidence_score
+            heatmap_arr,
+            confidence=analysis.confidence_score,
+            rgb_image=rgb_img if config.use_signal_mask else None,
         )
 
         heatmap_dir = storage_root / "heatmaps" / str(analysis.id)

@@ -19,6 +19,10 @@ class HiResCAMConfig:
     top_percent: float = 20.0
     colormap: str = "inferno"
     overlay_alpha: float = 0.45
+    clip_percentile_low: float = 5.0
+    use_signal_mask: bool = True
+    signal_mask_strength: float = 0.65
+    signal_mask_blur_radius: int = 5
 
     def to_dict(self) -> dict[str, object]:
         """Serialize to JSON-compatible dict."""

@@ -1,7 +1,7 @@
 """Seed model_metadata from files on disk.
 
-Scans MODELS_DIR for subdirectories containing `best.pt`, registers each
-as a ModelMetadata row. Idempotent on (model_name, model_version).
+Scans MODELS_DIR for subdirectories containing `*_best.pt` or `best.pt`,
+registers each as a ModelMetadata row. Idempotent on (model_name, model_version).
 """
 import hashlib
 from pathlib import Path
@@ -29,9 +29,13 @@ def seed_model_metadata(session) -> None:
 
     first = True
     for model_dir in sorted(MODELS_DIR.iterdir()):
-        best_pt = model_dir / "best.pt"
-        if not model_dir.is_dir() or not best_pt.exists():
+        if not model_dir.is_dir():
             continue
+        # Support both Kaggle naming (*_best.pt) and standard (best.pt)
+        candidates = sorted(model_dir.glob("*_best.pt")) + sorted(model_dir.glob("best.pt"))
+        if not candidates:
+            continue
+        best_pt = candidates[0]
 
         folder_name = model_dir.name
         parts = folder_name.split("_")
@@ -55,7 +59,7 @@ def seed_model_metadata(session) -> None:
             architecture=arch,
             task_type="classification",
             input_size=224,
-            model_file_path=f"{folder_name}/best.pt",
+            model_file_path=f"{folder_name}/{best_pt.name}",
             model_checksum=_file_checksum(best_pt),
             model_size_mb=size_mb,
             class_names_json=["abnormal", "homi", "mi", "normal"],
