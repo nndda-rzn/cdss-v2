@@ -179,3 +179,57 @@ def test_study_not_found_raises(session, seeded_admin, tmp_path, monkeypatch):
             model_dir=tmp_path / "models", storage_root=tmp_path / "storage",
         )
     assert exc.value.code == "ECG_STUDY_NOT_FOUND"
+
+
+def test_analyze_study_with_roi_crop(session, seeded_admin, tmp_path, monkeypatch):
+    import os
+
+    import numpy as np
+    from PIL import Image
+
+    study = _study(session)
+    _models(session)
+
+    # Create the storage directory and write a dummy ECG image
+    img_dir = tmp_path / "storage" / os.path.dirname(study.image_original_path)
+    img_dir.mkdir(parents=True, exist_ok=True)
+    img_path = tmp_path / "storage" / study.image_original_path
+    
+    # Save a 100x100 RGB image
+    arr = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+    Image.fromarray(arr, mode="RGB").save(img_path)
+
+    # Capture the image path passed to run_inference
+    captured_paths = []
+    def fake_run_inference(model, image_path, device="cpu"):
+        captured_paths.append(image_path)
+        return {
+            "predicted_class": "mi",
+            "confidence": 0.75,
+            "probabilities": {
+                "abnormal": 0.1, "homi": 0.1, "mi": 0.75, "normal": 0.05
+            },
+            "inference_ms": 12.5,
+        }
+
+    monkeypatch.setattr(
+        orchestrate, "load_model",
+        lambda path: _Model([0.1, 0.1, 0.75, 0.05], top1=2),
+    )
+    monkeypatch.setattr(orchestrate, "run_inference", fake_run_inference)
+
+    rows = analyze_study(
+        session, study_id=study.id, user_id=1,
+        model_dir=tmp_path / "models", storage_root=tmp_path / "storage",
+    )
+
+    assert len(rows) == 2
+    assert all(r.status == "success" for r in rows)
+    # Check that we passed a temporary crop path, not the original path
+    assert len(captured_paths) == 2
+    for path in captured_paths:
+        assert path != str(img_path)
+        assert "ecg_crop_" in path
+        # Check that the file existed when passed (though it is unlinked afterwards)
+        assert not os.path.exists(path)  # Verify it was successfully cleaned up
+

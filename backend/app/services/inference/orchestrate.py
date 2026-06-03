@@ -111,6 +111,9 @@ def _run_one(
     model_dir: Path,
     image_path: Path,
 ) -> None:
+    from app.services.hirescam.config import HiResCAMConfig
+    from app.services.hirescam.ecg_crop import crop_ecg_roi
+
     # Reuse a prior non-success row to avoid the (study, model) unique-constraint
     # violation on re-run; otherwise create a fresh row.
     row = session.scalar(
@@ -127,11 +130,25 @@ def _run_one(
             status="failed",
         )
 
+    crop_path = None
     try:
+        config = HiResCAMConfig()
+        if config.use_roi_crop and image_path.exists():
+            crop_path, _ = crop_ecg_roi(
+                str(image_path),
+                roi_x1=config.roi_x1,
+                roi_y1=config.roi_y1,
+                roi_x2=config.roi_x2,
+                roi_y2=config.roi_y2,
+            )
+            inference_path = str(crop_path)
+        else:
+            inference_path = str(image_path)
+
         resolved = str(Path(model_dir) / model.model_file_path)
         loaded = load_model(resolved)
         started = datetime.now(UTC)
-        out = run_inference(loaded, str(image_path), device="cpu")
+        out = run_inference(loaded, inference_path, device="cpu")
         finished = datetime.now(UTC)
         row.predicted_class = out["predicted_class"]
         row.confidence_score = out["confidence"]
@@ -146,6 +163,9 @@ def _run_one(
         row.status = "failed"
         row.error_message = str(exc)[:500]
         row.device_used = "cpu"
+    finally:
+        if crop_path is not None and crop_path.exists():
+            crop_path.unlink(missing_ok=True)
 
     if is_new:
         session.add(row)
