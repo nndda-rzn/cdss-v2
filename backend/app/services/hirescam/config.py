@@ -12,21 +12,21 @@ class HiResCAMConfig:
     """
 
     target_layer_name: str = "last_conv"
-    input_size: int = 1600
+    input_size: int = 640
     device: str = "cpu"
-    clip_percentile: float = 99.0
+    clip_percentile: float = 98.0
     smooth_sigma: float = 1.0
     top_percent: float = 20.0
-    colormap: str = "inferno"
+    colormap: str = "jet"
     overlay_alpha: float = 0.45
-    clip_percentile_low: float = 5.0
+    clip_percentile_low: float = 2.0
     use_signal_mask: bool = True
     signal_mask_strength: float = 0.65
     signal_mask_blur_radius: int = 5
     roi_x1: float = 0.03
-    roi_y1: float = 0.23
+    roi_y1: float = 0.18
     roi_x2: float = 0.98
-    roi_y2: float = 0.94
+    roi_y2: float = 0.96
     use_roi_crop: bool = True
 
     def to_dict(self) -> dict[str, object]:
