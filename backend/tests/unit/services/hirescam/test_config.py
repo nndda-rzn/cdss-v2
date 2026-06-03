@@ -13,12 +13,15 @@ class TestHiResCAMConfig:
         assert cfg.top_percent == 100.0
         assert cfg.colormap == "jet"
         assert cfg.overlay_alpha == 0.45
-        assert cfg.use_signal_mask is False
+        assert cfg.use_signal_mask is True
         assert cfg.roi_x1 == 0.03
         assert cfg.roi_y1 == 0.18
         assert cfg.roi_x2 == 0.98
         assert cfg.roi_y2 == 0.96
         assert cfg.use_roi_crop is True
+        assert cfg.cam_threshold == 0.40
+        assert cfg.cam_gamma == 2.0
+        assert cfg.max_alpha == 0.60
 
     def test_to_dict_round_trip(self):
         cfg = HiResCAMConfig(

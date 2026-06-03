@@ -20,7 +20,7 @@ class HiResCAMConfig:
     colormap: str = "jet"
     overlay_alpha: float = 0.45
     clip_percentile_low: float = 2.0
-    use_signal_mask: bool = False
+    use_signal_mask: bool = True
     signal_mask_strength: float = 0.65
     signal_mask_blur_radius: int = 5
     roi_x1: float = 0.03
@@ -28,6 +28,9 @@ class HiResCAMConfig:
     roi_x2: float = 0.98
     roi_y2: float = 0.96
     use_roi_crop: bool = True
+    cam_threshold: float = 0.40
+    cam_gamma: float = 2.0
+    max_alpha: float = 0.60
 
     def to_dict(self) -> dict[str, object]:
         """Serialize to JSON-compatible dict."""
