@@ -15,12 +15,12 @@ class HiResCAMConfig:
     input_size: int = 640
     device: str = "cpu"
     clip_percentile: float = 98.0
-    smooth_sigma: float = 1.0
-    top_percent: float = 20.0
+    smooth_sigma: float = 0.0
+    top_percent: float = 100.0
     colormap: str = "jet"
     overlay_alpha: float = 0.45
     clip_percentile_low: float = 2.0
-    use_signal_mask: bool = True
+    use_signal_mask: bool = False
     signal_mask_strength: float = 0.65
     signal_mask_blur_radius: int = 5
     roi_x1: float = 0.03

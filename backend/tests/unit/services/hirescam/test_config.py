@@ -9,10 +9,11 @@ class TestHiResCAMConfig:
         assert cfg.input_size == 640
         assert cfg.device == "cpu"
         assert cfg.clip_percentile == 98.0
-        assert cfg.smooth_sigma == 1.0
-        assert cfg.top_percent == 20.0
+        assert cfg.smooth_sigma == 0.0
+        assert cfg.top_percent == 100.0
         assert cfg.colormap == "jet"
         assert cfg.overlay_alpha == 0.45
+        assert cfg.use_signal_mask is False
         assert cfg.roi_x1 == 0.03
         assert cfg.roi_y1 == 0.18
         assert cfg.roi_x2 == 0.98
