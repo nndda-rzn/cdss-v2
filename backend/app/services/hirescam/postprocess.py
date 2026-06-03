@@ -15,6 +15,7 @@ def postprocess_heatmap(
     heatmap: np.ndarray,
     letterbox_params: LetterboxParams,
     clip_percentile: float = 99.0,
+    clip_percentile_low: float = 5.0,
     smooth_sigma: float = 1.0,
     top_percent: float = 20.0,
     colormap: str = "inferno",
@@ -32,7 +33,8 @@ def postprocess_heatmap(
     Args:
         heatmap: Raw HiResCAM 2D array (letterboxed space).
         letterbox_params: Parameters from letterbox preprocessing.
-        clip_percentile: Percentile for outlier clipping (default 99.0).
+        clip_percentile: Upper percentile for outlier clipping (default 99.0).
+        clip_percentile_low: Lower percentile for outlier clipping (default 5.0).
         smooth_sigma: Gaussian smoothing sigma, 0 = no smoothing (default 1.0).
         top_percent: Top percent of activation to mask (default 20.0).
         colormap: Matplotlib colormap name (default "inferno").
@@ -43,8 +45,9 @@ def postprocess_heatmap(
     raw = heatmap.copy()
 
     # 1. Percentile clipping
-    cap = np.percentile(heatmap, clip_percentile)
-    clipped = np.clip(heatmap, 0, cap)
+    cap_high = np.percentile(heatmap, clip_percentile)
+    cap_low = np.percentile(heatmap, clip_percentile_low)
+    clipped = np.clip(heatmap, cap_low, cap_high)
 
     # 2. Min-max normalization
     h_min, h_max = clipped.min(), clipped.max()
