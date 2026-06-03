@@ -1,6 +1,6 @@
 // frontend/src/features/tuning/components/ConfigDetailModal.tsx
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchTuningConfig, tuningImageUrl, tuningKeys } from "../api";
+import { Button } from "@/components/ui/button";
+import { applyTuningConfig, fetchTuningConfig, tuningImageUrl, tuningKeys } from "../api";
 import type { TuningConfig } from "../types";
+import { useI18nStore } from "@/lib/i18n/store";
 
 interface ConfigDetailModalProps {
   config: TuningConfig | null;
@@ -28,6 +30,8 @@ const imageFiles: Record<ViewMode, string> = {
 };
 
 export function ConfigDetailModal({ config, open, onOpenChange }: ConfigDetailModalProps) {
+  const t = useI18nStore((s) => s.t);
+  const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<ViewMode>("overlay");
 
   const { data: metadata, isLoading } = useQuery({
@@ -36,16 +40,36 @@ export function ConfigDetailModal({ config, open, onOpenChange }: ConfigDetailMo
     enabled: open && config !== null,
   });
 
+  const applyMut = useMutation({
+    mutationFn: () => applyTuningConfig(config!.config_index),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tuningKeys.active() });
+      onOpenChange(false);
+    },
+  });
+
   if (!config) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>Config #{config.config_index}</DialogTitle>
-          <DialogDescription className="sr-only">
-            Detail konfigurasi HiResCAM #{config.config_index}
-          </DialogDescription>
+        <DialogHeader className="flex flex-row items-center justify-between">
+          <div>
+            <DialogTitle>Config #{config.config_index}</DialogTitle>
+            <DialogDescription className="sr-only">
+              Detail konfigurasi HiResCAM #{config.config_index}
+            </DialogDescription>
+          </div>
+          <Button
+            onClick={() => applyMut.mutate()}
+            disabled={applyMut.isPending}
+            size="sm"
+            className="mr-6"
+          >
+            {applyMut.isPending
+              ? t("Menerapkan...", "Applying...")
+              : t("Terapkan ke Produksi", "Apply to Production")}
+          </Button>
         </DialogHeader>
 
         {/* View mode toggle */}

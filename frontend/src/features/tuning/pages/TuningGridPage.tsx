@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useI18nStore } from "@/lib/i18n/store";
 import { fetchTuningGrid, tuningKeys } from "../api";
+import { ActiveConfigPanel } from "../components/ActiveConfigPanel";
 import { ConfigCard } from "../components/ConfigCard";
 import { ConfigDetailModal } from "../components/ConfigDetailModal";
 import { SummaryTable } from "../components/SummaryTable";
@@ -97,6 +98,9 @@ export function TuningGridPage() {
           </Button>
         </div>
       </div>
+
+      {/* Active production configuration */}
+      <ActiveConfigPanel />
 
       {/* Content */}
       {viewMode === "grid" ? (
