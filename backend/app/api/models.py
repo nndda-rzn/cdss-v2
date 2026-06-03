@@ -35,4 +35,4 @@ def list_models() -> tuple[Response, int]:
         }
         for r in rows
     ]
-    return jsonify(result), 200
+    return jsonify(items=result), 200

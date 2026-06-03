@@ -35,10 +35,10 @@ class TestListModels:
         )
         assert resp.status_code == 200
         data = resp.get_json()
-        assert isinstance(data, list)
-        assert len(data) >= 1
-        assert data[0]["model_name"] == "resnet50"
-        assert data[0]["architecture"] == "ResNet50"
+        assert "items" in data
+        assert len(data["items"]) >= 1
+        assert data["items"][0]["model_name"] == "resnet50"
+        assert data["items"][0]["architecture"] == "ResNet50"
 
     def test_empty_when_no_models(self, client, seeded_admin):
         resp = client.get(
@@ -47,8 +47,8 @@ class TestListModels:
         )
         assert resp.status_code == 200
         data = resp.get_json()
-        assert isinstance(data, list)
-        assert len(data) == 0
+        assert "items" in data
+        assert len(data["items"]) == 0
 
     def test_rejects_unauthenticated(self, client, seeded_admin):
         resp = client.get("/api/models")
