@@ -147,8 +147,8 @@ class TestTuningActiveConfig:
             resp = client.get("/api/tuning/active", headers=_auth())
             assert resp.status_code == 200
             data = resp.get_json()
-            assert data["colormap"] == "inferno"
-            assert data["input_size"] == 1600
+            assert data["colormap"] == "jet"
+            assert data["input_size"] == 640
 
     def test_apply_requires_auth(self, client, tmp_path, monkeypatch):
         grid = _write_grid(tmp_path)
