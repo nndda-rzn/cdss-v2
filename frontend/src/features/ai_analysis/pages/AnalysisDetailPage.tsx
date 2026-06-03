@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Printer, Sparkles } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -11,12 +11,12 @@ import { RoleGate } from "@/features/auth/components/RoleGate";
 import { ecgKeys, fetchEcgStudy } from "@/features/ecg_study/api";
 import { fetchPatient, patientKeys } from "@/features/patient/api";
 import { useI18nStore } from "@/lib/i18n/store";
-
 import { analysisKeys, fetchAnalyses, fetchStudyHiResCAM, hirescamKeys, runAnalysis } from "../api";
 import { AnalysisDetailTable } from "../components/AnalysisDetailTable";
 import { ConsensusCard } from "../components/ConsensusCard";
 import { ExplanationStatusBadge } from "../components/ExplanationStatusBadge";
 import { HeatmapViewer } from "../components/HeatmapViewer";
+import { ModelSelector } from "../components/ModelSelector";
 import { StudyHeaderCard } from "../components/StudyHeaderCard";
 import type { HiResCAMRow } from "../types";
 
@@ -39,7 +39,6 @@ export function AnalysisDetailPage() {
     enabled: !!id && !!studyId,
     retry: false,
   });
-
   const patientId = study.data?.patient_id;
   const patient = useQuery({
     queryKey: patientKeys.detail(patientId ?? ""),
@@ -47,7 +46,6 @@ export function AnalysisDetailPage() {
     enabled: !!patientId,
     retry: false,
   });
-
   const hirescam = useQuery({
     queryKey: hirescamKeys.study(id, studyId),
     queryFn: () => fetchStudyHiResCAM(id, studyId),
@@ -55,8 +53,11 @@ export function AnalysisDetailPage() {
     retry: false,
   });
 
+  const [selectedModelId, setSelectedModelId] = useState<string>("");
+
   const mutation = useMutation({
-    mutationFn: () => runAnalysis(id, studyId),
+    mutationFn: () =>
+      runAnalysis(id, studyId, selectedModelId ? [Number(selectedModelId)] : undefined),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: analysisKeys.list(id, studyId) });
       qc.invalidateQueries({ queryKey: hirescamKeys.study(id, studyId) });
@@ -188,18 +189,21 @@ export function AnalysisDetailPage() {
           {t("Cetak", "Print")}
         </Button>
         <RoleGate allow={["clinician", "nurse"]}>
-          <Button
-            onClick={() => mutation.mutate()}
-            disabled={mutation.isPending}
-            className="cursor-pointer"
-          >
-            <Sparkles className="mr-1.5 h-4 w-4" aria-hidden="true" />
-            {mutation.isPending
-              ? t("Menganalisis...", "Analysing...")
-              : rows.length === 0
-                ? t("Jalankan Analisis AI", "Run AI Analysis")
-                : t("Analisis ulang", "Re-run analysis")}
-          </Button>
+          <div className="flex items-end gap-2">
+            <ModelSelector value={selectedModelId} onChange={setSelectedModelId} />
+            <Button
+              onClick={() => mutation.mutate()}
+              disabled={mutation.isPending || !selectedModelId}
+              className="cursor-pointer"
+            >
+              <Sparkles className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              {mutation.isPending
+                ? t("Menganalisis...", "Analysing...")
+                : rows.length === 0
+                  ? t("Jalankan Analisis AI", "Run AI Analysis")
+                  : t("Analisis ulang", "Re-run analysis")}
+            </Button>
+          </div>
         </RoleGate>
       </div>
 

@@ -27,6 +27,14 @@ export type ExplanationStatus =
   | "low-confidence"
   | "need-review";
 
+export interface ModelOption {
+  id: number;
+  model_name: string;
+  model_version: string;
+  architecture: string;
+  is_active: boolean;
+}
+
 export interface HiResCAMRow {
   id: number;
   ai_analysis_id: number;

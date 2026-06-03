@@ -1,14 +1,19 @@
 import { apiFetch } from "@/lib/api/client";
 
-import type { AnalysisRow, HiResCAMRow } from "./types";
+import type { AnalysisRow, HiResCAMRow, ModelOption } from "./types";
 
 export type {
   AnalysisRow,
   AnalysisStatus,
   ExplanationStatus,
   HiResCAMRow,
+  ModelOption,
   PredictedClass,
 } from "./types";
+
+export const modelKeys = {
+  list: () => ["models"] as const,
+};
 
 export const analysisKeys = {
   list: (encounterId: string, studyId: string) => ["analyses", encounterId, studyId] as const,
@@ -21,9 +26,26 @@ export async function fetchAnalyses(encounterId: string, studyId: string): Promi
   return body.items as AnalysisRow[];
 }
 
-export async function runAnalysis(encounterId: string, studyId: string): Promise<void> {
+export async function fetchModels(): Promise<ModelOption[]> {
+  const resp = await apiFetch("/api/models");
+  const body = await resp.json();
+  if (!resp.ok) throw new Error(body.error?.message_id ?? "Gagal memuat daftar model");
+  return body.items as ModelOption[];
+}
+
+export async function runAnalysis(
+  encounterId: string,
+  studyId: string,
+  modelIds?: number[],
+): Promise<void> {
   const resp = await apiFetch(`/api/encounters/${encounterId}/ecg-studies/${studyId}/analyze`, {
     method: "POST",
+    ...(modelIds && modelIds.length > 0
+      ? {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model_ids: modelIds }),
+        }
+      : {}),
   });
   if (!resp.ok) {
     const body = await resp.json().catch(() => ({}));
