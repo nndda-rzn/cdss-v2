@@ -23,6 +23,11 @@ class HiResCAMConfig:
     use_signal_mask: bool = True
     signal_mask_strength: float = 0.65
     signal_mask_blur_radius: int = 5
+    roi_x1: float = 0.03
+    roi_y1: float = 0.23
+    roi_x2: float = 0.98
+    roi_y2: float = 0.94
+    use_roi_crop: bool = True
 
     def to_dict(self) -> dict[str, object]:
         """Serialize to JSON-compatible dict."""
