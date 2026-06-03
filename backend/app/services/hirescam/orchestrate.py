@@ -15,7 +15,7 @@ from app.services.hirescam.config import HiResCAMConfig
 from app.services.hirescam.config_store import get_config
 from app.services.hirescam.evaluator import evaluate_explanation
 from app.services.hirescam.generator_v2 import generate_hirescam_v2
-from app.services.hirescam.overlay import compose_overlay, compose_side_by_side
+from app.services.hirescam.overlay import compose_side_by_side
 from app.services.hirescam.postprocess import postprocess_heatmap
 from app.services.inference.loader import load_model
 
@@ -56,7 +56,7 @@ def generate_artifacts(
 
     crop_path = None
     try:
-        from app.services.hirescam.ecg_crop import crop_ecg_roi, paste_overlay_to_full
+        from app.services.hirescam.ecg_crop import crop_ecg_roi
 
         model_path = Path(model_dir) / model.model_file_path
         yolo_model = load_model(str(model_path))
@@ -89,43 +89,45 @@ def generate_artifacts(
             heatmap_arr,
             lb_params,
             clip_percentile=config.clip_percentile,
+            clip_percentile_low=config.clip_percentile_low,
             smooth_sigma=config.smooth_sigma,
             top_percent=config.top_percent,
             colormap=config.colormap,
         )
 
-        # Apply signal mask to focus heatmap on ECG signals
-        rgb_img = np.array(Image.open(cam_source).convert("RGB"))
-        if config.use_signal_mask:
-            from app.services.hirescam.signal_mask import create_signal_mask
-
-            sig_mask = create_signal_mask(
-                rgb_img,
-                blur_radius=config.signal_mask_blur_radius,
-            )
-            norm_heatmap = processed["heatmap_norm"]
-            masked = (
-                (1.0 - config.signal_mask_strength) * norm_heatmap
-                + config.signal_mask_strength * (norm_heatmap * sig_mask)
-            )
-            # Re-normalize
-            m_min, m_max = masked.min(), masked.max()
-            if m_max - m_min > 1e-8:
-                masked = (masked - m_min) / (m_max - m_min)
-            else:
-                masked = np.zeros_like(masked)
-            processed["heatmap_norm"] = masked
-
-        heatmap_png = array_to_png(processed["heatmap_norm"], colormap=config.colormap)
-
-        # Generate overlay on the cropped source
-        overlay_png = compose_overlay(
-            cam_source, heatmap_png, alpha=config.overlay_alpha,
+        from app.services.hirescam.overlay import (
+            clean_cam,
+            make_transparent_cam_overlay,
+            paste_roi_overlay_to_full,
         )
+
+        crop_img = Image.open(cam_source)
+        rgb_img = np.array(crop_img.convert("RGB"))
+
+        # Clean the heatmap using threshold, gamma, and signal masking
+        cam_clean = clean_cam(
+            cam=processed["heatmap_norm"],
+            crop_img=crop_img,
+            threshold=config.cam_threshold,
+            gamma=config.cam_gamma,
+            use_signal_mask=config.use_signal_mask,
+            signal_mask_blur_radius=config.signal_mask_blur_radius,
+        )
+
+        # Generate transparent per-pixel alpha overlay on crop
+        overlay_png = make_transparent_cam_overlay(
+            crop_img=crop_img,
+            cam=cam_clean,
+            max_alpha=config.max_alpha,
+            colormap=config.colormap,
+        )
+
+        # Generate standard colored heatmap PNG for DB artifacts
+        heatmap_png = array_to_png(cam_clean, colormap=config.colormap)
 
         # Paste back onto full image if cropped
         if config.use_roi_crop and roi_bbox is not None:
-            full_overlay_png = paste_overlay_to_full(
+            full_overlay_png = paste_roi_overlay_to_full(
                 str(image_path),
                 overlay_png,
                 roi_bbox,
