@@ -84,6 +84,7 @@ export function FacilityListPage() {
                       setEditing(f);
                       setModalOpen(true);
                     }}
+                    aria-label="Edit fasilitas"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>

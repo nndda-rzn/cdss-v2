@@ -87,10 +87,16 @@ export function UserListPage() {
                       setEditing(u);
                       setModalOpen(true);
                     }}
+                    aria-label="Edit user"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => toggleActive(u)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleActive(u)}
+                    aria-label={u.is_active ? "Nonaktifkan user" : "Aktifkan user"}
+                  >
                     {u.is_active ? (
                       <UserX className="h-4 w-4" />
                     ) : (
