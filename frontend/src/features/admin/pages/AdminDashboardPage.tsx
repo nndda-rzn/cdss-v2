@@ -108,18 +108,19 @@ export function AdminDashboardPage() {
           <CardTitle>{t("Aksi Cepat", "Quick Actions")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
-          <Button asChild>
+          <Button asChild className="cursor-pointer">
             <Link to="/admin/users">
               <Users className="mr-1.5 h-4 w-4" />
               {t("Kelola User", "Manage Users")}
             </Link>
           </Button>
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" className="cursor-pointer">
             <Link to="/admin/facilities">
               <Building2 className="mr-1.5 h-4 w-4" />
               {t("Kelola Fasilitas", "Manage Facilities")}
             </Link>
           </Button>
+
         </CardContent>
       </Card>
 
