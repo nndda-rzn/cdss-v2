@@ -62,7 +62,8 @@ export function UserListPage() {
         </Button>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Daftar Pengguna">
+          <caption className="sr-only">Daftar pengguna sistem dan peran mereka</caption>
           <thead>
             <tr className="border-b text-left text-muted-foreground">
               <th className="pb-2 pr-4">Nama</th>

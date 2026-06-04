@@ -116,7 +116,8 @@ export function PatientList() {
       )}
 
       {items.length > 0 && (
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Daftar Pasien">
+          <caption className="sr-only">Daftar pasien yang terdaftar di fasilitas</caption>
           <thead>
             <tr className="border-b border-border-strong text-left">
               <th className="py-2 font-medium text-muted-foreground">MRN</th>
