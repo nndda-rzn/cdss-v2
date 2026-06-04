@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +39,20 @@ export function CreateForm() {
     resolver: zodResolver(EncounterSchema),
     defaultValues: { encounter_type: "rawat_jalan", chief_complaint: "" },
   });
+
+  const isDirty = form.formState.isDirty;
+  const isSubmitting = form.formState.isSubmitting;
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty && !isSubmitting) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty, isSubmitting]);
 
   async function onSubmit(values: EncounterValues) {
     setServerError(null);

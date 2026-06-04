@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +44,20 @@ export function RegisterForm() {
       consent_data_use: false as unknown as true,
     },
   });
+
+  const isDirty = form.formState.isDirty;
+  const isSubmitting = form.formState.isSubmitting;
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty && !isSubmitting) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty, isSubmitting]);
 
   async function submit(values: PatientCreateValues, confirmNew = false) {
     setServerError(null);
