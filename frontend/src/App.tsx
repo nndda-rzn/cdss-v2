@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
 import { LoginRoute } from "@/routes/login";
 import { NotFoundRoute } from "@/routes/NotFoundRoute";
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
@@ -19,6 +20,7 @@ import { RoleRedirect } from "@/features/auth/components/RoleRedirect";
 export function App() {
   return (
     <BrowserRouter>
+      <Toaster />
       <Routes>
         <Route path="/login" element={<LoginRoute />} />
         <Route element={<ProtectedRoute />}>

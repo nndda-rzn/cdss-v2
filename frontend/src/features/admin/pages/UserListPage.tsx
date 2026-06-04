@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, UserX, UserCheck } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,6 +24,10 @@ export function UserListPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: adminKeys.users });
       setModalOpen(false);
+      toast.success("User berhasil dibuat");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Gagal membuat user");
     },
   });
 
@@ -32,6 +37,10 @@ export function UserListPage() {
       qc.invalidateQueries({ queryKey: adminKeys.users });
       setModalOpen(false);
       setEditing(null);
+      toast.success("User berhasil diperbarui");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Gagal memperbarui user");
     },
   });
 

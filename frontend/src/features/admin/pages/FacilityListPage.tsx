@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,6 +24,10 @@ export function FacilityListPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: adminKeys.facilities });
       setModalOpen(false);
+      toast.success("Fasilitas berhasil dibuat");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Gagal membuat fasilitas");
     },
   });
 
@@ -33,6 +38,10 @@ export function FacilityListPage() {
       qc.invalidateQueries({ queryKey: adminKeys.facilities });
       setModalOpen(false);
       setEditing(null);
+      toast.success("Fasilitas berhasil diperbarui");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Gagal memperbarui fasilitas");
     },
   });
 
