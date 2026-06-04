@@ -44,15 +44,15 @@ export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) 
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t("Email", "Email")}</FormLabel>
               <FormControl>
-                <Input type="text" inputMode="email" autoComplete="username" {...field} />
+                <Input type="email" inputMode="email" autoComplete="username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -72,7 +72,7 @@ export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) 
           )}
         />
         {serverError && (
-          <p role="alert" className="text-sm text-destructive">
+          <p role="alert" aria-live="polite" className="text-sm text-destructive">
             {serverError}
           </p>
         )}
