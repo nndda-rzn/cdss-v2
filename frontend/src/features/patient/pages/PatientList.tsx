@@ -1,9 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useHotkeys } from "react-hotkeys-hook";
-import { Search, UserPlus } from "lucide-react";
+import { Info, Search, UserPlus } from "lucide-react";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,9 @@ import { AdminModeBanner } from "../components/AdminModeBanner";
 
 export function PatientList() {
   const t = useI18nStore((s) => s.t);
+  const [searchParams] = useSearchParams();
+  const action = searchParams.get("action");
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: patientKeys.list({}),
     queryFn: () => fetchPatients(),
@@ -61,6 +65,32 @@ export function PatientList() {
       </div>
 
       <AdminModeBanner />
+
+      {action === "new-encounter" && (
+        <Alert className="bg-affirmed-soft border-primary/20 text-primary">
+          <Info className="h-4 w-4 text-primary" />
+          <AlertTitle>{t("Buat Kunjungan Baru", "Create New Encounter")}</AlertTitle>
+          <AlertDescription>
+            {t(
+              "Cari dan pilih pasien dari daftar di bawah untuk membuat kunjungan baru.",
+              "Search and select a patient from the list below to create a new encounter.",
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {action === "upload-ecg" && (
+        <Alert className="bg-affirmed-soft border-primary/20 text-primary">
+          <Info className="h-4 w-4 text-primary" />
+          <AlertTitle>{t("Unggah EKG", "Upload ECG")}</AlertTitle>
+          <AlertDescription>
+            {t(
+              "Cari dan pilih pasien dari daftar di bawah untuk mengunggah berkas EKG.",
+              "Search and select a patient from the list below to upload an ECG file.",
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="relative max-w-sm">
         <Search

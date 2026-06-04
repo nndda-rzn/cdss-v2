@@ -20,13 +20,13 @@ export function QuickActions() {
           </Link>
         </Button>
         <Button asChild size="sm" variant="outline" className="cursor-pointer">
-          <Link to="/patients">
+          <Link to="/patients?action=new-encounter">
             <Stethoscope className="mr-1.5 h-4 w-4" aria-hidden="true" />
             {t("Kunjungan Baru", "New Encounter")}
           </Link>
         </Button>
         <Button asChild size="sm" variant="ghost" className="cursor-pointer">
-          <Link to="/patients">
+          <Link to="/patients?action=upload-ecg">
             <ClipboardPlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
             {t("Unggah EKG", "Upload ECG")}
           </Link>
