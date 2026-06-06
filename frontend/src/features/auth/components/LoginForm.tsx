@@ -120,6 +120,14 @@ export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) 
           {form.formState.isSubmitting ? t("Memuat...", "Signing in...") : t("Masuk", "Sign in")}
         </Button>
       </form>
+      <p className="text-center text-sm text-muted-foreground">
+        <a
+          href="#"
+          className="text-primary underline-offset-4 hover:underline pointer-events-none opacity-50"
+        >
+          {t("Lupa kata sandi?", "Forgot password?")}
+        </a>
+      </p>
     </Form>
   );
 }
