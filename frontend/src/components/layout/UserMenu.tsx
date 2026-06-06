@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { logout } from "@/features/auth/api";
 import { useAuthStore } from "@/features/auth/store";
 import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
@@ -51,7 +52,6 @@ const ROLE_LABEL_EN: Record<string, string> = {
 /** Avatar dropdown shown in the right side of the header. */
 export function UserMenu() {
   const accessToken = useAuthStore((s) => s.accessToken);
-  const clear = useAuthStore((s) => s.clear);
   const t = useI18nStore((s) => s.t);
 
   const claims = decode(accessToken);
@@ -90,7 +90,7 @@ export function UserMenu() {
           {t("Profil (segera)", "Profile (soon)")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => clear()} className="cursor-pointer text-destructive">
+        <DropdownMenuItem onClick={() => logout()} className="cursor-pointer text-destructive">
           <LogOut className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
           {t("Keluar", "Sign out")}
         </DropdownMenuItem>
