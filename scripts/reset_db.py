@@ -59,6 +59,18 @@ def seed():
     )
     print("Seeded: clinical user.", file=sys.stderr)
 
+    subprocess.run(
+        [sys.executable, "-m", "scripts.seed_system_config"],
+        cwd=str(REPO_ROOT), env=env, check=True,
+    )
+    print("Seeded: system config.", file=sys.stderr)
+
+    subprocess.run(
+        [sys.executable, "-m", "scripts.seed_models"],
+        cwd=str(REPO_ROOT), env=env, check=True,
+    )
+    print("Seeded: models.", file=sys.stderr)
+
 
 if __name__ == "__main__":
     print("=== Resetting database ===", file=sys.stderr)
