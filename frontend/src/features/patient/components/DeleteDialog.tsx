@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useI18nStore } from "@/lib/i18n/store";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,7 @@ import { deletePatient, patientKeys } from "../api";
 
 export function DeleteDialog({ patientId }: { patientId: string }) {
   const navigate = useNavigate();
+  const t = useI18nStore((s) => s.t);
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
@@ -27,24 +29,28 @@ export function DeleteDialog({ patientId }: { patientId: string }) {
       void qc.invalidateQueries({ queryKey: patientKeys.all });
       navigate("/patients");
     },
-    onError: (err) => setError(err instanceof Error ? err.message : "Gagal menghapus"),
+    onError: (err) =>
+      setError(err instanceof Error ? err.message : t("Gagal menghapus", "Delete failed")),
   });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive">Hapus Pasien</Button>
+        <Button variant="destructive">{t("Hapus Pasien", "Delete Patient")}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Hapus Pasien</DialogTitle>
+          <DialogTitle>{t("Hapus Pasien", "Delete Patient")}</DialogTitle>
           <DialogDescription>
-            Tindakan ini menandai pasien sebagai terhapus. Berikan alasan penghapusan.
+            {t(
+              "Tindakan ini menandai pasien sebagai terhapus. Berikan alasan penghapusan.",
+              "This action marks the patient as deleted. Provide a reason for deletion.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <Input
-          aria-label="Alasan penghapusan"
-          placeholder="Alasan penghapusan (wajib)"
+          aria-label={t("Alasan penghapusan", "Deletion reason")}
+          placeholder={t("Alasan penghapusan (wajib)", "Deletion reason (required)")}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
         />
@@ -59,7 +65,7 @@ export function DeleteDialog({ patientId }: { patientId: string }) {
             disabled={!reason.trim() || mutation.isPending}
             onClick={() => mutation.mutate()}
           >
-            Konfirmasi Hapus
+            {t("Konfirmasi Hapus", "Confirm Delete")}
           </Button>
         </DialogFooter>
       </DialogContent>

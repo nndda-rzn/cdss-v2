@@ -10,6 +10,7 @@ import { PatientRegisterRoute } from "@/routes/PatientRegisterRoute";
 import { PatientsRoute } from "@/routes/PatientsRoute";
 import { PatientDetailRoute } from "@/routes/PatientDetailRoute";
 import { EncounterCreateRoute } from "@/routes/EncounterCreateRoute";
+import { EncountersRoute } from "@/routes/EncountersRoute";
 import { EncounterDetailRoute } from "@/routes/EncounterDetailRoute";
 import { AnalysisDetailRoute } from "@/routes/AnalysisDetailRoute";
 import { AdminUsersRoute } from "@/routes/AdminUsersRoute";
@@ -31,6 +32,7 @@ export function App() {
             <Route path="/patients/new" element={<PatientRegisterRoute />} />
             <Route path="/patients/:id" element={<PatientDetailRoute />} />
             <Route path="/patients/:id/encounters/new" element={<EncounterCreateRoute />} />
+            <Route path="/encounters" element={<EncountersRoute />} />
             <Route path="/encounters/:id" element={<EncounterDetailRoute />} />
             <Route path="/admin" element={<AdminDashboardRoute />} />
             <Route path="/admin/users" element={<AdminUsersRoute />} />

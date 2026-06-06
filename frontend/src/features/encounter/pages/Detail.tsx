@@ -95,6 +95,7 @@ export function Detail() {
           />
           <EncounterActionsCard
             status={data.status}
+            patientId={data.patient_id}
             closing={closeMutation.isPending}
             onClose={() => closeMutation.mutate()}
           />

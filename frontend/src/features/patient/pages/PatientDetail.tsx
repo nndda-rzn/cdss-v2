@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, FilePlus2, ShieldCheck, Stethoscope } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Stethoscope } from "lucide-react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RoleGate } from "@/features/auth/components/RoleGate";
@@ -16,6 +14,7 @@ import { useI18nStore } from "@/lib/i18n/store";
 import { fetchPatient, patientKeys } from "../api";
 import { DeleteDialog } from "../components/DeleteDialog";
 import { IdentitySidebar } from "../components/IdentitySidebar";
+import { EncounterListForPatient } from "@/features/encounter/components/EncounterListForPatient";
 
 function PanelFallback({ error }: { error: unknown }) {
   const message = error instanceof Error ? error.message : "Tidak dapat memuat panel";
@@ -52,7 +51,7 @@ export function PatientDetail() {
   }
   if (!data) return null;
 
-  // Researcher gets an anonymised, sidebar-less variant.
+  // Researcher / expert_reviewer get an anonymised, sidebar-less variant.
   if (data.is_pseudonymized) {
     return (
       <div className="max-w-lg space-y-4">
@@ -110,26 +109,7 @@ export function PatientDetail() {
                   <CardTitle>{t("Daftar kunjungan", "Encounter list")}</CardTitle>
                 </CardHeader>
                 <CardContent className="border-t border-border-strong pt-3">
-                  <EmptyState
-                    title={t(
-                      "Daftar kunjungan akan tampil di sini",
-                      "Encounter list will appear here",
-                    )}
-                    description={t(
-                      "Mulai kunjungan baru untuk merekam keluhan, tanda vital, dan studi EKG.",
-                      "Start a new encounter to record complaints, vitals, and ECG studies.",
-                    )}
-                    action={
-                      <RoleGate allow={["clinical"]}>
-                        <Button asChild size="sm" className="cursor-pointer">
-                          <Link to={`/patients/${data.id}/encounters/new`}>
-                            <FilePlus2 className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                            {t("Kunjungan baru", "New encounter")}
-                          </Link>
-                        </Button>
-                      </RoleGate>
-                    }
-                  />
+                  <EncounterListForPatient patientId={data.id} />
                 </CardContent>
               </Card>
             </TabsContent>

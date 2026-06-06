@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { ImageUp, UploadCloud, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useI18nStore } from "@/lib/i18n/store";
 import { cn } from "@/lib/utils";
 
 import { ecgKeys, uploadEcgStudy } from "../api";
@@ -24,6 +25,7 @@ export function EcgUploadForm({
   encounterId: string;
   onUploadSuccess?: () => void;
 }) {
+  const t = useI18nStore((s) => s.t);
   const qc = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -32,13 +34,13 @@ export function EcgUploadForm({
   const accept = useCallback((f: File) => {
     setError(null);
     if (!_ALLOWED.includes(f.type)) {
-      setError("Format harus JPEG atau PNG");
+      setError(t("Format harus JPEG atau PNG", "Format must be JPEG or PNG"));
       setFile(null);
       setPreview(null);
       return;
     }
     if (f.size > _MAX_BYTES) {
-      setError("Berkas melebihi 10 MB");
+      setError(t("Berkas melebihi 10 MB", "File exceeds 10 MB"));
       setFile(null);
       setPreview(null);
       return;
@@ -54,12 +56,18 @@ export function EcgUploadForm({
     noClick: true,
     noKeyboard: true,
     onDropAccepted: (files) => files[0] && accept(files[0]),
-    onDropRejected: () => setError("Berkas ditolak: pastikan JPEG/PNG dan maks 10 MB"),
+    onDropRejected: () =>
+      setError(
+        t(
+          "Berkas ditolak: pastikan JPEG/PNG dan maks 10 MB",
+          "File rejected: ensure JPEG/PNG and max 10 MB",
+        ),
+      ),
   });
 
   const mutation = useMutation({
     mutationFn: () => {
-      if (!file) throw new Error("Tidak ada berkas");
+      if (!file) throw new Error(t("Tidak ada berkas", "No file selected"));
       return uploadEcgStudy(encounterId, file);
     },
     onSuccess: () => {
@@ -69,7 +77,8 @@ export function EcgUploadForm({
       qc.invalidateQueries({ queryKey: ecgKeys.list(encounterId) });
       onUploadSuccess?.();
     },
-    onError: (err) => setError(err instanceof Error ? err.message : "Gagal mengunggah"),
+    onError: (err) =>
+      setError(err instanceof Error ? err.message : t("Gagal mengunggah", "Upload failed")),
   });
 
   function clearFile() {
@@ -93,8 +102,12 @@ export function EcgUploadForm({
           <UploadCloud className="h-6 w-6 text-primary shrink-0" aria-hidden="true" />
         </div>
         <div className="text-sm">
-          <span className="font-medium text-foreground block">Seret berkas EKG ke sini</span>
-          <span className="text-xs text-muted-foreground mt-0.5 block">JPEG/PNG, maks 10 MB</span>
+          <span className="font-medium text-foreground block">
+            {t("Seret berkas EKG ke sini", "Drag ECG file here")}
+          </span>
+          <span className="text-xs text-muted-foreground mt-0.5 block">
+            {t("JPEG/PNG, maks 10 MB", "JPEG/PNG, max 10 MB")}
+          </span>
         </div>
         <Button
           type="button"
@@ -103,18 +116,22 @@ export function EcgUploadForm({
           onClick={open}
         >
           <ImageUp className="mr-1.5 h-4 w-4" aria-hidden="true" />
-          Pilih berkas
+          {t("Pilih berkas", "Choose file")}
         </Button>
-        {/* The label keeps the accessible name "Pilih berkas" for tests + a11y. */}
+        {/* The label keeps the accessible name for tests + a11y. */}
         <label htmlFor="ecg-file" className="sr-only">
-          Pilih berkas EKG
+          {t("Pilih berkas EKG", "Choose ECG file")}
         </label>
         <input id="ecg-file" {...getInputProps()} />
       </div>
 
       {preview && file && (
         <div className="flex items-center gap-3 rounded-lg border border-border-strong bg-card p-3">
-          <img src={preview} alt="Pratinjau EKG" className="h-10 w-10 rounded-md object-cover" />
+          <img
+            src={preview}
+            alt={t("Pratinjau EKG", "ECG preview")}
+            className="h-10 w-10 rounded-md object-cover"
+          />
           <div className="flex flex-1 flex-col gap-0.5 text-sm min-w-0">
             <span className="truncate font-medium text-foreground">{file.name}</span>
             <span className="tabular text-xs text-muted-foreground">
@@ -128,7 +145,7 @@ export function EcgUploadForm({
               size="icon"
               className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-destructive"
               onClick={clearFile}
-              aria-label="Hapus berkas terpilih"
+              aria-label={t("Hapus berkas terpilih", "Remove selected file")}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -138,7 +155,7 @@ export function EcgUploadForm({
               onClick={() => mutation.mutate()}
               className="cursor-pointer"
             >
-              {mutation.isPending ? "Mengunggah..." : "Unggah"}
+              {mutation.isPending ? t("Mengunggah...", "Uploading...") : t("Unggah", "Upload")}
             </Button>
           </div>
         </div>

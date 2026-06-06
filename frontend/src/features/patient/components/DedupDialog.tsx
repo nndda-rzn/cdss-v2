@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useI18nStore } from "@/lib/i18n/store";
 
 import type { DuplicateSuggestion } from "../types";
 
@@ -22,13 +23,17 @@ interface DedupDialogProps {
 /** Surfaces similar-patient matches; lets the registrar pick one or force-new. */
 export function DedupDialog({ duplicates, onClose, onConfirmNew }: DedupDialogProps) {
   const navigate = useNavigate();
+  const t = useI18nStore((s) => s.t);
   return (
     <Dialog open={duplicates !== null} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Pasien Serupa Ditemukan</DialogTitle>
+          <DialogTitle>{t("Pasien Serupa Ditemukan", "Similar Patients Found")}</DialogTitle>
           <DialogDescription>
-            Sistem menemukan pasien dengan nama, tanggal lahir, dan jenis kelamin yang serupa.
+            {t(
+              "Sistem menemukan pasien dengan nama, tanggal lahir, dan jenis kelamin yang serupa.",
+              "The system found patients with similar name, date of birth, and gender.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <ul className="space-y-2">
@@ -48,7 +53,7 @@ export function DedupDialog({ duplicates, onClose, onConfirmNew }: DedupDialogPr
         </ul>
         <DialogFooter>
           <Button variant="outline" onClick={onConfirmNew}>
-            Daftarkan sebagai pasien baru
+            {t("Daftarkan sebagai pasien baru", "Register as new patient")}
           </Button>
         </DialogFooter>
       </DialogContent>
