@@ -6,8 +6,9 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.exceptions.base import AuthError, NotFoundError
+from app.core.exceptions.base import AuthError, NotFoundError, RateLimitError
 from app.core.security.jwt import make_access_token
+from app.core.security.rate_limit import LoginRateLimiter
 from app.core.security.tokens import hash_token
 from app.db.models.refresh_token import RefreshToken
 from app.db.models.user import User
@@ -21,6 +22,18 @@ from app.services.auth.token_service import (
 )
 
 bp = Blueprint("auth", __name__, url_prefix="/api/auth")
+
+_rate_limiter: LoginRateLimiter | None = None
+
+
+def _get_rate_limiter() -> LoginRateLimiter:
+    global _rate_limiter  # noqa: PLW0603
+    if _rate_limiter is None:
+        _rate_limiter = LoginRateLimiter(
+            max_attempts=current_app.config["LOGIN_RATE_LIMIT_MAX"],
+            window_seconds=current_app.config["LOGIN_RATE_LIMIT_WINDOW"],
+        )
+    return _rate_limiter
 
 
 def _session() -> Session:
@@ -39,6 +52,16 @@ def _ctx() -> dict[str, str]:
 
 @bp.post("/login")
 def login() -> Response:
+    limiter = _get_rate_limiter()
+    ip = request.remote_addr or "unknown"
+
+    if not limiter.is_allowed(ip):
+        raise RateLimitError(
+            code="AUTH_RATE_LIMITED",
+            message_id="Terlalu banyak percobaan. Coba lagi nanti.",
+            message_en="Too many attempts. Please try again later.",
+        )
+
     data = LoginRequest(**(request.get_json() or {}))
     session = _session()
     try:

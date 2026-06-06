@@ -25,3 +25,6 @@ class ConflictError(AppException):
 
 class ForbiddenError(AppException):
     http_status = 403
+
+class RateLimitError(AppException):
+    http_status = 429
