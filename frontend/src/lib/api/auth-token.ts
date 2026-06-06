@@ -20,3 +20,13 @@ export function clearTokens(): void {
   localStorage.removeItem(ACCESS);
   localStorage.removeItem(REFRESH);
 }
+
+const REMEMBER = "ekg.remember";
+
+export function saveRememberMe(value: boolean): void {
+  localStorage.setItem(REMEMBER, String(value));
+}
+
+export function loadRememberMe(): boolean {
+  return localStorage.getItem(REMEMBER) === "true";
+}

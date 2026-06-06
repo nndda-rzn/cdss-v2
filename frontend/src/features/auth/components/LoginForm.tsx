@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -15,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useI18nStore } from "@/lib/i18n/store";
+import { useAuthStore } from "@/features/auth/store";
 
 import { login } from "../api";
 
@@ -29,6 +31,8 @@ export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) 
   const t = useI18nStore((s) => s.t);
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const rememberMe = useAuthStore((s) => s.rememberMe);
+  const setRememberMe = useAuthStore((s) => s.setRememberMe);
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: { email: "", password: "" },
@@ -93,6 +97,16 @@ export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) 
             </FormItem>
           )}
         />
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="remember-me"
+            checked={rememberMe}
+            onCheckedChange={(checked) => setRememberMe(checked === true)}
+          />
+          <label htmlFor="remember-me" className="text-sm text-muted-foreground cursor-pointer">
+            {t("Ingat saya", "Remember me")}
+          </label>
+        </div>
         {serverError && (
           <p role="alert" aria-live="polite" className="text-sm text-destructive">
             {serverError}
