@@ -52,7 +52,7 @@ export function PatientDetail() {
   }
   if (!data) return null;
 
-  // Researcher / expert_reviewer get an anonymised, sidebar-less variant.
+  // Researcher gets an anonymised, sidebar-less variant.
   if (data.is_pseudonymized) {
     return (
       <div className="max-w-lg space-y-4">
@@ -120,7 +120,7 @@ export function PatientDetail() {
                       "Start a new encounter to record complaints, vitals, and ECG studies.",
                     )}
                     action={
-                      <RoleGate allow={["clinician", "nurse"]}>
+                      <RoleGate allow={["clinical"]}>
                         <Button asChild size="sm" className="cursor-pointer">
                           <Link to={`/patients/${data.id}/encounters/new`}>
                             <FilePlus2 className="mr-1.5 h-4 w-4" aria-hidden="true" />

@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { useI18nStore } from "@/lib/i18n/store";
 
 /** Three-button quick-actions strip rendered on the dashboard. Hidden for
- *  roles that cannot write (admin, researcher, expert_reviewer). */
+ *  roles that cannot write (admin, researcher). */
 export function QuickActions() {
   const t = useI18nStore((s) => s.t);
 
   return (
-    <RoleGate allow={["clinician", "nurse"]}>
+    <RoleGate allow={["clinical"]}>
       <div className="flex flex-wrap gap-2">
         <Button asChild size="sm" className="cursor-pointer">
           <Link to="/patients/new">

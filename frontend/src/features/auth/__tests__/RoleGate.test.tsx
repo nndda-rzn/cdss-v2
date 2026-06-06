@@ -38,7 +38,7 @@ describe("RoleGate", () => {
   });
 
   it("hides children when role is not allowed", () => {
-    useAuthStore.setState({ accessToken: tokenWithRole("clinician") });
+    useAuthStore.setState({ accessToken: tokenWithRole("clinical") });
     render(
       <RoleGate allow={["admin"]}>
         <button>Hapus</button>
