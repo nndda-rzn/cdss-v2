@@ -120,12 +120,6 @@ export function AdminDashboardPage() {
               {t("Kelola Fasilitas", "Manage Facilities")}
             </Link>
           </Button>
-          <Button asChild variant="outline">
-            <Link to="/tuning">
-              <Cpu className="mr-1.5 h-4 w-4" />
-              {t("Tuning AI", "AI Tuning")}
-            </Link>
-          </Button>
         </CardContent>
       </Card>
 

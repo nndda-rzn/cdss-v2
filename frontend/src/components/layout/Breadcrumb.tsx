@@ -22,6 +22,14 @@ interface Crumb {
 function deriveCrumbs(pathname: string, params: Record<string, string | undefined>): Crumb[] {
   if (pathname === "/dashboard") return [];
 
+  if (pathname === "/admin") return [{ label: "Admin" }];
+  if (pathname === "/admin/users") {
+    return [{ label: "Admin", href: "/admin" }, { label: "User" }];
+  }
+  if (pathname === "/admin/facilities") {
+    return [{ label: "Admin", href: "/admin" }, { label: "Fasilitas" }];
+  }
+
   if (pathname === "/patients") return [{ label: "Pasien" }];
   if (pathname === "/patients/new") {
     return [{ label: "Pasien", href: "/patients" }, { label: "Daftar baru" }];
