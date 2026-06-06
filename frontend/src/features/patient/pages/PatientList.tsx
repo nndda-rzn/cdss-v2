@@ -54,7 +54,7 @@ export function PatientList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">{t("Pasien", "Patients")}</h1>
-        <RoleGate allow={["clinician", "nurse"]}>
+        <RoleGate allow={["clinical"]}>
           <Button asChild className="cursor-pointer">
             <Link to="/patients/new">
               <UserPlus className="mr-1.5 h-4 w-4" aria-hidden="true" />
@@ -132,7 +132,7 @@ export function PatientList() {
             "Register the first patient to start recording encounters and ECG studies.",
           )}
           action={
-            <RoleGate allow={["clinician", "nurse"]}>
+            <RoleGate allow={["clinical"]}>
               <Button asChild size="sm" className="cursor-pointer">
                 <Link to="/patients/new">
                   <UserPlus className="mr-1.5 h-4 w-4" aria-hidden="true" />

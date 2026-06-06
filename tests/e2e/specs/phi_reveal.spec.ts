@@ -1,10 +1,10 @@
 import { test, expect, login, SEED } from "../fixtures/seed";
 
-// Opening a patient detail reveals plaintext identity (clinician role) and the
+// Opening a patient detail reveals plaintext identity (clinical role) and the
 // backend records PHIAccessLog rows. The DB assertion is left as a TODO for the
 // environment that wires a query helper.
 test.fixme("PHI reveal: detail shows plaintext for clinician", async ({ page }) => {
-  await login(page, SEED.clinician);
+  await login(page, SEED.clinical);
 
   await page.goto("/patients/new");
   await page.getByLabel(/nama lengkap/i).fill("Budi Santoso");

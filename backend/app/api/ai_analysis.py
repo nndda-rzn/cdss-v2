@@ -37,7 +37,7 @@ def analysis_to_out(a: AIAnalysis, model: ModelMetadata) -> dict[str, object]:
 
 
 @bp.post("/<int:encounter_id>/ecg-studies/<int:study_id>/analyze")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def analyze_ecg(encounter_id: int, study_id: int) -> tuple[Response, int]:
     body = request.get_json(silent=True) or {}
     model_ids = body.get("model_ids")
@@ -73,7 +73,7 @@ def analyze_ecg(encounter_id: int, study_id: int) -> tuple[Response, int]:
 
 
 @bp.get("/<int:encounter_id>/ecg-studies/<int:study_id>/analyses")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def get_analyses(encounter_id: int, study_id: int) -> Response:
     s = session()
     rows = list(

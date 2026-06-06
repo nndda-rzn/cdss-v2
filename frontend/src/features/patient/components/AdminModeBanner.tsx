@@ -5,7 +5,7 @@ import { useI18nStore } from "@/lib/i18n/store";
 
 /**
  * One-line advisory banner shown only to admin users on the patient list.
- * Patient registration / encounter creation are clinician/nurse-only
+ * Patient registration / encounter creation are clinical-only
  * (ADR-0006 separation of duties), so admins see this instead of write
  * buttons. Renders null for every other role.
  */

@@ -35,7 +35,7 @@ def artifact_to_out(a: HiResCAMArtifact) -> dict[str, object]:
     "/<int:encounter_id>/ecg-studies/<int:study_id>/analyses/"
     "<int:analysis_id>/hirescam"
 )
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def generate_hirescam(
     encounter_id: int, study_id: int, analysis_id: int
 ) -> tuple[Response, int]:
@@ -74,7 +74,7 @@ def generate_hirescam(
     "/<int:encounter_id>/ecg-studies/<int:study_id>/analyses/"
     "<int:analysis_id>/hirescam"
 )
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def get_hirescam(
     encounter_id: int, study_id: int, analysis_id: int
 ) -> Response:
@@ -98,7 +98,7 @@ def get_hirescam(
 @bp.get(
     "/<int:encounter_id>/ecg-studies/<int:study_id>/hirescam"
 )
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def get_study_hirescam(encounter_id: int, study_id: int) -> Response:
     """Get all HiResCAM artifacts for a study."""
     s = session()
@@ -114,7 +114,7 @@ def get_study_hirescam(encounter_id: int, study_id: int) -> Response:
 
 
 @bp.get("/heatmaps/<path:filepath>")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def serve_heatmap(filepath: str) -> Response:
     """Serve a heatmap/overlay/side-by-side PNG file."""
     storage_root = Path(current_app.config["STORAGE_DIR"])

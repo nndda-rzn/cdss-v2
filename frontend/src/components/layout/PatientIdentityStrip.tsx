@@ -15,7 +15,7 @@ function age(dob: string): number | null {
 /**
  * Horizontal patient identity strip for the medical-grade focus header.
  * Mirrors the top-of-screen banner on ECG workstations. Anonymised when the
- * record is pseudonymised (researcher / expert_reviewer reads).
+ * record is pseudonymised (researcher reads).
  */
 export function PatientIdentityStrip({ patient }: { patient: PatientDetail }) {
   const t = useI18nStore((s) => s.t);

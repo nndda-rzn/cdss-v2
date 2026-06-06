@@ -36,17 +36,13 @@ function decode(token: string | null): JwtClaims {
 
 const ROLE_LABEL_ID: Record<string, string> = {
   admin: "Admin",
-  clinician: "Klinisi",
-  nurse: "Perawat",
+  clinical: "Klinis",
   researcher: "Peneliti",
-  superadmin: "Super Admin",
 };
 const ROLE_LABEL_EN: Record<string, string> = {
   admin: "Admin",
-  clinician: "Clinician",
-  nurse: "Nurse",
+  clinical: "Clinical",
   researcher: "Researcher",
-  superadmin: "Super Admin",
 };
 
 /** Avatar dropdown shown in the right side of the header. */

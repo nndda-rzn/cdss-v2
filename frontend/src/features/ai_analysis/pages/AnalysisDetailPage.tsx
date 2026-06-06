@@ -83,7 +83,7 @@ export function AnalysisDetailPage() {
         </div>
       </header>
       <div className="no-print flex flex-col gap-3 rounded-lg border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
-        <RoleGate allow={["clinician", "nurse"]}>
+        <RoleGate allow={["clinical"]}>
           <ModelSelector value={selectedModelId} onChange={setSelectedModelId} />
         </RoleGate>
         <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export function AnalysisDetailPage() {
             <Printer className="mr-1.5 h-4 w-4" aria-hidden="true" />
             {t("Cetak", "Print")}
           </Button>
-          <RoleGate allow={["clinician", "nurse"]}>
+          <RoleGate allow={["clinical"]}>
             <Button
               onClick={() => mutation.mutate()}
               disabled={mutation.isPending || !selectedModelId}

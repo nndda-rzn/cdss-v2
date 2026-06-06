@@ -15,7 +15,7 @@ bp = Blueprint("patient_consent", __name__, url_prefix="/api/patients")
 
 
 @bp.post("/<patient_id>/consent")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def capture_patient_consent(patient_id: str) -> tuple[Response, int]:
     s = session()
     body = request.get_json() or {}
@@ -30,7 +30,7 @@ def capture_patient_consent(patient_id: str) -> tuple[Response, int]:
 
 
 @bp.get("/<patient_id>/consent")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+@require_role(Role.ADMIN, Role.CLINICAL)
 def list_patient_consent(patient_id: str) -> Response:
     s = session()
     rows = s.scalars(

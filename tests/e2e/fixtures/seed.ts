@@ -7,7 +7,7 @@ import { test as base, type Page } from "@playwright/test";
  */
 
 export const SEED = {
-  clinician: { email: "clinician@demo.id", password: "StrongPass1" },
+  clinical: { email: "clinician@demo.id", password: "StrongPass1" },
   admin: { email: "admin@demo.id", password: "StrongPass1" },
 };
 

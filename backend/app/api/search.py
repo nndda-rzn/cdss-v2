@@ -73,7 +73,7 @@ def _search_encounters(s: Session, *, facility_id: int, q: str) -> list[dict[str
 
 
 @bp.get("")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def search() -> Response:
     q = (request.args.get("q") or "").strip()
     if len(q) < _MIN_QUERY:

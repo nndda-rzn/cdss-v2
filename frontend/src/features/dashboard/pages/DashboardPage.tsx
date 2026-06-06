@@ -100,9 +100,7 @@ export function DashboardPage() {
             </p>
           </div>
           <Button asChild variant="ghost" size="sm" className="cursor-pointer">
-            <Link to="/encounters">
-              {t("Lihat Semua", "View all")}
-            </Link>
+            <Link to="/encounters">{t("Lihat Semua", "View all")}</Link>
           </Button>
         </CardHeader>
         <CardContent>

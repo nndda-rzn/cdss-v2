@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.exceptions.base import AuthError, NotFoundError, RateLimitError
+from app.core.rbac.roles import resolve_role
 from app.core.security.jwt import make_access_token
 from app.core.security.rate_limit import LoginRateLimiter
 from app.core.security.tokens import hash_token
@@ -71,7 +72,9 @@ def login() -> Response:
         # it so failed attempts are persisted in the real request lifecycle.
         session.commit()
         raise
-    access = make_access_token(user_id=user.id, role=user.role, facility_id=user.facility_id)
+    access = make_access_token(
+        user_id=user.id, role=resolve_role(user.role), facility_id=user.facility_id
+    )
     refresh = issue_refresh_token(
         session, user_id=user.id, ttl_days=current_app.config["REFRESH_TTL_DAYS"]
     )
@@ -118,7 +121,9 @@ def refresh() -> Response:
             message_id="Akun tidak aktif",
             message_en="Account is inactive",
         )
-    access = make_access_token(user_id=user.id, role=user.role, facility_id=user.facility_id)
+    access = make_access_token(
+        user_id=user.id, role=resolve_role(user.role), facility_id=user.facility_id
+    )
     session.commit()
     return jsonify(access_token=access, refresh_token=new_refresh)
 

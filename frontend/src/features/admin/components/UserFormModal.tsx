@@ -27,7 +27,7 @@ interface Props {
   user?: AdminUser | null;
 }
 
-const ROLES = ["admin", "clinician", "nurse", "researcher", "expert_reviewer"];
+const ROLES = ["admin", "clinical", "researcher"];
 
 export function UserFormModal({ open, onClose, onSave, user }: Props) {
   const { register, handleSubmit, reset, setValue, watch } = useForm({
@@ -35,7 +35,7 @@ export function UserFormModal({ open, onClose, onSave, user }: Props) {
       name: "",
       email: "",
       password: "",
-      role: "clinician",
+      role: "clinical",
       facility_id: 1,
       profession: "",
       license_number: "",
@@ -58,7 +58,7 @@ export function UserFormModal({ open, onClose, onSave, user }: Props) {
         name: "",
         email: "",
         password: "",
-        role: "clinician",
+        role: "clinical",
         facility_id: 1,
         profession: "",
         license_number: "",

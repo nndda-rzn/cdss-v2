@@ -11,7 +11,7 @@ bp = Blueprint("vital_signs", __name__, url_prefix="/api/encounters")
 
 
 @bp.post("/<int:encounter_id>/vital-signs")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def create_vitals(encounter_id: int) -> tuple[Response, int]:
     s = session()
     body = request.get_json() or {}
@@ -33,7 +33,7 @@ def create_vitals(encounter_id: int) -> tuple[Response, int]:
 
 
 @bp.get("/<int:encounter_id>/vital-signs")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+@require_role(Role.ADMIN, Role.CLINICAL)
 def get_vitals(encounter_id: int) -> Response:
     s = session()
     rows = list_vitals(s, encounter_id=encounter_id)

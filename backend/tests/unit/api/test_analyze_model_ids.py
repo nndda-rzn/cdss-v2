@@ -10,7 +10,7 @@ from app.db.models.patient import Patient
 
 
 def _clinician_token():
-    return make_access_token(user_id=1, role="clinician", facility_id=1)
+    return make_access_token(user_id=1, role="clinical", facility_id=1)
 
 
 def _seed_encounter_and_study(session):

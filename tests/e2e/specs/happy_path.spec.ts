@@ -6,7 +6,7 @@ import { test, expect, login, SEED } from "../fixtures/seed";
 test.fixme("happy path: register -> encounter -> context -> vitals -> close", async ({
   page,
 }) => {
-  await login(page, SEED.clinician);
+  await login(page, SEED.clinical);
 
   // Register a patient
   await page.goto("/patients/new");
