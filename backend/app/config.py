@@ -57,3 +57,4 @@ class TestConfig(BaseConfig):
         self.JWT_SECRET_KEY = "test-secret"  # noqa: S105
         self.STORAGE_DIR = os.environ.get("TEST_STORAGE_DIR", str(STORAGE_DIR / "_test"))
         self.MODEL_DIR = os.environ.get("TEST_MODEL_DIR", str(MODEL_DIR))
+        self.LOGIN_RATE_LIMIT_MAX = 10_000

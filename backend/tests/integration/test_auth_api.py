@@ -137,6 +137,10 @@ def test_logout_then_me(client):
 
 
 def test_rate_limit_after_repeated_failures(client):
+    import app.api.auth as auth_mod
+    from app.core.security.rate_limit import LoginRateLimiter
+
+    auth_mod._rate_limiter = LoginRateLimiter(max_attempts=5, window_seconds=300)
     for _ in range(5):
         client.post("/api/auth/login", json={"email": "a@x.id", "password": "bad"})
     resp = client.post("/api/auth/login", json={"email": "a@x.id", "password": "bad"})
