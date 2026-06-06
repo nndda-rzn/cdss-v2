@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { useI18nStore } from "@/lib/i18n/store";
 import { useAuthStore } from "@/features/auth/store";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { login } from "../api";
 
@@ -108,16 +109,24 @@ export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) 
           </label>
         </div>
         {serverError && (
-          <p role="alert" aria-live="polite" className="text-sm text-destructive">
-            {serverError}
-          </p>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{serverError}</AlertDescription>
+          </Alert>
         )}
         <Button
           type="submit"
           disabled={form.formState.isSubmitting}
           className="w-full cursor-pointer"
         >
-          {form.formState.isSubmitting ? t("Memuat...", "Signing in...") : t("Masuk", "Sign in")}
+          {form.formState.isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t("Memuat...", "Signing in...")}
+            </>
+          ) : (
+            t("Masuk", "Sign in")
+          )}
         </Button>
       </form>
       <p className="text-center text-sm text-muted-foreground">
