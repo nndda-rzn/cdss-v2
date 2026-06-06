@@ -1,7 +1,8 @@
-"""Seed ModelMetadata for trained YOLO classification models.
+"""Seed ModelMetadata by auto-discovering *.pt files in MODELS_DIR.
 
-Primary: hardcoded 5-model list (deterministic).
-Fallback: auto-discover *best.pt files in MODELS_DIR.
+Scans each subfolder for *_best.pt or best.pt files.
+Reads class names from YOLO weights when ultralytics is available.
+First discovered model is marked active.
 Idempotent on (model_name, model_version).
 """
 import hashlib
@@ -17,20 +18,6 @@ from app.db.models.model_metadata import ModelMetadata
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MODELS_DIR = REPO_ROOT / "models"
 
-# Primary: hardcoded trained models
-_HARDCODED = {
-    "yolov8n_cls": ("yolov8n-cls", "YOLOv8n"),
-    "yolov8s_cls": ("yolov8s-cls", "YOLOv8s"),
-    "yolo11n_cls": ("yolov11n-cls", "YOLOv11n"),
-    "yolo11s_cls": ("yolov11s-cls", "YOLOv11s"),
-    "yolo26n_cls": ("yolov26n-cls", "YOLOv26n"),
-}
-_ENUM_MAP = {
-    "abnormal_heartbeat": "abnormal",
-    "history_myocardial_infarction": "homi",
-    "myocardial_infarction": "mi",
-    "normal": "normal",
-}
 _CLASS_NAMES_DEFAULT = ["abnormal", "homi", "mi", "normal"]
 
 
@@ -49,6 +36,22 @@ def _exists(session: Session, name: str, version: str) -> bool:
             ModelMetadata.model_version == version,
         )
     ) is not None
+
+
+def _read_class_names(weights_path: Path) -> list[str]:
+    """Try reading class names from YOLO weights, fallback to default."""
+    try:
+        from ultralytics import YOLO
+        names = YOLO(str(weights_path)).names
+        return [names[i] for i in sorted(names)]
+    except Exception:
+        return list(_CLASS_NAMES_DEFAULT)
+
+
+def _derive_architecture(folder_name: str) -> str:
+    """Extract architecture name from folder name (e.g. yolov8n_cls -> yolov8n)."""
+    parts = folder_name.split("_")
+    return parts[0] if parts else folder_name
 
 
 def _add_model(session: Session, *, name, arch, folder, weights, version, class_names, is_active=True):
@@ -72,45 +75,28 @@ def _add_model(session: Session, *, name, arch, folder, weights, version, class_
 
 
 def seed_models(session: Session, model_dir: Path = MODELS_DIR, version: str = "v1.0") -> int:
-    """Register models: hardcoded list first, then auto-discover fallback."""
-    count = 0
-
-    # 1. Hardcoded models (if .pt files exist on disk)
-    try:
-        from ultralytics import YOLO
-        for folder, (name, arch) in _HARDCODED.items():
-            weights = model_dir / folder / "best.pt"
-            if not weights.exists():
-                print(f"skip {folder}: {weights} missing", file=sys.stderr)
-                continue
-            names = YOLO(str(weights)).names
-            ordered = [_ENUM_MAP[names[i]] for i in sorted(names)]
-            if _add_model(session, name=name, arch=arch, folder=folder,
-                          weights=weights, version=version, class_names=ordered):
-                count += 1
-    except ImportError:
-        print("ultralytics not installed, skipping hardcoded models", file=sys.stderr)
-
-    # 2. Auto-discover fallback (Kaggle naming: *_best.pt)
+    """Discover and register all models from model_dir subfolders."""
     if not model_dir.exists():
-        return count
+        print(f"Model dir {model_dir} not found, skipping.", file=sys.stderr)
+        return 0
+
+    count = 0
     first = True
-    for model_dir_entry in sorted(model_dir.iterdir()):
-        if not model_dir_entry.is_dir():
+    for entry in sorted(model_dir.iterdir()):
+        if not entry.is_dir():
             continue
-        folder_name = model_dir_entry.name
-        # Skip folders already handled by hardcoded list
-        if folder_name in _HARDCODED:
-            continue
-        candidates = sorted(model_dir_entry.glob("*_best.pt")) + sorted(model_dir_entry.glob("best.pt"))
+        folder_name = entry.name
+        candidates = sorted(entry.glob("*_best.pt")) + sorted(entry.glob("best.pt"))
         if not candidates:
             continue
         best_pt = candidates[0]
-        parts = folder_name.split("_")
-        arch = parts[0] if parts else folder_name
-        if _add_model(session, name=arch, arch=arch, folder=folder_name,
-                      weights=best_pt, version=version,
-                      class_names=_CLASS_NAMES_DEFAULT, is_active=first):
+        arch = _derive_architecture(folder_name)
+        class_names = _read_class_names(best_pt)
+        if _add_model(
+            session, name=folder_name, arch=arch, folder=folder_name,
+            weights=best_pt, version=version, class_names=class_names,
+            is_active=first,
+        ):
             count += 1
         first = False
 
