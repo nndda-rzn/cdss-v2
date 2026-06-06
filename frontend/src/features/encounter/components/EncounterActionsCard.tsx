@@ -1,4 +1,5 @@
-import { TriangleAlert, XCircle } from "lucide-react";
+import { TriangleAlert, XCircle, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -6,12 +7,13 @@ import { useI18nStore } from "@/lib/i18n/store";
 
 interface EncounterActionsCardProps {
   status: string;
+  patientId: string;
   closing: boolean;
   onClose: () => void;
 }
 
 /** Rail card: close-encounter action with a short clinical hint. */
-export function EncounterActionsCard({ status, closing, onClose }: EncounterActionsCardProps) {
+export function EncounterActionsCard({ status, patientId, closing, onClose }: EncounterActionsCardProps) {
   const t = useI18nStore((s) => s.t);
 
   const handleClose = () => {
@@ -48,9 +50,17 @@ export function EncounterActionsCard({ status, closing, onClose }: EncounterActi
             </Button>
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            {t("Kunjungan telah ditutup.", "This encounter has been closed.")}
-          </p>
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">
+              {t("Kunjungan telah ditutup.", "This encounter has been closed.")}
+            </p>
+            <Button asChild variant="outline" className="w-full cursor-pointer">
+              <Link to={`/patients/${patientId}/encounters/new`}>
+                <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                {t("Kunjungan Baru", "New Encounter")}
+              </Link>
+            </Button>
+          </div>
         )}
       </CardContent>
     </Card>
