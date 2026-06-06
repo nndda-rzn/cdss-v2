@@ -25,3 +25,18 @@ export async function fetchMe(): Promise<AuthUser> {
   const data = await resp.json();
   return data.user;
 }
+
+export async function logout(): Promise<void> {
+  const { refreshToken } = useAuthStore.getState();
+  if (refreshToken) {
+    try {
+      await apiFetch("/api/auth/logout", {
+        method: "POST",
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+    } catch {
+      // Best-effort: even if revoke fails, clear local state
+    }
+  }
+  useAuthStore.getState().clear();
+}

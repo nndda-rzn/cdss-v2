@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, UserX, UserCheck } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,6 +24,10 @@ export function UserListPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: adminKeys.users });
       setModalOpen(false);
+      toast.success("User berhasil dibuat");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Gagal membuat user");
     },
   });
 
@@ -32,6 +37,10 @@ export function UserListPage() {
       qc.invalidateQueries({ queryKey: adminKeys.users });
       setModalOpen(false);
       setEditing(null);
+      toast.success("User berhasil diperbarui");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Gagal memperbarui user");
     },
   });
 
@@ -62,7 +71,8 @@ export function UserListPage() {
         </Button>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Daftar Pengguna">
+          <caption className="sr-only">Daftar pengguna sistem dan peran mereka</caption>
           <thead>
             <tr className="border-b text-left text-muted-foreground">
               <th className="pb-2 pr-4">Nama</th>
@@ -87,10 +97,16 @@ export function UserListPage() {
                       setEditing(u);
                       setModalOpen(true);
                     }}
+                    aria-label="Edit user"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => toggleActive(u)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleActive(u)}
+                    aria-label={u.is_active ? "Nonaktifkan user" : "Aktifkan user"}
+                  >
                     {u.is_active ? (
                       <UserX className="h-4 w-4" />
                     ) : (

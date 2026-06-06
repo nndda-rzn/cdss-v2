@@ -14,6 +14,16 @@ interface EncounterActionsCardProps {
 export function EncounterActionsCard({ status, closing, onClose }: EncounterActionsCardProps) {
   const t = useI18nStore((s) => s.t);
 
+  const handleClose = () => {
+    const confirmMessage = t(
+      "Apakah Anda yakin ingin menutup kunjungan ini? Data kunjungan tidak akan dapat diubah lagi setelah ditutup.",
+      "Are you sure you want to close this encounter? The encounter data cannot be modified after it is closed.",
+    );
+    if (window.confirm(confirmMessage)) {
+      onClose();
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="p-4 pb-2" sectionLabel={t("Aksi", "Actions")} />
@@ -30,7 +40,7 @@ export function EncounterActionsCard({ status, closing, onClose }: EncounterActi
             <Button
               variant="outline"
               disabled={closing}
-              onClick={onClose}
+              onClick={handleClose}
               className="w-full cursor-pointer"
             >
               <XCircle className="mr-1.5 h-4 w-4" aria-hidden="true" />

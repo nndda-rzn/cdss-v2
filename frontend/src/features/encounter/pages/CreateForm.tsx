@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useI18nStore } from "@/lib/i18n/store";
 import { createEncounter } from "../api";
 
 const EncounterSchema = z.object({
@@ -32,11 +33,26 @@ type EncounterValues = z.infer<typeof EncounterSchema>;
 export function CreateForm() {
   const { id: patientId = "" } = useParams();
   const navigate = useNavigate();
+  const t = useI18nStore((s) => s.t);
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<EncounterValues>({
     resolver: zodResolver(EncounterSchema),
     defaultValues: { encounter_type: "rawat_jalan", chief_complaint: "" },
   });
+
+  const isDirty = form.formState.isDirty;
+  const isSubmitting = form.formState.isSubmitting;
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty && !isSubmitting) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty, isSubmitting]);
 
   async function onSubmit(values: EncounterValues) {
     setServerError(null);
@@ -54,7 +70,7 @@ export function CreateForm() {
 
   return (
     <div className="max-w-lg">
-      <h1 className="mb-4 text-xl font-semibold">Kunjungan Baru</h1>
+      <h1 className="mb-4 text-xl font-semibold">{t("Kunjungan Baru", "New Encounter")}</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -62,7 +78,7 @@ export function CreateForm() {
             name="encounter_type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tipe Kunjungan</FormLabel>
+                <FormLabel>{t("Tipe Kunjungan", "Encounter Type")}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -70,8 +86,8 @@ export function CreateForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="rawat_jalan">Rawat Jalan</SelectItem>
-                    <SelectItem value="igd">IGD</SelectItem>
+                    <SelectItem value="rawat_jalan">{t("Rawat Jalan", "Outpatient")}</SelectItem>
+                    <SelectItem value="igd">{t("IGD", "ER")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -83,7 +99,7 @@ export function CreateForm() {
             name="chief_complaint"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Keluhan Utama</FormLabel>
+                <FormLabel>{t("Keluhan Utama", "Chief Complaint")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -97,7 +113,9 @@ export function CreateForm() {
             </p>
           )}
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            Buat Kunjungan
+            {form.formState.isSubmitting
+              ? t("Membuat...", "Creating...")
+              : t("Buat Kunjungan", "Create Encounter")}
           </Button>
         </form>
       </Form>

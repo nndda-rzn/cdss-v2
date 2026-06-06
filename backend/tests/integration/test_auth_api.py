@@ -8,6 +8,16 @@ from app.db.models.user import User
 from app.extensions import db
 
 
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """Reset the in-memory rate limiter between tests so they don't interfere."""
+    import app.api.auth as auth_mod
+
+    auth_mod._rate_limiter = None
+    yield
+    auth_mod._rate_limiter = None
+
+
 @pytest.fixture()
 def client():
     app = create_app(TestConfig)
@@ -124,3 +134,15 @@ def test_logout_then_me(client):
         ).status_code
         == 200
     )
+
+
+def test_rate_limit_after_repeated_failures(client):
+    import app.api.auth as auth_mod
+    from app.core.security.rate_limit import LoginRateLimiter
+
+    auth_mod._rate_limiter = LoginRateLimiter(max_attempts=5, window_seconds=300)
+    for _ in range(5):
+        client.post("/api/auth/login", json={"email": "a@x.id", "password": "bad"})
+    resp = client.post("/api/auth/login", json={"email": "a@x.id", "password": "bad"})
+    assert resp.status_code == 429
+    assert resp.get_json()["error"]["code"] == "AUTH_RATE_LIMITED"

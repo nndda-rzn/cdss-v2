@@ -18,6 +18,8 @@ class BaseConfig:
         self.JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", _DEV_JWT_KEY)
         self.JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
         self.REFRESH_TTL_DAYS = 7
+        self.LOGIN_RATE_LIMIT_MAX = int(os.environ.get("LOGIN_RATE_LIMIT_MAX", "5"))
+        self.LOGIN_RATE_LIMIT_WINDOW = int(os.environ.get("LOGIN_RATE_LIMIT_WINDOW", "300"))
         self.SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", default_database_url())
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
         self.MASTER_KEY_PATH = os.environ.get("MASTER_KEY_PATH", str(DEFAULT_MASTER_KEY_PATH))
@@ -55,3 +57,4 @@ class TestConfig(BaseConfig):
         self.JWT_SECRET_KEY = "test-secret"  # noqa: S105
         self.STORAGE_DIR = os.environ.get("TEST_STORAGE_DIR", str(STORAGE_DIR / "_test"))
         self.MODEL_DIR = os.environ.get("TEST_MODEL_DIR", str(MODEL_DIR))
+        self.LOGIN_RATE_LIMIT_MAX = 10_000
