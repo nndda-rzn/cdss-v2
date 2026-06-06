@@ -5,7 +5,7 @@ import { test, expect, login, SEED } from "../fixtures/seed";
 test.fixme("dedup: similar patient shows suggestion, confirm-new creates", async ({
   page,
 }) => {
-  await login(page, SEED.clinician);
+  await login(page, SEED.clinical);
 
   async function register() {
     await page.goto("/patients/new");

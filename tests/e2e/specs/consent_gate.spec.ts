@@ -5,7 +5,7 @@ import { test, expect, login, SEED } from "../fixtures/seed";
 test.fixme("consent gate: encounter blocked after data_use revoked", async ({
   page,
 }) => {
-  await login(page, SEED.clinician);
+  await login(page, SEED.clinical);
 
   // Register (auto-captures data_use consent)
   await page.goto("/patients/new");

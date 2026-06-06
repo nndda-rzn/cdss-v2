@@ -1,9 +1,9 @@
-"""Seed a clinician, nurse, researcher, or expert-reviewer user. Idempotent on email."""
+"""Seed a clinical or researcher user. Idempotent on email."""
 import sys
 
 from scripts._utils import get_first_facility, prompt_or_env, seed_user
 
-_VALID_ROLES = frozenset({"clinician", "nurse", "researcher", "expert_reviewer"})
+_VALID_ROLES = frozenset({"clinical", "researcher"})
 
 
 def seed_clinical_user(session, *, name, email, password, facility_id, role, rounds=12):
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     from app.db.engine import create_db_engine
     from app.paths import default_database_url
 
-    role = prompt_or_env("Role (clinician/nurse/researcher/expert_reviewer): ", "CLINICIAN_ROLE")
+    role = prompt_or_env("Role (clinical/researcher): ", "CLINICIAN_ROLE")
     if role not in _VALID_ROLES:
         raise SystemExit(f"Invalid role '{role}'. Allowed: {', '.join(sorted(_VALID_ROLES))}")
     name = prompt_or_env("Name: ", "CLINICIAN_NAME")
