@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { captureConsent, consentKeys, fetchConsents, type ConsentRow } from "../api";
 
 const _TYPE_LABELS: Record<string, string> = {
@@ -32,6 +34,7 @@ export function ConsentPanel({ patientId }: { patientId: string }) {
   });
 
   const latest = latestByType(data ?? []);
+  const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
 
   return (
     <div className="space-y-2">
@@ -49,12 +52,13 @@ export function ConsentPanel({ patientId }: { patientId: string }) {
                 size="sm"
                 variant="outline"
                 disabled={mutation.isPending}
-                onClick={() =>
-                  mutation.mutate({
-                    type,
-                    status: given ? "revoked" : "given",
-                  })
-                }
+                onClick={() => {
+                  if (given) {
+                    setRevokeTarget(type);
+                  } else {
+                    mutation.mutate({ type, status: "given" });
+                  }
+                }}
               >
                 {given ? "Cabut" : "Berikan"}
               </Button>
@@ -62,6 +66,23 @@ export function ConsentPanel({ patientId }: { patientId: string }) {
           </div>
         );
       })}
+      <ConfirmDialog
+        open={revokeTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setRevokeTarget(null);
+        }}
+        title="Cabut Persetujuan?"
+        description={`Apakah Anda yakin ingin mencabut persetujuan "${revokeTarget ? _TYPE_LABELS[revokeTarget] : ""}"? Tindakan ini dapat dibatalkan dengan memberikan ulang.`}
+        confirmLabel="Ya, Cabut"
+        cancelLabel="Batal"
+        variant="destructive"
+        onConfirm={() => {
+          if (revokeTarget) {
+            mutation.mutate({ type: revokeTarget, status: "revoked" });
+            setRevokeTarget(null);
+          }
+        }}
+      />
     </div>
   );
 }

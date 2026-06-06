@@ -35,8 +35,11 @@ export function EcgStudyList({ encounterId }: { encounterId: string }) {
   if (!data || data.length === 0) {
     return (
       <EmptyState
-        title="Belum ada studi EKG di kunjungan ini"
-        description="Unggah berkas EKG (JPEG/PNG, maks 10 MB) untuk mulai analisis kualitas."
+        title={t("Belum ada studi EKG di kunjungan ini", "No ECG studies in this visit yet")}
+        description={t(
+          "Unggah berkas EKG (JPEG/PNG, maks 10 MB) untuk mulai analisis kualitas.",
+          "Upload an ECG file (JPEG/PNG, max 10 MB) to start quality analysis.",
+        )}
       />
     );
   }
