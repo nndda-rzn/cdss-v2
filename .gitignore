@@ -132,3 +132,6 @@ tmp/
 temp/
 *.tmp
 *.bak
+
+# ===== Documentation (local reference only, never push) =====
+docs/
