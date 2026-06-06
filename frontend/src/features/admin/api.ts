@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api/client";
 import type {
   AdminFacility,
   AdminFacilityListResponse,
+  AdminModelListResponse,
   AdminStats,
   AdminUser,
   AdminUserListResponse,
@@ -10,6 +11,7 @@ import type {
 export const adminKeys = {
   users: ["admin", "users"] as const,
   facilities: ["admin", "facilities"] as const,
+  models: ["admin", "models"] as const,
   stats: ["admin", "stats"] as const,
 };
 
@@ -92,6 +94,13 @@ export async function updateFacility(
   });
   const body = await resp.json();
   if (!resp.ok) throw new Error(body.error?.message_en ?? "Failed to update facility");
+  return body;
+}
+
+export async function fetchModels(): Promise<AdminModelListResponse> {
+  const resp = await apiFetch("/api/models");
+  const body = await resp.json();
+  if (!resp.ok) throw new Error(body.error?.message_en ?? "Failed to load models");
   return body;
 }
 

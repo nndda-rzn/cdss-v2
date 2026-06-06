@@ -46,6 +46,27 @@ export interface AdminAuditEntry {
   created_at: string | null;
 }
 
+export interface AdminModel {
+  id: number;
+  model_name: string;
+  model_version: string;
+  architecture: string;
+  task_type: string;
+  input_size: number;
+  model_file_path: string;
+  model_checksum: string;
+  model_size_mb: number;
+  class_names_json: string[];
+  threshold_config_json: Record<string, unknown>;
+  is_active: boolean;
+  training_date: string | null;
+  created_at: string;
+}
+
+export interface AdminModelListResponse {
+  items: AdminModel[];
+}
+
 export interface AdminStats {
   users: { total: number; active: number; by_role: Record<string, number> };
   facilities: { total: number };

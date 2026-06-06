@@ -16,6 +16,7 @@ import { AnalysisDetailRoute } from "@/routes/AnalysisDetailRoute";
 import { AdminUsersRoute } from "@/routes/AdminUsersRoute";
 import { AdminFacilitiesRoute } from "@/routes/AdminFacilitiesRoute";
 import { AdminDashboardRoute } from "@/routes/AdminDashboardRoute";
+import { AdminModelsRoute } from "@/routes/AdminModelsRoute";
 import { RoleRedirect } from "@/features/auth/components/RoleRedirect";
 
 export function App() {
@@ -37,6 +38,7 @@ export function App() {
             <Route path="/admin" element={<AdminDashboardRoute />} />
             <Route path="/admin/users" element={<AdminUsersRoute />} />
             <Route path="/admin/facilities" element={<AdminFacilitiesRoute />} />
+            <Route path="/admin/models" element={<AdminModelsRoute />} />
           </Route>
           <Route element={<FocusShell />}>
             <Route
