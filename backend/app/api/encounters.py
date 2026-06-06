@@ -30,7 +30,7 @@ def encounter_to_out(e: Encounter) -> dict[str, object]:
 
 
 @bp.post("")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def create() -> tuple[Response, int]:
     data = EncounterCreate(**(request.get_json() or {}))
     s = session()
@@ -48,7 +48,7 @@ def create() -> tuple[Response, int]:
 
 
 @bp.get("/<int:encounter_id>")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+@require_role(Role.ADMIN, Role.CLINICAL)
 def get_one(encounter_id: int) -> Response:
     s = session()
     encounter = s.get(Encounter, encounter_id)
@@ -62,7 +62,7 @@ def get_one(encounter_id: int) -> Response:
 
 
 @bp.patch("/<int:encounter_id>/close")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def close(encounter_id: int) -> Response:
     s = session()
     close_encounter(s, encounter_id=encounter_id, user_id=current_user_id())

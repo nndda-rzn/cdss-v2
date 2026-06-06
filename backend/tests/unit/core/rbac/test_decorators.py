@@ -23,7 +23,7 @@ def _make_app():
 def test_role_enum_values():
     assert Role.ADMIN.value == "admin"
     assert {r.value for r in Role} == {
-        "admin", "clinician", "nurse", "researcher", "expert_reviewer"
+        "admin", "clinical", "researcher"
     }
 
 

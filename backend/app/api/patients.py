@@ -28,15 +28,13 @@ bp = Blueprint("patients", __name__, url_prefix="/api/patients")
 
 _READ_ROLES = (
     Role.ADMIN,
-    Role.CLINICIAN,
-    Role.NURSE,
-    Role.EXPERT_REVIEWER,
+    Role.CLINICAL,
     Role.RESEARCHER,
 )
 
 
 @bp.post("")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def register() -> tuple[Response, int]:
     data = PatientCreate(**(request.get_json() or {}))
     s = session()
@@ -135,7 +133,7 @@ def get_patient(patient_id: str) -> Response:
 
     # Research roles never decrypt T1: shape from a non-revealing read so no
     # PHIAccessLog is written and no identifier leaves the service.
-    if role in ("researcher", "expert_reviewer"):
+    if role in ("researcher",):
         patient = s.get(Patient, pid)
         if patient is None or patient.deleted_at is not None:
             raise NotFoundError(
@@ -166,7 +164,7 @@ def get_patient(patient_id: str) -> Response:
 
 
 @bp.patch("/<patient_id>")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def update_patient(patient_id: str) -> Response:
     s = session()
     patient = s.get(Patient, uuid.UUID(patient_id))

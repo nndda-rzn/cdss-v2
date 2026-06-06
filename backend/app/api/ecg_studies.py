@@ -46,7 +46,7 @@ def get_study_or_404(db: Session, *, encounter_id: int, study_id: int) -> ECGStu
 
 
 @bp.post("/<int:encounter_id>/ecg-studies")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def create_ecg(encounter_id: int) -> tuple[Response, int]:
     s = session()
     file = request.files.get("file")
@@ -73,7 +73,7 @@ def create_ecg(encounter_id: int) -> tuple[Response, int]:
 
 
 @bp.get("/<int:encounter_id>/ecg-studies")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def get_ecg_studies(encounter_id: int) -> Response:
     s = session()
     rows = list_studies(s, encounter_id=encounter_id)
@@ -89,7 +89,7 @@ def get_ecg_studies(encounter_id: int) -> Response:
 
 
 @bp.get("/<int:encounter_id>/ecg-studies/<int:study_id>")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def get_ecg_study(encounter_id: int, study_id: int) -> Response:
     s = session()
     study = get_study_or_404(s, encounter_id=encounter_id, study_id=study_id)

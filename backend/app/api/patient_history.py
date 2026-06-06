@@ -14,7 +14,7 @@ bp = Blueprint("patient_history", __name__, url_prefix="/api/patients")
 
 
 @bp.post("/<patient_id>/history")
-@require_role(Role.CLINICIAN, Role.NURSE)
+@require_role(Role.CLINICAL)
 def add_patient_history(patient_id: str) -> tuple[Response, int]:
     s = session()
     body = request.get_json() or {}
@@ -30,7 +30,7 @@ def add_patient_history(patient_id: str) -> tuple[Response, int]:
 
 
 @bp.get("/<patient_id>/history")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+@require_role(Role.ADMIN, Role.CLINICAL)
 def list_patient_history(patient_id: str) -> Response:
     s = session()
     rows = s.scalars(

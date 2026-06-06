@@ -21,7 +21,7 @@ _ALLOWED_PREFIX = "ecg/"
 
 
 @bp.get("/uploads/<path:subpath>")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def serve_upload(subpath: str) -> Response:
     # Defense-in-depth: send_from_directory already rejects traversal, but we
     # fail fast on anything outside the ecg/ whitelist or containing "..".

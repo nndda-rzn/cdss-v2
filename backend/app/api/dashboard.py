@@ -26,7 +26,7 @@ def _start_of_today_utc() -> datetime:
 
 
 @bp.get("/stats")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE, Role.RESEARCHER)
+@require_role(Role.ADMIN, Role.CLINICAL, Role.RESEARCHER)
 def get_stats() -> Response:
     s = session()
     facility_id = claims_facility_id()

@@ -1,12 +1,14 @@
 """Role-based shaping of patient detail responses.
 
-Treatment roles (admin, clinician, nurse) see full plaintext T1. Research roles
-(researcher, expert_reviewer) get a pseudonymized view with no direct
-identifiers, satisfying the "research export without T1" rule.
+Treatment roles (admin, clinical) see full plaintext T1. Research roles
+(researcher) get a pseudonymized view with no direct identifiers, satisfying
+the "research export without T1" rule.
 """
 from typing import Any
 
-_RESEARCH_ROLES = {"researcher", "expert_reviewer"}
+from app.core.rbac.roles import Role
+
+_RESEARCH_ROLES = {Role.RESEARCHER}
 
 
 def filter_patient_detail_for_role(detail: dict[str, Any], role: str) -> dict[str, Any]:
