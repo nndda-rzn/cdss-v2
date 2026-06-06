@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { TriangleAlert, XCircle, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useI18nStore } from "@/lib/i18n/store";
 
 interface EncounterActionsCardProps {
@@ -13,18 +15,14 @@ interface EncounterActionsCardProps {
 }
 
 /** Rail card: close-encounter action with a short clinical hint. */
-export function EncounterActionsCard({ status, patientId, closing, onClose }: EncounterActionsCardProps) {
+export function EncounterActionsCard({
+  status,
+  patientId,
+  closing,
+  onClose,
+}: EncounterActionsCardProps) {
   const t = useI18nStore((s) => s.t);
-
-  const handleClose = () => {
-    const confirmMessage = t(
-      "Apakah Anda yakin ingin menutup kunjungan ini? Data kunjungan tidak akan dapat diubah lagi setelah ditutup.",
-      "Are you sure you want to close this encounter? The encounter data cannot be modified after it is closed.",
-    );
-    if (window.confirm(confirmMessage)) {
-      onClose();
-    }
-  };
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
     <Card>
@@ -42,12 +40,25 @@ export function EncounterActionsCard({ status, patientId, closing, onClose }: En
             <Button
               variant="outline"
               disabled={closing}
-              onClick={handleClose}
+              onClick={() => setConfirmOpen(true)}
               className="w-full cursor-pointer"
             >
               <XCircle className="mr-1.5 h-4 w-4" aria-hidden="true" />
               {closing ? t("Menutup...", "Closing...") : t("Tutup Kunjungan", "Close Encounter")}
             </Button>
+            <ConfirmDialog
+              open={confirmOpen}
+              onOpenChange={setConfirmOpen}
+              title={t("Tutup Kunjungan?", "Close Encounter?")}
+              description={t(
+                "Apakah Anda yakin ingin menutup kunjungan ini? Data kunjungan tidak akan dapat diubah lagi setelah ditutup.",
+                "Are you sure you want to close this encounter? The encounter data cannot be modified after it is closed.",
+              )}
+              confirmLabel={t("Ya, Tutup", "Yes, Close")}
+              cancelLabel={t("Batal", "Cancel")}
+              variant="destructive"
+              onConfirm={onClose}
+            />
           </div>
         ) : (
           <div className="space-y-2">

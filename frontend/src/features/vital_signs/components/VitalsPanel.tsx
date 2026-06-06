@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Activity, Droplet, Heart, Thermometer, Wind } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 
 import { captureVitals, fetchVitals, vitalsKeys, type VitalsInput } from "../api";
 import { MiniCard } from "./MiniCard";
-import { classify } from "../ranges";
+import { classify, type VitalStatus } from "../ranges";
 
 const _FIELDS = [
   { key: "bp_systolic", label: "Sistolik" },
@@ -105,6 +106,71 @@ export function VitalsPanel({ encounterId }: { encounterId: string }) {
           description="Tambahkan tanda vital untuk konteks klinis."
           hideMotif
         />
+      )}
+
+      {data && data.length > 1 && (
+        <div className="space-y-2">
+          <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Riwayat (terakhir {Math.min(data.length, 5)} pengukuran)
+          </h4>
+          <div className="overflow-x-auto rounded-md border">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b bg-muted/50 text-left">
+                  <th className="px-2 py-1.5 font-medium">Waktu</th>
+                  <th className="px-2 py-1.5 font-medium">TD</th>
+                  <th className="px-2 py-1.5 font-medium">Nadi</th>
+                  <th className="px-2 py-1.5 font-medium">SpO2</th>
+                  <th className="px-2 py-1.5 font-medium">Suhu</th>
+                  <th className="px-2 py-1.5 font-medium">Napas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.slice(0, 5).map((row) => {
+                  const s = classify(row);
+                  const badgeFor = (st: VitalStatus) => {
+                    if (st === "ok") return <Badge variant="secondary">OK</Badge>;
+                    if (st === "caution")
+                      return (
+                        <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                          Caution
+                        </Badge>
+                      );
+                    if (st === "negative") return <Badge variant="destructive">-</Badge>;
+                    return <Badge variant="outline">-</Badge>;
+                  };
+                  return (
+                    <tr key={row.id} className="border-b last:border-0">
+                      <td className="px-2 py-1.5 whitespace-nowrap">
+                        {new Date(row.measured_at).toLocaleString("id-ID", {
+                          day: "2-digit",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {row.bp_systolic ?? "-"}/{row.bp_diastolic ?? "-"} {badgeFor(s.bp)}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {row.heart_rate ?? "-"} {badgeFor(s.hr)}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {row.spo2 ?? "-"}% {badgeFor(s.spo2)}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {row.temperature ?? "-"}°C {badgeFor(s.temp)}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {row.respiratory_rate ?? "-"} {badgeFor(s.resp)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
