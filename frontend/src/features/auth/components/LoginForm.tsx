@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,7 @@ type LoginValues = z.infer<typeof LoginSchema>;
 export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) {
   const t = useI18nStore((s) => s.t);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: { email: "", password: "" },
@@ -64,9 +66,29 @@ export function LoginForm({ onSuccess }: { onSuccess: (role: string) => void }) 
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("Kata sandi", "Password")}</FormLabel>
-              <FormControl>
-                <Input type="password" autoComplete="current-password" {...field} />
-              </FormControl>
+              <div className="relative">
+                <FormControl>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    className="pr-10"
+                    {...field}
+                  />
+                </FormControl>
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground cursor-pointer"
+                  aria-label={
+                    showPassword
+                      ? t("Sembunyikan sandi", "Hide password")
+                      : t("Tampilkan sandi", "Show password")
+                  }
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               <FormMessage />
             </FormItem>
           )}
