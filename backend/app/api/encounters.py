@@ -50,7 +50,7 @@ def create() -> tuple[Response, int]:
 
 
 @bp.get("")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+@require_role(Role.ADMIN, Role.CLINICAL)
 def list_all() -> Response:
     s = session()
     facility_id = claims_facility_id()
@@ -77,7 +77,7 @@ def get_one(encounter_id: int) -> Response:
 
 
 @bp.get("/by-patient/<patient_id>")
-@require_role(Role.ADMIN, Role.CLINICIAN, Role.NURSE)
+@require_role(Role.ADMIN, Role.CLINICAL)
 def list_for_patient(patient_id: str) -> Response:
     s = session()
     encounters = list_encounters_for_patient(
