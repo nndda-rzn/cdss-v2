@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { Activity, ClipboardList, Sparkles, Users } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useI18nStore } from "@/lib/i18n/store";
 
@@ -87,14 +89,21 @@ export function DashboardPage() {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>{t("Kunjungan Terbaru", "Recent Encounters")}</CardTitle>
-          <p className="text-xs text-muted-foreground">
-            {t(
-              "Lima kunjungan terbaru di fasilitas Anda.",
-              "Five most recent encounters at your facility.",
-            )}
-          </p>
+        <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+          <div>
+            <CardTitle>{t("Kunjungan Terbaru", "Recent Encounters")}</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              {t(
+                "Lima kunjungan terbaru di fasilitas Anda.",
+                "Five most recent encounters at your facility.",
+              )}
+            </p>
+          </div>
+          <Button asChild variant="ghost" size="sm" className="cursor-pointer">
+            <Link to="/encounters">
+              {t("Lihat Semua", "View all")}
+            </Link>
+          </Button>
         </CardHeader>
         <CardContent>
           {isError ? (
