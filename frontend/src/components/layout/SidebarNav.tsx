@@ -1,5 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Building2, ClipboardList, type LucideIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  ClipboardList,
+  Brain,
+  type LucideIcon,
+} from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRole } from "@/features/auth/components/RoleGate";
@@ -34,6 +41,7 @@ const ADMIN_SECTION = {
     { to: "/admin", label: "Dashboard", labelEn: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/admin/users", label: "User", labelEn: "Users", icon: Users },
     { to: "/admin/facilities", label: "Fasilitas", labelEn: "Facilities", icon: Building2 },
+    { to: "/admin/models", label: "Model AI", labelEn: "AI Models", icon: Brain },
   ],
 };
 
