@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Building2, type LucideIcon } from "lucide-react";
+import { LayoutDashboard, Users, Building2, ClipboardList, type LucideIcon } from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRole } from "@/features/auth/components/RoleGate";
@@ -22,6 +22,7 @@ const BASE_SECTIONS: { titleId: string; titleEn: string; items: NavItem[] }[] = 
     items: [
       { to: "/dashboard", label: "Dashboard", labelEn: "Dashboard", icon: LayoutDashboard },
       { to: "/patients", label: "Pasien", labelEn: "Patients", icon: Users },
+      { to: "/encounters", label: "Kunjungan", labelEn: "Encounters", icon: ClipboardList },
     ],
   },
 ];
