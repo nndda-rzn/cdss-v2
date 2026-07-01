@@ -28,7 +28,7 @@ jobs:
       issues: write
       checks: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Run gitleaks
@@ -43,7 +43,7 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check backend exists
         id: check
         run: echo "exists=$([ -f pyproject.toml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
@@ -76,7 +76,7 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check frontend exists
         id: check
         run: echo "exists=$([ -f package.json ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: markdownlint
         uses: DavidAnson/markdownlint-cli2-action@v23
         with:
@@ -123,7 +123,7 @@ jobs:
     needs: [backend, frontend]
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check e2e exists
         id: check
         run: echo "exists=$([ -f tests/e2e/package.json ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
